@@ -4,9 +4,10 @@ import { useState } from "react";
 import Image from "next/image";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import { getReviews, getReviewsRating } from "@/apis/reviewsApi";
+import ReviewRatingComponent from "@/app/groupDetail/_components/ReviewRatingComponent";
+import ReviewSkeleton from "@/app/groupDetail/_components/ReviewSkeleton";
 import { GetReviewsRatingRes, ReviewsRes } from "@/types/api/reviews";
 import { formatToKoreanTime } from "@/utils/date";
-import ReviewSkeleton from "./ReviewSkeleton";
 
 export default function Reviews({ gatheringId }: { gatheringId: number }) {
   // page가 0부터 시작함
@@ -70,6 +71,10 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
         <h3 className="mb-5 text-lg font-semibold">
           리뷰 <span>({totalReviews})</span>
         </h3>
+
+        {ratingData && (
+          <ReviewRatingComponent ratingData={ratingData[0]} totalReviews={totalReviews || 0} />
+        )}
 
         {reviews && reviews.length > 0 ? (
           <div>
