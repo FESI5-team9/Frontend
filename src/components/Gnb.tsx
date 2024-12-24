@@ -18,6 +18,8 @@ export default function Gnb() {
     });
 
     localStorage.removeItem("userData");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
 
     // 쿠키 삭제
     document.cookie = "accessToken=; Max-Age=0; path=/;";
