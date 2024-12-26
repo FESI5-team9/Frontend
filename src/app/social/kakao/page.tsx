@@ -29,7 +29,7 @@ function KakaoRedirect() {
         src="/images/img_login.png"
         width={400}
         height={400}
-        alt="카카오로고"
+        alt="로고 이미지"
         className="animate-[bounce_0.7s_ease-in-out_infinite]"
       />
     </div>
