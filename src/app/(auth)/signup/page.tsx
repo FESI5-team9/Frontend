@@ -142,7 +142,7 @@ function Signup() {
             className="mt-7"
             size="small"
             bgColor={nicknameValue.length <= 10 ? "yellow" : "disabled"}
-            disabled={nicknameValue.length > 10}
+            disabled={nicknameValue.length > 10 || nicknameValue.length === 0}
           >
             중복 확인
           </Button>

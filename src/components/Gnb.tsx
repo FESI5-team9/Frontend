@@ -3,13 +3,15 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { signout } from "@/apis/authApi";
 import useUserStore from "@/store/userStore";
 
 export default function Gnb() {
   const { id, image, setUser, favoriteGatheringCount } = useUserStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await signout();
     setUser({
       id: null,
       email: null,
@@ -18,10 +20,6 @@ export default function Gnb() {
     });
 
     localStorage.removeItem("userData");
-
-    // 쿠키 삭제
-    document.cookie = "accessToken=; Max-Age=0; path=/;";
-    document.cookie = "refreshToken=; Max-Age=0; path=/;";
 
     window.location.href = "/";
   };
