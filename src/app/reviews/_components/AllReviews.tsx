@@ -9,7 +9,7 @@ import { GetReviewStatsRes, GetReviews, ReviewsRes } from "@/types/api/reviews";
 import RatingComponent from "./RatingComponent";
 import ReviewListComponent from "./ReviewListComponent";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 
 interface Filters {
   type: GetReviews["type"];
@@ -19,7 +19,14 @@ interface Filters {
 
 type ReviewQueryKey = readonly ["reviews", Filters];
 
-function AllReviews() {
+interface AllReviewsProps {
+  initialData: {
+    reviews: ReviewsRes;
+    stats: GetReviewStatsRes;
+  };
+}
+
+function AllReviews({ initialData }: AllReviewsProps) {
   const [type, setType] = useState<Category["link"]>("RESTAURANT");
   const [filters, setFilters] = useState<Filters>({
     type: "RESTAURANT",
@@ -54,17 +61,27 @@ function AllReviews() {
       return response;
     },
     initialPageParam: 0,
-    getNextPageParam: lastPage => {
+    getNextPageParam: (lastPage, allPages) => {
       if (!lastPage || lastPage.length < PAGE_SIZE) {
         return undefined;
       }
-      return Math.floor(lastPage.length / PAGE_SIZE) + 1;
+
+      // 다음 페이지 번호는 현재까지의 페이지 수
+      return allPages.length;
     },
+    initialData:
+      filters.type === "RESTAURANT"
+        ? {
+          pages: [initialData.reviews],
+          pageParams: [0],
+        }
+        : undefined,
   });
 
   const { data: stats } = useQuery<GetReviewStatsRes>({
     queryKey: ["stats", { type }],
     queryFn: () => getReviewStats(type),
+    initialData: type === "RESTAURANT" ? initialData.stats : undefined,
   });
 
   const reviews = reviewsData?.pages.flat() ?? [];
