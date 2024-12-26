@@ -82,7 +82,7 @@ function AllReviews() {
         />
         <div>
           <h4 className="text-2xl">모든리뷰</h4>
-          <h1 className="pb-2 text-sm">밀엔메이트를 이용한 분들은 이렇게 느꼈아요!</h1>
+          <h1 className="pb-2 text-sm">밀엔메이트를 이용한 분들은 이렇게 느꼈어요!</h1>
         </div>
       </div>
 
