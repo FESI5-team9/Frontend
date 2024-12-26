@@ -18,7 +18,7 @@ export default function FavoriteGathClient() {
   // 필터 메모이제이션
   const filters = useMemo(() => {
     const f: GatheringFilters = {};
-    searchParams.forEach((value, key) => {
+    searchParams?.forEach((value, key) => {
       if (
         ["id", "type", "startDate", "endDate", "location", "createdBy", "direction"].includes(key)
       ) {
