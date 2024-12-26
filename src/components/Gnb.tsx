@@ -7,6 +7,7 @@ import useUserStore from "@/store/userStore";
 
 export default function Gnb() {
   const { id, image, setUser, favoriteGatheringCount } = useUserStore();
+  const [isProfileClick, setIsProfileClick] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -28,6 +29,10 @@ export default function Gnb() {
     window.location.href = "/";
   };
 
+  const handleProfileMenuClose = () => {
+    setIsProfileClick(false);
+  };
+
   const handleMenuClose = () => {
     setIsMenuOpen(false);
   };
@@ -36,9 +41,46 @@ export default function Gnb() {
     <header>
       <div className="tablet:h-15 fixed top-0 z-30 flex h-[60px] w-full items-center justify-center bg-yellow-primary text-black">
         <div className="mx-auto flex w-full justify-between px-4 tablet:w-[744px] tablet:px-1.5 desktop:w-[1200px]">
-          <button type="button" className="tablet:hidden">
+          {/* 햄버거 버튼 */}
+          <button
+            type="button"
+            className="relative tablet:hidden"
+            onClick={() => {
+              setIsMenuOpen(!isMenuOpen);
+            }}
+          >
             <Image src="/icons/hamburger.svg" width={20} height={20} alt="메뉴 버튼" />
           </button>
+          {isMenuOpen && (
+            // 드롭다운 시안이 나오면 디자인 수정(현재 임시)
+            <div className="absolute -bottom-[100px] flex h-[100px] w-[60px] flex-col items-center justify-center gap-[10px] bg-yellow-400">
+              <Link
+                href={"/"}
+                className="hover:text-white"
+                aria-label="모임 찾기"
+                onClick={handleMenuClose}
+              >
+                모임 찾기
+              </Link>
+              <Link
+                href={"/myFavorite/gathering"}
+                className="hover:text-white"
+                aria-label="찜한 모임"
+                onClick={handleMenuClose}
+              >
+                찜한 모임
+              </Link>
+              <Link
+                href={"/reviews"}
+                className="hover:text-white"
+                aria-label="모든 리뷰"
+                onClick={handleMenuClose}
+              >
+                모든 리뷰
+              </Link>
+            </div>
+          )}
+          {/* 기본 탭 */}
           <div className="hidden items-center gap-3 tablet:flex tablet:gap-5 tablet:text-base">
             <Link href={"/"} className="block font-[800]">
               MNM
@@ -77,7 +119,7 @@ export default function Gnb() {
                 <button
                   className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full"
                   aria-label="유저 프로필"
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  onClick={() => setIsProfileClick(!isProfileClick)}
                 >
                   <Image src={image || "/images/profile.svg"} fill objectFit="cover" alt="프로필" />
                 </button>
@@ -92,12 +134,12 @@ export default function Gnb() {
                 </Link>
               )}
             </div>
-            {isMenuOpen && (
+            {isProfileClick && (
               <div className="absolute right-1 top-[50px] flex h-[80px] w-[110px] flex-col justify-start rounded-2xl bg-white shadow-lg desktop:h-[88px] desktop:w-[142px]">
                 <Link
                   href={"/mypage"}
                   className="inline-block h-10 py-[10px] pl-3 text-sm tablet:h-11 tablet:pl-4 tablet:text-base"
-                  onClick={handleMenuClose}
+                  onClick={handleProfileMenuClose}
                 >
                   마이페이지
                 </Link>
