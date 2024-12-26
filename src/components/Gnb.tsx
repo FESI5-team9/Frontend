@@ -6,7 +6,7 @@ import Link from "next/link";
 import useUserStore from "@/store/userStore";
 
 export default function Gnb() {
-  const { id, image, setUser } = useUserStore();
+  const { id, image, setUser, favoriteGatheringCount } = useUserStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -27,7 +27,7 @@ export default function Gnb() {
   };
 
   const handleMenuClose = () => {
-    setIsMenuOpen(false); // 드롭다운 닫기
+    setIsMenuOpen(false);
   };
 
   return (
@@ -42,13 +42,20 @@ export default function Gnb() {
               <Link href={"/"} className="hover:text-white" aria-label="모임 찾기">
                 모임 찾기
               </Link>
-              <Link
-                href={"/myFavorite/gathering"}
-                className="hover:text-white"
-                aria-label="찜한 모임"
-              >
-                찜한 모임
-              </Link>
+              <span className="flex items-center gap-[5px]">
+                <Link
+                  href={"/myFavorite/gathering"}
+                  className="hover:text-white"
+                  aria-label="찜한 모임"
+                >
+                  찜한 모임
+                </Link>
+                {favoriteGatheringCount > 0 && (
+                  <span className="flex h-4 w-[27px] items-center justify-center rounded-3xl bg-[#595421] text-xs text-white">
+                    {favoriteGatheringCount}
+                  </span>
+                )}
+              </span>
               <Link href={"/reviews"} className="hover:text-white" aria-label="모든 리뷰">
                 모든 리뷰
               </Link>

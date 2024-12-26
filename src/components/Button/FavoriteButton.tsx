@@ -3,7 +3,11 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { deleteFavoriteGathering, getFavoriteGathering } from "@/apis/favoriteGatheringApi";
+import {
+  deleteFavoriteGathering,
+  getFavoriteGathering,
+  getFavoriteGatherings,
+} from "@/apis/favoriteGatheringApi";
 import useUserStore from "@/store/userStore";
 
 export default function FavoriteButton({ gatheringId, initialFavorite }: FavoriteButtonProps) {
@@ -11,6 +15,15 @@ export default function FavoriteButton({ gatheringId, initialFavorite }: Favorit
 
   const router = useRouter();
   const userInfo = useUserStore();
+
+  const updateFavoriteCount = useCallback(async () => {
+    try {
+      const favoriteGatherings = await getFavoriteGatherings({ size: 10, page: 0 }); // 서버에서 찜한 모임 목록 가져오기
+      userInfo.setFavoriteGatheringCount(favoriteGatherings.length); // 상태 갱신 (개수만 저장)
+    } catch (error) {
+      console.error("Failed to update favorite count:", error);
+    }
+  }, [userInfo]);
 
   const submitFavorite = useCallback(async () => {
     if (!userInfo.id) return router.push("/signin");
@@ -22,10 +35,11 @@ export default function FavoriteButton({ gatheringId, initialFavorite }: Favorit
         await getFavoriteGathering(gatheringId);
       }
       setIsFavorite(prev => !prev);
+      await updateFavoriteCount(); // 상태 갱신 (개수만 갱신)
     } catch (error) {
       console.error("Error updating favorite status", error);
     }
-  }, [isFavorite, gatheringId, userInfo.id, router]);
+  }, [isFavorite, gatheringId, userInfo.id, router, updateFavoriteCount]);
 
   return (
     <>
