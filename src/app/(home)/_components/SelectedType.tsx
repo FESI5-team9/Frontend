@@ -18,7 +18,7 @@ export default function SelectedType() {
   // URL에서 초기 필터 값 설정
   useEffect(() => {
     const params: Record<string, string | null> = {};
-    searchParams.forEach((value, paramKey) => {
+    searchParams?.forEach((value, paramKey) => {
       params[paramKey] = value; // 'key'를 'paramKey'로 변경
     });
     setSelectedFilters(params);
