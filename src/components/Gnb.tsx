@@ -40,16 +40,16 @@ export default function Gnb() {
   return (
     <header>
       <div className="tablet:h-15 fixed top-0 z-30 flex h-[60px] w-full items-center justify-center bg-yellow-primary text-black">
-        <div className="mx-auto flex w-full justify-between px-4 tablet:w-[744px] tablet:px-1.5 desktop:w-[1200px]">
+        <div className="mx-auto flex w-full items-center justify-between gap-6 px-4 tablet:w-[744px] tablet:px-1.5 desktop:w-[1200px]">
           {/* 햄버거 버튼 */}
           <button
             type="button"
-            className="relative tablet:hidden"
+            className="relative flex h-[30px] w-[30px] tablet:hidden"
             onClick={() => {
               setIsMenuOpen(!isMenuOpen);
             }}
           >
-            <Image src="/icons/hamburger.svg" width={20} height={20} alt="메뉴 버튼" />
+            <Image src="/icons/hamburger.svg" fill alt="메뉴 버튼" layout="fixed" />
           </button>
           {isMenuOpen && (
             // 드롭다운 시안이 나오면 디자인 수정(현재 임시)
@@ -109,9 +109,21 @@ export default function Gnb() {
             </div>
           </div>
 
+          <form className="relative flex w-[350px] items-center tablet:hidden">
+            <input
+              type="text"
+              placeholder="검색어를 입력해주세요."
+              aria-label="검색어 입력"
+              className="mx-auto h-[38px] w-full rounded-full px-4 tablet:w-[297px] desktop:w-[510px]"
+            />
+            <button type="submit" aria-label="검색 실행" className="absolute right-4">
+              <Image src="/icons/magnifier.svg" width={24} height={24} alt="검색" />
+            </button>
+          </form>
+
           <div className="relative flex flex-col gap-2">
             <div className="flex items-center gap-4 tablet:gap-5 desktop:gap-6">
-              <form className="relative flex items-center">
+              <form className="relative hidden items-center tablet:flex">
                 <input
                   type="text"
                   placeholder="검색어를 입력해주세요."
