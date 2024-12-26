@@ -12,13 +12,9 @@ interface SignInResponse {
 
 async function getTokensFromSigninApi(signInData: SignInRequestBody) {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/auth/signin/${signInData.social}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/auth/signin/${signInData.social}?code=${signInData.code}`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ code: signInData.code }),
     },
   );
 

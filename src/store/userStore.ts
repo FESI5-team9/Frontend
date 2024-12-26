@@ -7,7 +7,9 @@ interface UserStore {
   name: string | null;
   nickname: string | null;
   image: string | null;
+  favoriteGatheringCount: number;
   setUser: (user: Partial<UserStore>) => void;
+  setFavoriteGatheringCount: (count: number) => void;
 }
 
 const useUserStore = create<UserStore>()(
@@ -18,7 +20,9 @@ const useUserStore = create<UserStore>()(
       name: null,
       nickname: null,
       image: null,
+      favoriteGatheringCount: 0,
       setUser: user => set(state => ({ ...state, ...user })),
+      setFavoriteGatheringCount: count => set({ favoriteGatheringCount: count }),
     }),
     {
       name: "userData",

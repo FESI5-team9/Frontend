@@ -7,9 +7,15 @@ import { GetGathering } from "@/types/components/card";
 import { formatToOriginTime, getRemainingOriginHours } from "@/utils/date";
 import ButtonJoin from "./ButtonJoin";
 
-export default function Card({ cardData }: { cardData: GetGathering }) {
+export default function Card({
+  cardData,
+  onUpdate,
+}: {
+  cardData: GetGathering;
+  onUpdate: () => void;
+}) {
   return (
-    <div className="border-gray relative flex w-full transform flex-col rounded-2xl border-y-2 bg-gray-background transition-transform duration-200 hover:shadow-xl tablet:h-[156px] tablet:w-full tablet:flex-row">
+    <div className="border-gray relative flex w-full transform flex-col rounded-2xl border-y-2 bg-white transition-transform duration-200 hover:shadow-xl tablet:h-[156px] tablet:w-full tablet:flex-row">
       {/* 카드 내용 */}
       <Link prefetch={false} href={`groupDetail/${cardData.id}`} className="relative flex">
         <Image
@@ -21,9 +27,9 @@ export default function Card({ cardData }: { cardData: GetGathering }) {
           alt="food"
           width={272}
           height={153}
-          className="w-full rounded-l-2xl object-cover tablet:h-[153px] tablet:w-[272px]"
+          className="w-full rounded-2xl object-cover tablet:h-[153px] tablet:w-[272px] tablet:rounded-l-2xl"
         />
-        <div className="absolute right-0 top-0 flex flex-row items-center gap-1 rounded-bl-xl border border-none bg-yellow-primary px-2 py-1">
+        <div className="absolute right-0 top-0 flex flex-row items-center gap-1 rounded-xl border border-none bg-yellow-primary px-2 py-1 tablet:rounded-bl-xl">
           <Image src="/images/mainPage/alarm.svg" width={20} height={16} alt="alarm" />
           <p>{getRemainingOriginHours(cardData.registrationEnd) || "날짜 없음"}</p>
         </div>
@@ -83,7 +89,7 @@ export default function Card({ cardData }: { cardData: GetGathering }) {
             </div>
             <Progressbar now={cardData.participantCount} max={cardData.capacity} />
           </div>
-          <ButtonJoin id={cardData.id} participation={cardData.participation} />
+          <ButtonJoin id={cardData.id} participation={cardData.participation} onUpdate={onUpdate} />
         </div>
       </div>
     </div>
