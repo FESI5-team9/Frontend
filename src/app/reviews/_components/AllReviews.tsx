@@ -8,6 +8,7 @@ import { categoryList } from "@/constants/categoryList";
 import { GetReviewStatsRes, GetReviews, ReviewsRes } from "@/types/api/reviews";
 import RatingComponent from "./RatingComponent";
 import ReviewListComponent from "./ReviewListComponent";
+import RatingSkeleton from "./Skeleton/RatingSkeleton";
 
 const PAGE_SIZE = 5;
 
@@ -128,7 +129,7 @@ function AllReviews({ initialData }: AllReviewsProps) {
         </ul>
       </div>
 
-      <RatingComponent stats={stats} />
+      {stats ? <RatingComponent stats={stats} /> : <RatingSkeleton />}
 
       <ReviewListComponent
         reviews={reviews}
