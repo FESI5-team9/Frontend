@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+const now = new Date();
+
 export const CreateGatheringSchema = z
   .object({
     name: z
@@ -14,7 +16,7 @@ export const CreateGatheringSchema = z
 
     dateTime: z
       .string()
-      .optional() // 선택하지 않아도 처리 가능
+      .optional()
       .superRefine((value, ctx) => {
         const [date, time] = value?.split("T") || [null, null];
 
@@ -25,6 +27,7 @@ export const CreateGatheringSchema = z
             message: "날짜를 선택해주세요.",
             path: ["dateTime"],
           });
+          return;
         }
         // 시간만 없을 때 에러 추가
         if (date && !time) {
@@ -33,6 +36,7 @@ export const CreateGatheringSchema = z
             message: "시간을 선택해주세요.",
             path: ["dateTime"],
           });
+          return;
         }
         // 날짜와 시간이 모두 없는 경우
         if (!date && !time) {
@@ -41,6 +45,42 @@ export const CreateGatheringSchema = z
             message: "날짜와 시간을 선택해주세요.",
             path: ["dateTime"],
           });
+          return;
+        }
+
+        if (date && time) {
+          const dateTime = new Date(value!);
+
+          // 유효하지 않은 날짜 확인
+          if (isNaN(dateTime.getTime())) {
+            ctx.addIssue({
+              code: "custom",
+              message: "날짜와 시간을 정확히 선택해주세요.",
+              path: ["dateTime"],
+            });
+            return;
+          }
+
+          // 과거 날짜 선택 불가
+          if (dateTime < now) {
+            ctx.addIssue({
+              code: "custom",
+              message: "과거의 날짜는 선택할 수 없어요.",
+              path: ["dateTime"],
+            });
+            return;
+          }
+
+          // 최대 61일까지만 선택 가능
+          const maxDate = new Date();
+          maxDate.setDate(maxDate.getDate() + 61);
+          if (dateTime > maxDate) {
+            ctx.addIssue({
+              code: "custom",
+              message: "날짜는 최대 61일까지만 선택할 수 있습니다.",
+              path: ["dateTime"],
+            });
+          }
         }
       }),
 
