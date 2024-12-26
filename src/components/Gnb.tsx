@@ -7,6 +7,7 @@ import useUserStore from "@/store/userStore";
 
 export default function Gnb() {
   const { id, image, setUser, favoriteGatheringCount } = useUserStore();
+  const [isProfileClick, setIsProfileClick] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -18,12 +19,18 @@ export default function Gnb() {
     });
 
     localStorage.removeItem("userData");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
 
     // 쿠키 삭제
     document.cookie = "accessToken=; Max-Age=0; path=/;";
     document.cookie = "refreshToken=; Max-Age=0; path=/;";
 
     window.location.href = "/";
+  };
+
+  const handleProfileMenuClose = () => {
+    setIsProfileClick(false);
   };
 
   const handleMenuClose = () => {
@@ -33,8 +40,48 @@ export default function Gnb() {
   return (
     <header>
       <div className="tablet:h-15 fixed top-0 z-30 flex h-[60px] w-full items-center justify-center bg-yellow-primary text-black">
-        <div className="mx-auto flex w-full justify-between px-4 tablet:w-[744px] tablet:px-1.5 desktop:w-[1200px]">
-          <div className="flex items-center gap-3 tablet:gap-5 tablet:text-base">
+        <div className="mx-auto flex w-full items-center justify-between gap-6 px-4 tablet:w-[744px] tablet:px-1.5 desktop:w-[1200px]">
+          {/* 햄버거 버튼 */}
+          <button
+            type="button"
+            className="relative flex h-[30px] w-[30px] tablet:hidden"
+            onClick={() => {
+              setIsMenuOpen(!isMenuOpen);
+            }}
+          >
+            <Image src="/icons/hamburger.svg" fill alt="메뉴 버튼" layout="fixed" />
+          </button>
+          {isMenuOpen && (
+            // 드롭다운 시안이 나오면 디자인 수정(현재 임시)
+            <div className="absolute -bottom-[100px] flex h-[100px] w-[60px] flex-col items-center justify-center gap-[10px] bg-yellow-400">
+              <Link
+                href={"/"}
+                className="hover:text-white"
+                aria-label="모임 찾기"
+                onClick={handleMenuClose}
+              >
+                모임 찾기
+              </Link>
+              <Link
+                href={"/myFavorite/gathering"}
+                className="hover:text-white"
+                aria-label="찜한 모임"
+                onClick={handleMenuClose}
+              >
+                찜한 모임
+              </Link>
+              <Link
+                href={"/reviews"}
+                className="hover:text-white"
+                aria-label="모든 리뷰"
+                onClick={handleMenuClose}
+              >
+                모든 리뷰
+              </Link>
+            </div>
+          )}
+          {/* 기본 탭 */}
+          <div className="hidden items-center gap-3 tablet:flex tablet:gap-5 tablet:text-base">
             <Link href={"/"} className="block font-[800]">
               MNM
             </Link>
@@ -62,17 +109,37 @@ export default function Gnb() {
             </div>
           </div>
 
+          <form className="relative flex w-[350px] items-center tablet:hidden">
+            <input
+              type="text"
+              placeholder="검색어를 입력해주세요."
+              aria-label="검색어 입력"
+              className="mx-auto h-[38px] w-full rounded-full px-4 tablet:w-[297px] desktop:w-[510px]"
+            />
+            <button type="submit" aria-label="검색 실행" className="absolute right-4">
+              <Image src="/icons/magnifier.svg" width={24} height={24} alt="검색" />
+            </button>
+          </form>
+
           <div className="relative flex flex-col gap-2">
-            <div className="flex items-center gap-5 tablet:gap-6">
-              <Link href={`/search/${id}`}>
-                <Image src="/icons/magnifier.svg" width={24} height={24} alt="검색" />
-              </Link>
+            <div className="flex items-center gap-4 tablet:gap-5 desktop:gap-6">
+              <form className="relative hidden items-center tablet:flex">
+                <input
+                  type="text"
+                  placeholder="검색어를 입력해주세요."
+                  aria-label="검색어 입력"
+                  className="h-[38px] w-[251px] rounded-full px-4 tablet:w-[297px] desktop:w-[510px]"
+                />
+                <button type="submit" aria-label="검색 실행" className="absolute right-4">
+                  <Image src="/icons/magnifier.svg" width={24} height={24} alt="검색" />
+                </button>
+              </form>
               {id ? (
                 // 로그인 상태면 유저 프로필
                 <button
                   className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full"
                   aria-label="유저 프로필"
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  onClick={() => setIsProfileClick(!isProfileClick)}
                 >
                   <Image src={image || "/images/profile.svg"} fill objectFit="cover" alt="프로필" />
                 </button>
@@ -87,12 +154,12 @@ export default function Gnb() {
                 </Link>
               )}
             </div>
-            {isMenuOpen && (
+            {isProfileClick && (
               <div className="absolute right-1 top-[50px] flex h-[80px] w-[110px] flex-col justify-start rounded-2xl bg-white shadow-lg desktop:h-[88px] desktop:w-[142px]">
                 <Link
                   href={"/mypage"}
                   className="inline-block h-10 py-[10px] pl-3 text-sm tablet:h-11 tablet:pl-4 tablet:text-base"
-                  onClick={handleMenuClose}
+                  onClick={handleProfileMenuClose}
                 >
                   마이페이지
                 </Link>
