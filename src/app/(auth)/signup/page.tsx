@@ -16,8 +16,8 @@ function Signup() {
   const [emailVerified, setEmailVerified] = useState<boolean | null>(null);
   const [nicknameVerified, setNicknameVerified] = useState<boolean | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState<string | null>(null);
-  type LoginFormData = z.infer<typeof baseSchema>;
-  const loginSchema = baseSchema
+  type SignupFormData = z.infer<typeof baseSchema>;
+  const signupSchema = baseSchema
     .pick({
       email: true,
       password: true,
@@ -64,17 +64,20 @@ function Signup() {
     handleSubmit,
     getValues,
     trigger,
+    watch,
     formState: { errors, isValid },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
     mode: "all",
   });
   const router = useRouter();
+  const nicknameValue = watch("nickname") || "";
+  const emailValue = watch("email") || "";
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: SignupFormData) => {
     try {
       await signup(data);
-      router.push("/");
+      router.push("/signin");
     } catch (error) {
       setIsPopupOpen("signup-failed");
     }
@@ -138,7 +141,8 @@ function Signup() {
             onClick={onCheckNickname}
             className="mt-7"
             size="small"
-            bgColor="yellow"
+            bgColor={nicknameValue.length <= 10 ? "yellow" : "disabled"}
+            disabled={nicknameValue.length > 10}
           >
             중복 확인
           </Button>
@@ -159,7 +163,8 @@ function Signup() {
             onClick={onCheckEmail}
             className="mt-7"
             size="small"
-            bgColor="yellow"
+            bgColor={z.string().email().safeParse(emailValue).success ? "yellow" : "disabled"}
+            disabled={!z.string().email().safeParse(emailValue).success}
           >
             중복 확인
           </Button>
