@@ -2,11 +2,21 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { joinGathering } from "@/apis/assignGatheringApi";
 import useUserStore from "@/store/userStore";
 
-export default function ButtonJoin({ id, participation }: { id: number; participation: boolean }) {
+export default function ButtonJoin({
+  id,
+  participation,
+  onUpdate,
+}: {
+  id: number;
+  participation: boolean;
+  onUpdate: () => void;
+}) {
   const [isParticipation, setIsParticipation] = useState(participation);
-  const { id: userId } = useUserStore();
+  const [, setToast] = useState(false);
+  const { id: userId } = useUserStore(); // 로그인 상태 확인
   const router = useRouter();
 
   async function handleJoinGathering() {
@@ -15,30 +25,11 @@ export default function ButtonJoin({ id, participation }: { id: number; particip
         router.push("/signin");
         return;
       }
-
-      // 쿠키에서 accessToken 가져오기
-      const cookies = document.cookie;
-      const token = cookies
-        .split("; ")
-        .find(row => row.startsWith("accessToken="))
-        ?.split("=")[1];
-
-      // API 요청
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/gatherings/${id}/join`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        router.push("/signin");
-      }
-
+      joinGathering(id);
       alert("모임을 참여했습니다! 🎉");
       setIsParticipation(true);
+      onUpdate();
+      setToast(true);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "알 수 없는 에러가 발생했습니다.";
@@ -55,7 +46,14 @@ export default function ButtonJoin({ id, participation }: { id: number; particip
 
   return (
     <div>
-      {isParticipation ? (
+      {!userId ? ( // 로그인 안 되어 있으면 무조건 참여하기만 보여줌
+        <button
+          onClick={() => router.push("/signin")}
+          className="h-[40px] w-[100px] rounded-xl border bg-yellow-primary text-black"
+        >
+          참여하기
+        </button>
+      ) : isParticipation ? ( // 로그인 상태에서 참여 여부 확인
         <div className="flex h-[40px] w-[100px] items-center rounded-xl border bg-gray-400 px-5 text-base font-semibold text-gray-100">
           참여완료
         </div>

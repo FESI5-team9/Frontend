@@ -39,7 +39,7 @@ export default function CreateGathering({
     setValue,
     watch,
     trigger,
-    formState: { errors, touchedFields, isSubmitted },
+    formState: { errors, touchedFields, isSubmitted, isValid },
   } = useForm<CreateGatheringFormData>({
     resolver: zodResolver(CreateGatheringSchema),
     defaultValues: {
@@ -261,7 +261,6 @@ export default function CreateGathering({
               </div>
             ))}
           </div>
-          {errors.dateTime && <p className="text-red-500">{errors.dateTime.message}</p>}
         </div>
 
         {/* 모집 정원 */}
@@ -380,7 +379,11 @@ export default function CreateGathering({
           </div>
         </div>
 
-        <Button type="submit" bgColor="disabled" className="py-2 hover:bg-yellow-primary">
+        <Button
+          type="submit"
+          bgColor={`${isValid ? "yellow" : "disabled"}`}
+          className={`py-2 hover:bg-yellow-primary ${isValid ? "border-green-500" : "bg-gray-300"}`}
+        >
           확인
         </Button>
       </form>
