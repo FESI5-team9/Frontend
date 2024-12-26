@@ -63,7 +63,7 @@ export default function Kakao({
     <div
       id="postcode-container"
       className="rounded-md border p-4"
-      style={{ width: "100%", height: "400px" }}
+      style={{ width: "100%", height: "500px" }}
     ></div>
   );
 }

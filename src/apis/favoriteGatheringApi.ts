@@ -23,6 +23,7 @@ export async function deleteFavoriteGathering(id: number) {
 // 찜한 모임 목록 조회
 export async function getFavoriteGatherings(params: PaginationParams) {
   const searchParams = new URLSearchParams();
+
   if (params) {
     buildQueryParams(searchParams, params);
   }

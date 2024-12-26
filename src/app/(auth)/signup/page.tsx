@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +9,7 @@ import { z } from "zod";
 import { checkEmail, checkNickName, signup } from "@/apis/authApi";
 import Button from "@/components/Button/Button";
 import Input from "@/components/Input/Input";
-import Popup from "@/components/Popup";
+import PopupComponent from "@/app/(auth)/_components/PopupComponent";
 import baseSchema from "@/utils/schema";
 
 function Signup() {
@@ -72,40 +71,6 @@ function Signup() {
   });
   const router = useRouter();
 
-  const handleKakaoLogin = () => {
-    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_RESTAPI_KEY}&redirect_uri=${process.env.NEXT_PUBLIC_KAKAO_REDRICT_URL}&response_type=code`;
-    window.location.href = KAKAO_AUTH_URL;
-  };
-
-  const handleGoogleLogin = () => {
-    const GOOGLE_AUTH_URL = `https://accounts.google.com/o/oauth2/v2/auth?&client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_REDRICT_URL}&response_type=code`;
-    window.location.href = GOOGLE_AUTH_URL;
-  };
-
-  const PopupContent = ({ message }: { message: string }) => (
-    <div className="flex h-[156px] w-[252px] flex-col items-center justify-between tablet:h-[162px] tablet:w-[402px]">
-      <Image
-        src="/icons/X.svg"
-        width={24}
-        height={24}
-        className="self-end"
-        onClick={() => setIsPopupOpen(null)}
-        alt="닫기"
-      />
-      <p className="bold mt-2 text-center text-gray-700">{message}</p>
-      <div className="w-[120px] tablet:self-end">
-        <Button
-          onClick={() => setIsPopupOpen(null)}
-          size="small"
-          bgColor="yellow"
-          className="w-full"
-        >
-          확인
-        </Button>
-      </div>
-    </div>
-  );
-
   const onSubmit = async (data: LoginFormData) => {
     try {
       await signup(data);
@@ -121,7 +86,6 @@ function Signup() {
     }
   }, [emailVerified, trigger]);
 
-  // nicknameVerified가 변경되었을 때 유효성 검사 트리거
   useEffect(() => {
     if (nicknameVerified !== null) {
       trigger("nickname");
@@ -155,8 +119,8 @@ function Signup() {
   };
 
   return (
-    <div className="flex w-full flex-col items-center justify-center gap-8 rounded-3xl bg-white px-4 py-8 tablet:px-[54px] desktop:w-[510px] desktop:px-[54px]">
-      <h1 className="text-xl">회원가입 </h1>
+    <div className="flex w-full flex-col gap-5">
+      <h1 className="text-center text-xl">회원가입 </h1>
       <form onSubmit={handleSubmit(onSubmit)} className="mt-2 flex w-full flex-col gap-[28px]">
         <div className="relative flex w-full gap-3">
           <div className="flex-1">
@@ -226,73 +190,41 @@ function Signup() {
           </Link>
         </div>
       </form>
-      <div className="flex w-full items-center justify-between text-center text-gray-500">
-        <hr className="w-[50px] border-gray-300 tablet:w-[180px] desktop:w-20" />
-        <span className="text-md tablet:w-[240px] tablet:text-xl">SNS 계정으로 회원가입하기</span>
-        <hr className="w-[50px] border-gray-300 tablet:w-[180px] desktop:w-20" />
+      <div className="flex w-full items-center justify-between gap-4 text-center text-gray-500">
+        <hr className="flex-1 border-gray-200 desktop:w-20" />
+        <span className="w-[160px] text-sm text-gray-300">SNS 계정으로 회원가입하기</span>
+        <hr className="flex-1 border-gray-200 desktop:w-20" />
       </div>
-      <div className="flex justify-center gap-4">
-        <button
-          onClick={handleGoogleLogin}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-gray-300"
-        >
-          <Image
-            src="/icons/Ic-Google.svg"
-            width={48}
-            height={48}
-            alt="Google 아이콘"
-            draggable={false}
-          />
-        </button>
-
-        <button
-          onClick={handleKakaoLogin}
-          className="flex h-12 w-12 items-center justify-center rounded-full"
-        >
-          <Image
-            src="/icons/Ic-Kakao.svg"
-            width={48}
-            height={48}
-            alt="카카오톡 아이콘"
-            draggable={false}
-          />
-        </button>
-      </div>
-      <Popup
+      <PopupComponent
         id="email-exists"
+        message="이메일이 존재합니다."
         isOpen={isPopupOpen === "email-exists"}
         onClose={() => setIsPopupOpen(null)}
-      >
-        <PopupContent message="이메일이 존재합니다." />
-      </Popup>
-
-      <Popup
+      />
+      <PopupComponent
         id="nickname-exists"
+        message="닉네임이 이미 존재합니다."
         isOpen={isPopupOpen === "nickname-exists"}
         onClose={() => setIsPopupOpen(null)}
-      >
-        <PopupContent message="닉네임이 이미 존재합니다." />
-      </Popup>
-
-      <Popup
+      />
+      <PopupComponent
         id="signup-failed"
+        message="회원가입에 실패했습니다."
         isOpen={isPopupOpen === "signup-failed"}
         onClose={() => setIsPopupOpen(null)}
-      >
-        <PopupContent message="회원가입에 실패했습니다." />
-      </Popup>
-
-      <Popup
+      />
+      <PopupComponent
         id="nickname-ok"
+        message="사용 가능한 닉네임 입니다."
         isOpen={isPopupOpen === "nickname-ok"}
         onClose={() => setIsPopupOpen(null)}
-      >
-        <PopupContent message="사용 가능한 닉네임 입니다." />
-      </Popup>
-
-      <Popup id="email-ok" isOpen={isPopupOpen === "email-ok"} onClose={() => setIsPopupOpen(null)}>
-        <PopupContent message="사용 가능한 이메일입니다." />
-      </Popup>
+      />
+      <PopupComponent
+        id="email-ok"
+        message="사용 가능한 이메일입니다."
+        isOpen={isPopupOpen === "email-ok"}
+        onClose={() => setIsPopupOpen(null)}
+      />
     </div>
   );
 }

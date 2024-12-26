@@ -1,4 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
+import { UseFormSetValue } from "react-hook-form";
+import fetchWithMiddleware from "@/apis/fetchWithMiddleware";
 
 // 폼 데이터 타입 정의
 export interface CreateGatheringFormData {
@@ -99,60 +101,40 @@ export const handleTimeSelect = (
   }
 };
 
-// 제출 핸들러
-export const handleSubmit = async (
-  e: React.FormEvent,
-  formData: CreateGatheringFormData & { image?: File | null },
-  setIsOpen: Dispatch<SetStateAction<boolean>>,
+export const handleNumberChange = (
+  name: keyof CreateGatheringFormData,
+  value: string,
+  setValue: UseFormSetValue<CreateGatheringFormData>,
 ) => {
-  e.preventDefault();
-  const formDataToSend = new FormData();
+  const numericValue = value.replace(/\D/g, ""); // 숫자가 아닌 문자 제거
+  setValue(name, numericValue); // react-hook-form 상태 업데이트
+};
 
-  // FormData 생성
-  Object.entries(formData).forEach(([key, value]) => {
-    if (key === "image" && value instanceof File) {
-      formDataToSend.append(key, value); // 파일 추가
-    } else if (value !== null && value !== undefined) {
-      const processedValue = Array.isArray(value) ? JSON.stringify(value) : String(value);
-      // console.log(`Appending key: ${key}, value: ${processedValue}`); // 디버깅용
-      formDataToSend.append(key, processedValue);
+// 입력값 업데이트 핸들러
+export const handleKeywordChange = (
+  value: string,
+  setKeywordInput: Dispatch<SetStateAction<string>>,
+) => {
+  setKeywordInput(value);
+};
+
+export const handleKeywordAdditionTest = (
+  value: string,
+  keywords: string[],
+  setKeywordValue: React.Dispatch<string>,
+  setValue: UseFormSetValue<CreateGatheringFormData>, // React Hook Form setValue 타입
+) => {
+  const trimmedValue = value.trim();
+
+  if (trimmedValue.startsWith("#") && trimmedValue.length > 1) {
+    const newKeyword = trimmedValue.slice(1); // '#' 제거
+    setTimeout(() => {
+      setKeywordValue(""); // 입력 필드 초기화
+    }, 0);
+
+    if (!keywords.includes(newKeyword)) {
+      setValue("keyword", [...keywords, newKeyword]); // React Hook Form 상태 업데이트
     }
-  });
-
-  try {
-    // 환경 변수에서 API URL 가져오기
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-    const cookies = document.cookie;
-    const token = cookies
-      .split("; ")
-      .find(row => row.startsWith("access-token=")) // `token` 쿠키를 가져옴
-      ?.split("=")[1];
-    if (!baseUrl) {
-      throw new Error("NEXT_PUBLIC_BASE_URL 환경 변수를 설정하세요!");
-    }
-
-    // 쿠키 가져오기
-
-    const response = await fetch(`${baseUrl}gatherings`, {
-      method: "POST",
-      body: formDataToSend,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (response.ok) {
-      alert("모임이 성공적으로 생성되었습니다!");
-      setIsOpen(false);
-    } else {
-      const errorData = await response.json();
-      alert(`모임 생성 중 문제가 발생했습니다: ${errorData.message || "알 수 없는 오류"}`);
-      // console.log("베이스 url", baseUrl);
-      console.error("Error response:", errorData);
-    }
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    alert("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
   }
 };
 
@@ -178,10 +160,56 @@ export const handleKeywordAddition = (
   }
 };
 
-// 입력값 업데이트 핸들러
-export const handleKeywordChange = (
-  value: string,
-  setKeywordInput: Dispatch<SetStateAction<string>>,
+export const handleKeywordDelete = (
+  index: number,
+  keywords: string[],
+  setValue: UseFormSetValue<CreateGatheringFormData>,
 ) => {
-  setKeywordInput(value);
+  setValue(
+    "keyword",
+    keywords.filter((_, i) => i !== index), // 키워드 삭제
+  );
+};
+
+export const handleSubmitToServer = async (
+  data: CreateGatheringFormData,
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
+) => {
+  const formDataToSend = new FormData();
+
+  // FormData 변환
+  Object.entries(data).forEach(([key, value]) => {
+    if (key === "image" && value instanceof File) {
+      formDataToSend.append(key, value); // File 객체 추가
+    } else if (value !== null && value !== undefined) {
+      formDataToSend.append(key, Array.isArray(value) ? JSON.stringify(value) : String(value));
+    }
+  });
+
+  try {
+    const response = await fetchWithMiddleware(`/api/gatherings`, {
+      method: "POST",
+      body: formDataToSend,
+    });
+    if (!response.ok) throw new Error("서버 응답 오류!");
+
+    alert("모임이 성공적으로 생성되었습니다!");
+    setIsOpen(false);
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    alert("오류가 발생했습니다. 다시 시도해주세요.");
+  }
+};
+
+export const validateCapacityAndParticipant = (
+  capacity: number,
+  participantCount: number,
+): string | boolean => {
+  if (participantCount < 2) {
+    return "최소 인원은 2명 이상이어야 해요.";
+  }
+  if (participantCount > capacity) {
+    return "모집 정원보다 많을 수 없어요.";
+  }
+  return true; // 유효한 경우
 };

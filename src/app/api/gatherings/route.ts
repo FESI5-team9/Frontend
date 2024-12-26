@@ -30,17 +30,15 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const body = await request.json();
-
+  const body = await request.formData();
   const accessToken = request.cookies.get("access-token")?.value;
 
   const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/gatherings`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
       ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
     },
-    body: JSON.stringify(body),
+    body: body,
   });
 
   if (response.ok) {

@@ -1,5 +1,5 @@
 import React from "react";
-import Heart from "@/app/mypage/components/mypage/Heart";
+import Heart from "@/app/mypage/components/Heart";
 import { RatingProps } from "@/types/components/heart";
 
 const Rating = ({ score }: RatingProps) => {

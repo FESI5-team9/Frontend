@@ -16,7 +16,7 @@ export default async function fetchWithMiddleware(url: string, options: RequestI
 
     if (!refreshResponse.ok) {
       // refresh 실패시 로그인 페이지로
-      window.location.href = "/login";
+      window.location.href = "/";
       throw new Error("Token refresh failed");
     }
 

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { InfiniteData, useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getReviewStats, getReviews } from "@/apis/reviewsApi";
-import { categories } from "@/constants/categoryList";
+import { categoryList } from "@/constants/categoryList";
 import { GetReviewStatsRes, GetReviews, ReviewsRes } from "@/types/api/reviews";
 import RatingComponent from "./RatingComponent";
 import ReviewListComponent from "./ReviewListComponent";
@@ -88,7 +88,7 @@ function AllReviews() {
 
       <div className="flex justify-between px-2 pb-2 tablet:px-0">
         <ul className="flex gap-3 p-2 text-lg tablet:justify-between tablet:gap-4">
-          {categories.map(category => (
+          {categoryList.map(category => (
             <li
               key={category.name}
               onClick={() => handleTypeChange(category.link)}

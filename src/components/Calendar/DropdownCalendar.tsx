@@ -50,7 +50,7 @@ export default function DropdownCalendar() {
   };
 
   return (
-    <div ref={dropdownRef} className="w-[330px]">
+    <div ref={dropdownRef}>
       <FilterButton
         selectedDateOption="날짜 선택"
         filterType="selectionFilter"

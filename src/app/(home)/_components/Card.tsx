@@ -7,9 +7,16 @@ import { GetGathering } from "@/types/components/card";
 import { formatToOriginTime, getRemainingOriginHours } from "@/utils/date";
 import ButtonJoin from "./ButtonJoin";
 
-export default function Card({ cardData }: { cardData: GetGathering }) {
+export default function Card({
+  cardData,
+  onUpdate,
+}: {
+  cardData: GetGathering;
+  onUpdate: () => void;
+}) {
   return (
-    <div className="border-gray flex w-full transform flex-col rounded-2xl border-y-2 bg-gray-background transition-transform duration-200 hover:shadow-xl tablet:h-[156px] tablet:w-full tablet:flex-row">
+    <div className="border-gray relative flex w-full transform flex-col rounded-2xl border-y-2 bg-white transition-transform duration-200 hover:shadow-xl tablet:h-[156px] tablet:w-full tablet:flex-row">
+      {/* 카드 내용 */}
       <Link prefetch={false} href={`groupDetail/${cardData.id}`} className="relative flex">
         <Image
           src={
@@ -20,15 +27,22 @@ export default function Card({ cardData }: { cardData: GetGathering }) {
           alt="food"
           width={272}
           height={153}
-          className="w-full rounded-l-2xl object-cover tablet:h-[153px] tablet:w-[272px]"
+          className="w-full rounded-2xl object-cover tablet:h-[153px] tablet:w-[272px] tablet:rounded-l-2xl"
         />
-        <div className="absolute right-0 top-0 flex flex-row items-center gap-1 rounded-bl-xl border border-none bg-yellow-primary px-2 py-1">
+        <div className="absolute right-0 top-0 flex flex-row items-center gap-1 rounded-xl border border-none bg-yellow-primary px-2 py-1 tablet:rounded-bl-xl">
           <Image src="/images/mainPage/alarm.svg" width={20} height={16} alt="alarm" />
           <p>{getRemainingOriginHours(cardData.registrationEnd) || "날짜 없음"}</p>
         </div>
       </Link>
+      {/* 모임 종료된 경우 */}
+      {cardData.canceledAt && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center gap-2 rounded-2xl bg-black bg-opacity-70 text-lg font-semibold text-white">
+          <p>이미 종료된 모임이에요.</p>
+          <p>다음 기회에 만나요!</p>
+        </div>
+      )}
+
       <div className="flex w-full flex-col justify-between p-4">
-        {/* 컴포넌트 / 글자 같은거 넣는 곳이지 */}
         <div className="flex justify-between">
           <div className="flex flex-col gap-2">
             <div className="flex flex-row items-center gap-2">
@@ -50,10 +64,8 @@ export default function Card({ cardData }: { cardData: GetGathering }) {
               </Chip>
             </div>
           </div>
-          {/* 찜하기 */}
           <FavoriteButton gatheringId={cardData.id} initialFavorite={cardData.favorite} />
         </div>
-        {/* 밑에 컴포넌트 */}
         <div className="flex items-end justify-between">
           <div className="mt-4 flex w-3/5 flex-col gap-2 tablet:w-3/5 desktop:w-3/5">
             <div className="flex flex-row gap-2 text-sm">
@@ -69,7 +81,7 @@ export default function Card({ cardData }: { cardData: GetGathering }) {
                     src="/images/mainPage/card/ic_check.svg"
                     width={16}
                     height={16}
-                    alt="people"
+                    alt="check"
                   />
                   <div>개설확정</div>
                 </div>
@@ -77,7 +89,7 @@ export default function Card({ cardData }: { cardData: GetGathering }) {
             </div>
             <Progressbar now={cardData.participantCount} max={cardData.capacity} />
           </div>
-          <ButtonJoin id={cardData.id} participation={cardData.participation} />
+          <ButtonJoin id={cardData.id} participation={cardData.participation} onUpdate={onUpdate} />
         </div>
       </div>
     </div>

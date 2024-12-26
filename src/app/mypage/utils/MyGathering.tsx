@@ -21,7 +21,7 @@ export const MyGathering = () => {
       />
       {/* 구분선 추가 (마지막 요소 제외) */}
       {index !== gatherings.length - 1 && (
-        <div className="mb-6 mt-6 border-[2px] border-dashed border-gray-200"></div>
+        <div className="mb-[21px] mt-[10px] border-[1.6px] border-dashed border-gray-200"></div>
       )}
     </div>
   ));

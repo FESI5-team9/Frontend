@@ -1,4 +1,4 @@
-export const categories: Category[] = [
+export const categoryList: Category[] = [
   {
     name: "식당",
     icon: "/images/mainPage/category/restaurant-black.svg",
@@ -30,8 +30,9 @@ export const categories: Category[] = [
 ];
 
 //모임 만들기 시간리스트
-export const amTime = ["07:00", "08:00", "09:00", "10:00", "11:00"];
-export const pmTime = [
+export const timeChips = [
+  "10:00",
+  "11:00",
   "12:00",
   "13:00",
   "14:00",
@@ -44,4 +45,5 @@ export const pmTime = [
   "21:00",
   "22:00",
   "23:00",
+  "24:00",
 ];

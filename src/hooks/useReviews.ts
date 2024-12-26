@@ -1,8 +1,8 @@
 // hooks/useReviews.ts
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import { getReviews } from "@/apis/reviewsApi";
 import { getMyJoinedGatherings } from "@/apis/searchGatheringApi";
+import useUserStore from "@/store/userStore";
 import { GetMyJoinedGatheringsRes } from "@/types/api/gatheringApi";
 import { ReviewRes } from "@/types/api/reviews";
 
@@ -16,17 +16,15 @@ export const useReviews = () => {
   const [unCompletedReviews, setUnCompletedReviews] = useState<GetMyJoinedGatheringsRes>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const { id } = useParams();
+  const { id } = useUserStore();
 
   const fetchReviews = async () => {
     setLoading(true);
     setError(null);
     try {
-      const userId = id ? parseInt(id as string) : undefined;
-
       // 작성한 리뷰 가져오기
       const completedReviewsParams = {
-        userId: userId,
+        userId: id ?? undefined,
       };
       const completedReviewsData = await getReviews(completedReviewsParams);
 

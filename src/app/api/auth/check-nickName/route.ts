@@ -12,12 +12,6 @@ export async function GET(request: NextRequest) {
   // 외부 API 호출
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/auth/check-nickname?nickname=${nickname}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    },
   );
 
   if (response.ok) {
