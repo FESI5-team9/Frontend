@@ -110,10 +110,18 @@ export default function Gnb() {
           </div>
 
           <div className="relative flex flex-col gap-2">
-            <div className="flex items-center gap-5 tablet:gap-6">
-              <Link href={`/search/${id}`}>
-                <Image src="/icons/magnifier.svg" width={24} height={24} alt="검색" />
-              </Link>
+            <div className="flex items-center gap-4 tablet:gap-5 desktop:gap-6">
+              <form className="relative flex items-center">
+                <input
+                  type="text"
+                  placeholder="검색어를 입력해주세요."
+                  aria-label="검색어 입력"
+                  className="h-[38px] w-[251px] rounded-full px-4 tablet:w-[297px] desktop:w-[510px]"
+                />
+                <button type="submit" aria-label="검색 실행" className="absolute right-4">
+                  <Image src="/icons/magnifier.svg" width={24} height={24} alt="검색" />
+                </button>
+              </form>
               {id ? (
                 // 로그인 상태면 유저 프로필
                 <button
