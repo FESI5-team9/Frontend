@@ -44,6 +44,12 @@ export async function signin(body: Login) {
   return response;
 }
 
+// 회원가입
+export async function signout() {
+  await fetch("/api/auth/signout", {
+    method: "POST",
+  });
+}
 // 유저 정보 수정
 export async function updateUserProfile(body: PutUsers): Promise<User> {
   const formData = new FormData();
