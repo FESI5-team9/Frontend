@@ -37,7 +37,7 @@ export default function MypageCard({
     <div className="relative flex w-full flex-col gap-4 tablet:h-[153px] tablet:flex-row">
       {/* 반투명 오버레이 */}
       {canceledAt && (
-        <div className="absolute inset-0 z-10 flex h-[340px] flex-col items-center justify-center gap-6 rounded-3xl bg-black bg-opacity-70">
+        <div className="absolute inset-0 z-10 flex h-[340px] flex-col items-center justify-center gap-6 rounded-3xl bg-black bg-opacity-70 tablet:h-[173px]">
           <span className="text-center text-sm font-semibold text-white">
             모집 취소된 모임이에요,
             <br />
@@ -49,10 +49,10 @@ export default function MypageCard({
           </button>
         </div>
       )}
-      <div className="relative flex h-[153px] w-full items-center justify-center overflow-hidden rounded-3xl tablet:w-[280px]">
+      <div className="relative flex h-[153px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-3xl tablet:w-[280px]">
         <Image src={image} fill objectFit="cover" alt="모임 이미지" />
       </div>
-      <div className="flex flex-col">
+      <div className="flex w-full flex-col">
         <div className="mb-3 flex gap-2">
           <Chip
             type="state"
