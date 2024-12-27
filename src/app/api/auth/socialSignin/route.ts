@@ -13,9 +13,6 @@ interface SignInResponse {
 async function getTokensFromSigninApi(signInData: SignInRequestBody) {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/auth/signin/${signInData.social}?code=${signInData.code}`,
-    {
-      method: "POST",
-    },
   );
 
   if (!response.ok) {
@@ -30,9 +27,17 @@ async function getTokensFromSigninApi(signInData: SignInRequestBody) {
   };
 }
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const requestBody: SignInRequestBody = await request.json();
+    const { searchParams } = new URL(request.url);
+    const social = searchParams.get("social");
+    const code = searchParams.get("code");
+
+    if (!social || !code) {
+      return NextResponse.json({ message: "잘못된 요청" }, { status: 400 });
+    }
+
+    const requestBody: SignInRequestBody = { social, code };
     const { refreshToken, accessToken } = await getTokensFromSigninApi(requestBody);
 
     const response = NextResponse.json({ success: true }, { status: 200 });

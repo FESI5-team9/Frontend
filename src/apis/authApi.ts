@@ -44,6 +44,12 @@ export async function signin(body: Login) {
   return response;
 }
 
+// 회원가입
+export async function signout() {
+  await fetch("/api/auth/signout", {
+    method: "POST",
+  });
+}
 // 유저 정보 수정
 export async function updateUserProfile(body: PutUsers): Promise<User> {
   const formData = new FormData();
@@ -82,16 +88,15 @@ export async function checkNickName(nickname: string) {
 
 // 소셜 로그인
 export async function socialSignup(social: string, code: string) {
-  const response = await fetchWithMiddleware(`/api/auth/socialSignin`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetchWithMiddleware(
+    `/api/auth/socialSignin?social=${social}&code=${code}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-    body: JSON.stringify({
-      social: social,
-      code: code,
-    }),
-  });
+  );
 
   const { id, email, nickname, image } = await getUserProfile();
 
