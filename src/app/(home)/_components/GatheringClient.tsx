@@ -20,7 +20,16 @@ export default function GatheringClient() {
     const f: GatheringFilters = {};
     searchParams?.forEach((value, key) => {
       if (
-        ["id", "type", "startDate", "endDate", "location", "createdBy", "direction"].includes(key)
+        [
+          "id",
+          "type",
+          "startDate",
+          "endDate",
+          "location",
+          "createdBy",
+          "direction",
+          "search",
+        ].includes(key)
       ) {
         f[key] = value;
       }

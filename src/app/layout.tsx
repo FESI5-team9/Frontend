@@ -24,8 +24,10 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${pretendard.className} pt-[60px]`}>
-        <Gnb />
-        <ReactQueryProviders>{children}</ReactQueryProviders>
+        <ReactQueryProviders>
+          <Gnb />
+          {children}
+        </ReactQueryProviders>
       </body>
     </html>
   );
