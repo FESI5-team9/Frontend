@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
 import useQueryBuilder from "@/hooks/useUrlParams";
+import { signout } from "@/apis/authApi";
 import useUserStore from "@/store/userStore";
 
 export default function Gnb() {
@@ -26,7 +27,8 @@ export default function Gnb() {
     refreshData();
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await signout();
     setUser({
       id: null,
       email: null,
@@ -37,10 +39,6 @@ export default function Gnb() {
     localStorage.removeItem("userData");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-
-    // 쿠키 삭제
-    document.cookie = "accessToken=; Max-Age=0; path=/;";
-    document.cookie = "refreshToken=; Max-Age=0; path=/;";
 
     window.location.href = "/";
   };
