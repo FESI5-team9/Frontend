@@ -13,9 +13,6 @@ interface SignInResponse {
 async function getTokensFromSigninApi(signInData: SignInRequestBody) {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/auth/signin/${signInData.social}?code=${signInData.code}`,
-    {
-      method: "POST",
-    },
   );
 
   if (!response.ok) {
@@ -30,7 +27,7 @@ async function getTokensFromSigninApi(signInData: SignInRequestBody) {
   };
 }
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     const requestBody: SignInRequestBody = await request.json();
     const { refreshToken, accessToken } = await getTokensFromSigninApi(requestBody);
