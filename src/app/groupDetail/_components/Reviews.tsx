@@ -8,6 +8,7 @@ import ReviewRatingComponent from "@/app/groupDetail/_components/ReviewRatingCom
 import ReviewSkeleton from "@/app/groupDetail/_components/ReviewSkeleton";
 import { GetReviewsRatingRes, ReviewsRes } from "@/types/api/reviews";
 import { formatToKoreanTime } from "@/utils/date";
+import ReviewRatingSkeleton from "./ReviewRatingSkeleton";
 
 export default function Reviews({ gatheringId }: { gatheringId: number }) {
   // page가 0부터 시작함
@@ -72,8 +73,12 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
           리뷰 <span>({totalReviews})</span>
         </h3>
 
-        {ratingData && (
-          <ReviewRatingComponent ratingData={ratingData[0]} totalReviews={totalReviews || 0} />
+        {isRatingLoading ? (
+          <ReviewRatingSkeleton />
+        ) : (
+          ratingData && (
+            <ReviewRatingComponent ratingData={ratingData[0]} totalReviews={totalReviews || 0} />
+          )
         )}
 
         {reviews && reviews.length > 0 ? (
@@ -83,24 +88,17 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
                 <div key={review.id} className="border-b-2 border-dashed border-[#F3F4F6] pb-4">
                   <div className="flex h-[86px] flex-col justify-between">
                     <div className="flex">
-                      {Array.from({ length: review.score }).map((_, index) => (
+                      {Array.from({ length: 5 }).map((_, index) => (
                         <div key={index} className="flex h-6 w-6 items-center justify-center">
                           <Image
                             width={24}
                             height={22}
                             alt="평점"
-                            src="/images/heart/filled_heart.svg"
-                            style={{ width: "24px", height: "22px" }}
-                          />
-                        </div>
-                      ))}
-                      {Array.from({ length: 5 - review.score }).map((_, index) => (
-                        <div key={index} className="flex h-6 w-6 items-center justify-center">
-                          <Image
-                            width={24}
-                            height={22}
-                            alt="평점"
-                            src="/images/heart/grey_heart.svg"
+                            src={
+                              index < review.score
+                                ? "/images/heart/filled_heart.svg"
+                                : "/images/heart/grey_heart.svg"
+                            }
                             style={{ width: "24px", height: "22px" }}
                           />
                         </div>
@@ -135,14 +133,6 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
                 <p className="text-[#9CA3AF]">/</p>
                 <p className="text-[#9CA3AF]">{totalPages}</p>
               </div>
-              {/* <div className="flex gap-3">
-                {Array.from({ length: totalPages }).map((_, index) => (
-                  <button type="button" key={index}>
-                    {index + 1}
-                  </button>
-                ))}
-              </div> */}
-
               <button
                 className="flex h-6 w-6 items-center justify-center"
                 type="button"
@@ -156,7 +146,7 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
           <div className="flex h-[200px] w-full items-center justify-center">
             <p className="text-[#9CA3AF]">아직 리뷰가 없어요</p>
           </div>
-        ) : isRatingLoading || isReviewsLoading ? (
+        ) : isReviewsLoading ? (
           <div className="h-full w-full">
             <ReviewSkeleton />
             <ReviewSkeleton />

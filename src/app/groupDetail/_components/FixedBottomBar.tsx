@@ -10,9 +10,14 @@ import { GatheringDetailRes, Participant } from "@/types/api/gatheringApi";
 type FixedBottomBarProps = {
   data: GatheringDetailRes;
   gatheringId: number;
+  toggleEditModal: () => void;
 };
 
-export default function FixedBottomBar({ data, gatheringId }: FixedBottomBarProps) {
+export default function FixedBottomBar({
+  data,
+  gatheringId,
+  toggleEditModal,
+}: FixedBottomBarProps) {
   const [status, setStatus] = useState<"join" | "cancelJoin" | "closed" | "host">("join");
 
   const userInfo = useUserStore();
@@ -63,19 +68,8 @@ export default function FixedBottomBar({ data, gatheringId }: FixedBottomBarProp
     }
   };
 
-  const handleShare = async () => {
-    try {
-      const currentUrl = window.location.href;
-      await navigator.clipboard.writeText(currentUrl);
-      alert("URL이 클립보드에 복사되었습니다!");
-    } catch (error) {
-      console.error("URL 복사 실패", error);
-      alert("URL 복사 실패");
-    }
-  };
-
   return (
-    <div className="fixed bottom-0 left-0 z-[999] max-h-[134px] w-full border-t-2 bg-white tablet:h-[84px] desktop:h-[87px]">
+    <div className="fixed bottom-0 left-0 z-[2] max-h-[134px] w-full border-t-2 bg-white tablet:h-[84px] desktop:h-[87px]">
       <div
         className={`mx-auto flex max-w-[744px] ${status === "host" ? "flex-wrap" : "flex-nowrap"} items-center justify-between gap-[14px] px-4 py-5 tablet:px-6 tablet:py-5 desktop:px-12`}
       >
@@ -125,9 +119,9 @@ export default function FixedBottomBar({ data, gatheringId }: FixedBottomBarProp
             </Button>
             <Button
               className="h-11 w-[115px] grow bg-yellow-primary text-[#262626] tablet:w-[115px] tablet:grow-0"
-              onClick={handleShare}
+              onClick={toggleEditModal}
             >
-              공유하기
+              수정하기
             </Button>
           </div>
         )}

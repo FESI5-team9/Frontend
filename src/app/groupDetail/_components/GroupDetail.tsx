@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import { getGatheringDetail } from "@/apis/searchGatheringApi";
@@ -10,8 +11,11 @@ import DetailCard from "../_components/DetailCard";
 import FixedBottomBar from "../_components/FixedBottomBar";
 import Map from "../_components/Map";
 import Reviews from "../_components/Reviews";
+import EditGathering from "./EditGathering";
 
 function GroupDetail({ paramsId }: { paramsId: number }) {
+  const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
+
   const {
     data: detail,
     isLoading: isDetailLoading,
@@ -58,8 +62,13 @@ function GroupDetail({ paramsId }: { paramsId: number }) {
             <p className="text-sm font-medium">{detail.description}</p>
             <div className="flex items-center gap-1 text-xs font-medium">
               <div className="flex items-center gap-1">
-                <div className="h-6 w-6 rounded-full bg-gray-400">
-                  {detail.user.image && <Image src={detail.user.image} alt="작성자" />}
+                <div className="h-6 w-6 rounded-full">
+                  <Image
+                    src={detail.user.image ? detail.user.image : "/images/profile.svg"}
+                    alt="작성자"
+                    width={24}
+                    height={24}
+                  />
                 </div>
                 <span>{detail.user.nickname}</span>
               </div>
@@ -82,7 +91,17 @@ function GroupDetail({ paramsId }: { paramsId: number }) {
         <Reviews gatheringId={paramsId} />
       </div>
 
-      {detail && <FixedBottomBar data={detail} gatheringId={paramsId} />}
+      {detail && (
+        <FixedBottomBar
+          data={detail}
+          gatheringId={paramsId}
+          toggleEditModal={() => setIsEditOpen(true)}
+        />
+      )}
+
+      {detail && isEditOpen && (
+        <EditGathering isOpen={isEditOpen} setIsOpen={setIsEditOpen} initialData={detail} />
+      )}
     </div>
   );
 }

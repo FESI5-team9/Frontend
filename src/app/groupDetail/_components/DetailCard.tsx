@@ -79,9 +79,9 @@ export default function DetailCard({ gathering }: GatheringProp) {
                   index < 4 && (
                     <div
                       key={index}
-                      className="-ml-3 h-[29px] w-[29px] cursor-pointer rounded-full bg-gray-200 bg-cover bg-center"
+                      className="-ml-3 h-[29px] w-[29px] cursor-pointer rounded-full bg-cover bg-center"
                       style={{
-                        backgroundImage: `url(${person.image})`,
+                        backgroundImage: `url(${person.image ? person.image : "/images/profile.svg"})`,
                       }}
                     ></div>
                   ),
@@ -102,9 +102,9 @@ export default function DetailCard({ gathering }: GatheringProp) {
                   {gathering.participants.map(person => (
                     <div className="mt-2 flex w-full items-center gap-2" key={person.userId}>
                       <div
-                        className="h-[24px] w-[24px] rounded-full bg-gray-200 bg-cover bg-center"
+                        className="h-[24px] w-[24px] rounded-full bg-cover bg-center"
                         style={{
-                          backgroundImage: `url(${person.image})`,
+                          backgroundImage: `url(${person.image ? person.image : "/images/profile.svg"})`,
                         }}
                       ></div>
                       <p className="text-sm font-semibold"> {person.nickname}</p>
@@ -121,7 +121,7 @@ export default function DetailCard({ gathering }: GatheringProp) {
               )}
             </div>
           </div>
-          {gathering.open ? (
+          {gathering.open && (
             <div className="flex gap-1">
               <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-black">
                 <Image
@@ -137,7 +137,7 @@ export default function DetailCard({ gathering }: GatheringProp) {
               </div>
               <p className="text-sm">개설확정</p>
             </div>
-          ) : null}
+          )}
         </div>
         <div>
           <Progressbar now={gathering.participantCount} max={gathering.capacity} />
