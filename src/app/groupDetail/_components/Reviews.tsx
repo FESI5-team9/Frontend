@@ -5,10 +5,10 @@ import Image from "next/image";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import { getReviews, getReviewsRating } from "@/apis/reviewsApi";
 import ReviewRatingComponent from "@/app/groupDetail/_components/ReviewRatingComponent";
-import ReviewSkeleton from "@/app/groupDetail/_components/ReviewSkeleton";
+import ReviewRatingSkeleton from "@/app/groupDetail/_components/Skeleton/ReviewRatingSkeleton";
+import ReviewSkeleton from "@/app/groupDetail/_components/Skeleton/ReviewSkeleton";
 import { GetReviewsRatingRes, ReviewsRes } from "@/types/api/reviews";
 import { formatToKoreanTime } from "@/utils/date";
-import ReviewRatingSkeleton from "./ReviewRatingSkeleton";
 
 export default function Reviews({ gatheringId }: { gatheringId: number }) {
   // page가 0부터 시작함
@@ -33,7 +33,7 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
     isLoading: isRatingLoading,
     error: ratingError,
   }: UseQueryResult<GetReviewsRatingRes, Error> = useQuery({
-    queryKey: ["gatheringReviewRating", gatheringId],
+    queryKey: ["gatheringReviewRating", gatheringId, reviews],
     queryFn: () => getReviewsRating({ gatheringId: Number(gatheringId) }),
     staleTime: 1000 * 60 * 5,
   });
@@ -59,10 +59,17 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
     refetch();
   };
 
-  if (reviewsError || ratingError)
+  if (reviewsError)
     return (
       <div className="flex w-full items-center justify-center">
-        <p>Error occurred while fetching data.</p>
+        <p>Error occurred while fetching reviews data.</p>
+      </div>
+    );
+
+  if (ratingError)
+    return (
+      <div className="flex w-full items-center justify-center">
+        <p>Error occurred while fetching review rating data.</p>
       </div>
     );
 
@@ -70,7 +77,7 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
     <div className="border-t border-[#e5e7eb] bg-white px-4 py-6 tablet:col-span-2 tablet:px-6 tablet:pb-[87px]">
       <div className="min-h-[500px]">
         <h3 className="mb-5 text-lg font-semibold">
-          리뷰 <span>({totalReviews})</span>
+          리뷰 <span>{isRatingLoading || `(${totalReviews})`}</span>
         </h3>
 
         {isRatingLoading ? (
@@ -107,7 +114,16 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
                     <p className="text-sm font-medium">{review.comment}</p>
                     <div className="flex items-center gap-1 text-xs font-medium">
                       <div className="flex items-center gap-1">
-                        <div className="h-6 w-6 rounded-full bg-gray-400"></div>
+                        <div className="h-6 w-6 rounded-full bg-gray-400">
+                          <Image
+                            src={
+                              review.user.image ? review.user.image : "/images/default-profile.svg"
+                            }
+                            alt="작성자"
+                            width={24}
+                            height={24}
+                          />
+                        </div>
                         <span className="text-[#3d3d3d]">{review.user.nickname}</span>
                       </div>
                       <span className="text-[#3C3C3C]">|</span>
@@ -131,7 +147,7 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
               <div className="flex items-center justify-between gap-3">
                 <p>{page + 1}</p>
                 <p className="text-[#9CA3AF]">/</p>
-                <p className="text-[#9CA3AF]">{totalPages}</p>
+                <p className="text-[#9CA3AF]">{isRatingLoading || totalPages}</p>
               </div>
               <button
                 className="flex h-6 w-6 items-center justify-center"

@@ -14,19 +14,20 @@ type GatheringProp = {
 };
 
 export default function DetailCard({ gathering }: GatheringProp) {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isParticipantsListOpen, setIsParticipantsListOpen] = useState<boolean>(false);
 
   const popupRef = useRef<HTMLDivElement | null>(null);
 
   const date = formatToKoreanTime(gathering.dateTime, "MM월 d일");
   const time = formatToKoreanTime(gathering.dateTime, "HH:mm");
 
+  const toggleParticipantsList = () => setIsParticipantsListOpen(prev => !prev);
   const closeParticipantsList = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (isOpen) setIsOpen(false);
+    if (isParticipantsListOpen) setIsParticipantsListOpen(false);
   };
 
-  useClickOutside(popupRef, () => setIsOpen(false));
+  useClickOutside(popupRef, () => setIsParticipantsListOpen(false));
 
   return (
     <div className="flex flex-col rounded-3xl border-2 border-[#e5e7eb] bg-white px-6 py-[14px] tablet:p-6">
@@ -68,12 +69,16 @@ export default function DetailCard({ gathering }: GatheringProp) {
         </div>
       </div>
 
-      <div className="flex w-full grow flex-col justify-end gap-[10px] pt-3">
-        <div className="flex items-center justify-between">
+      <div
+        onClick={toggleParticipantsList}
+        ref={popupRef}
+        className="flex w-full grow flex-col justify-end gap-[10px] pt-3"
+      >
+        <div className="flex cursor-pointer items-center justify-between">
           <div className="flex items-center">
             <p className="text-sm font-semibold">모집 정원 {gathering.participantCount}명</p>
 
-            <div onClick={() => setIsOpen(true)} className="relative ml-4 flex">
+            <div className="relative ml-4 flex">
               {gathering.participants.map(
                 (person, index) =>
                   index < 4 && (
@@ -91,10 +96,10 @@ export default function DetailCard({ gathering }: GatheringProp) {
                   +{gathering.participantCount - 4}
                 </div>
               ) : null}
-              {isOpen && (
+              {isParticipantsListOpen && (
                 <div
-                  ref={popupRef}
-                  className="absolute -left-3 top-9 flex min-w-[200px] flex-col items-center justify-between rounded-2xl border bg-white p-4"
+                  onClick={e => e.stopPropagation()}
+                  className="absolute -left-3 top-9 z-10 flex min-w-[200px] cursor-default flex-col items-center justify-between rounded-2xl border bg-white p-4"
                 >
                   <h3 className="mb-3 border-b-2 border-gray-100 text-center font-semibold">
                     참석자 목록
@@ -121,6 +126,7 @@ export default function DetailCard({ gathering }: GatheringProp) {
               )}
             </div>
           </div>
+
           {gathering.open && (
             <div className="flex gap-1">
               <div className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-black">
