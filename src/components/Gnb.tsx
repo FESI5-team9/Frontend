@@ -3,14 +3,32 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useQueryClient } from "@tanstack/react-query";
+import useQueryBuilder from "@/hooks/useUrlParams";
+import { signout } from "@/apis/authApi";
 import useUserStore from "@/store/userStore";
 
 export default function Gnb() {
   const { id, image, setUser, favoriteGatheringCount } = useUserStore();
   const [isProfileClick, setIsProfileClick] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const queryClient = useQueryClient(); // React Query의 QueryClient
+  const updateQueryParams = useQueryBuilder(); // URL 파라미터 관리 훅
+  const [searchValue, setSearchValue] = useState("");
 
-  const handleLogout = () => {
+  const refreshData = () => {
+    queryClient.invalidateQueries({ queryKey: ["gatherings"] }); // 캐싱된 데이터 무효화
+  };
+
+  // 지역 변경 핸들러
+  const handleSearch = (searchText: string) => {
+    setSearchValue(searchText);
+    updateQueryParams({ search: searchText });
+    refreshData();
+  };
+
+  const handleLogout = async () => {
+    await signout();
     setUser({
       id: null,
       email: null,
@@ -21,10 +39,6 @@ export default function Gnb() {
     localStorage.removeItem("userData");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-
-    // 쿠키 삭제
-    document.cookie = "accessToken=; Max-Age=0; path=/;";
-    document.cookie = "refreshToken=; Max-Age=0; path=/;";
 
     window.location.href = "/";
   };
@@ -108,32 +122,57 @@ export default function Gnb() {
               </Link>
             </div>
           </div>
-
-          <form className="relative flex w-[350px] items-center tablet:hidden">
+          <div className="relative flex w-[350px] items-center tablet:hidden">
             <input
               type="text"
+              onChange={e => setSearchValue(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === "Enter") {
+                  e.preventDefault(); // 기본 동작 방지
+                  handleSearch(searchValue); // 버튼 클릭 동작 실행
+                }
+              }}
               placeholder="검색어를 입력해주세요."
               aria-label="검색어 입력"
               className="mx-auto h-[38px] w-full rounded-full px-4 tablet:w-[297px] desktop:w-[510px]"
             />
-            <button type="submit" aria-label="검색 실행" className="absolute right-4">
+            <button
+              type="submit"
+              aria-label="검색 실행"
+              className="absolute right-4"
+              onClick={() => handleSearch(searchValue)}
+            >
               <Image src="/icons/magnifier.svg" width={24} height={24} alt="검색" />
             </button>
-          </form>
+          </div>
 
           <div className="relative flex flex-col gap-2">
             <div className="flex items-center gap-4 tablet:gap-5 desktop:gap-6">
-              <form className="relative hidden items-center tablet:flex">
+              <div className="relative hidden items-center tablet:flex">
                 <input
+                  value={searchValue}
+                  onChange={e => setSearchValue(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === "Enter") {
+                      e.preventDefault(); // 기본 동작 방지
+                      handleSearch(searchValue); // 버튼 클릭 동작 실행
+                    }
+                  }}
                   type="text"
                   placeholder="검색어를 입력해주세요."
                   aria-label="검색어 입력"
                   className="h-[38px] w-[251px] rounded-full px-4 tablet:w-[297px] desktop:w-[510px]"
                 />
-                <button type="submit" aria-label="검색 실행" className="absolute right-4">
+                <button
+                  type="button"
+                  onClick={() => handleSearch(searchValue)}
+                  aria-label="검색 실행"
+                  className="absolute right-4"
+                >
                   <Image src="/icons/magnifier.svg" width={24} height={24} alt="검색" />
                 </button>
-              </form>
+              </div>
+
               {id ? (
                 // 로그인 상태면 유저 프로필
                 <button

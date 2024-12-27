@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Image from "next/image";
 import { ModalProps } from "@/types/components/modalPopup";
 
 export default function Modal({ title, isOpen, onClose, children }: ModalProps) {
@@ -49,7 +50,7 @@ export default function Modal({ title, isOpen, onClose, children }: ModalProps) 
             onClick={onClose}
             aria-label="Close Modal"
           >
-            ✖️
+            <Image src="/icons/X.svg" width={20} height={20} alt="X" />
           </button>
         </div>
         {children}
