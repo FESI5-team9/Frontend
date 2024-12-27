@@ -8,8 +8,9 @@ import { categoryList } from "@/constants/categoryList";
 import { GetReviewStatsRes, GetReviews, ReviewsRes } from "@/types/api/reviews";
 import RatingComponent from "./RatingComponent";
 import ReviewListComponent from "./ReviewListComponent";
+import RatingSkeleton from "./Skeleton/RatingSkeleton";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 
 interface Filters {
   type: GetReviews["type"];
@@ -19,7 +20,14 @@ interface Filters {
 
 type ReviewQueryKey = readonly ["reviews", Filters];
 
-function AllReviews() {
+interface AllReviewsProps {
+  initialData: {
+    reviews: ReviewsRes;
+    stats: GetReviewStatsRes;
+  };
+}
+
+function AllReviews({ initialData }: AllReviewsProps) {
   const [type, setType] = useState<Category["link"]>("RESTAURANT");
   const [filters, setFilters] = useState<Filters>({
     type: "RESTAURANT",
@@ -54,17 +62,27 @@ function AllReviews() {
       return response;
     },
     initialPageParam: 0,
-    getNextPageParam: lastPage => {
+    getNextPageParam: (lastPage, allPages) => {
       if (!lastPage || lastPage.length < PAGE_SIZE) {
         return undefined;
       }
-      return Math.floor(lastPage.length / PAGE_SIZE) + 1;
+
+      // 다음 페이지 번호는 현재까지의 페이지 수
+      return allPages.length;
     },
+    initialData:
+      filters.type === "RESTAURANT"
+        ? {
+          pages: [initialData.reviews],
+          pageParams: [0],
+        }
+        : undefined,
   });
 
   const { data: stats } = useQuery<GetReviewStatsRes>({
     queryKey: ["stats", { type }],
     queryFn: () => getReviewStats(type),
+    initialData: type === "RESTAURANT" ? initialData.stats : undefined,
   });
 
   const reviews = reviewsData?.pages.flat() ?? [];
@@ -82,7 +100,7 @@ function AllReviews() {
         />
         <div>
           <h4 className="text-2xl">모든리뷰</h4>
-          <h1 className="pb-2 text-sm">밀엔메이트를 이용한 분들은 이렇게 느꼈아요!</h1>
+          <h1 className="pb-2 text-sm">밀엔메이트를 이용한 분들은 이렇게 느꼈어요!</h1>
         </div>
       </div>
 
@@ -111,7 +129,7 @@ function AllReviews() {
         </ul>
       </div>
 
-      <RatingComponent stats={stats} />
+      {stats ? <RatingComponent stats={stats} /> : <RatingSkeleton />}
 
       <ReviewListComponent
         reviews={reviews}

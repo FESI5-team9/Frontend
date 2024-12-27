@@ -5,6 +5,7 @@ import { FilterDropDown } from "@/components/Filter/FilterDropDown";
 import { LOCATION_OPTIONS, REVIEW_SORT_OPTIONS } from "@/constants/filter";
 import { GetReviews, ReviewsRes } from "@/types/api/reviews";
 import AllReviewCard from "./ReviewCard";
+import ReviewCardSkeleton from "./Skeleton/ReviewCardSkeleton";
 
 interface Filters {
   type: GetReviews["type"];
@@ -94,13 +95,25 @@ function ReviewListComponent({
 
       <div className="flex flex-col gap-6">
         {isLoading ? (
-          <div className="flex h-40 items-center justify-center">데이터를 불러오는 중...</div>
+          <div className="space-y-2">
+            {Array(4)
+              .fill(null)
+              .map((_, index) => (
+                <ReviewCardSkeleton key={index} />
+              ))}
+          </div>
         ) : Array.isArray(reviews) && reviews.length > 1 ? (
           <>
             <AllReviewCard reviews={reviews} />
 
             {isFetchingNextPage && (
-              <div className="py-4 text-center text-gray-500">추가 데이터를 불러오는 중...</div>
+              <div className="space-y-2">
+                {Array(4)
+                  .fill(null)
+                  .map((_, index) => (
+                    <ReviewCardSkeleton key={index} />
+                  ))}
+              </div>
             )}
 
             <div ref={loadMoreRef} className="h-4" />
