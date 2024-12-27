@@ -29,7 +29,15 @@ async function getTokensFromSigninApi(signInData: SignInRequestBody) {
 
 export async function GET(request: NextRequest) {
   try {
-    const requestBody: SignInRequestBody = await request.json();
+    const { searchParams } = new URL(request.url);
+    const social = searchParams.get("social");
+    const code = searchParams.get("code");
+
+    if (!social || !code) {
+      return NextResponse.json({ message: "잘못된 요청" }, { status: 400 });
+    }
+
+    const requestBody: SignInRequestBody = { social, code };
     const { refreshToken, accessToken } = await getTokensFromSigninApi(requestBody);
 
     const response = NextResponse.json({ success: true }, { status: 200 });
