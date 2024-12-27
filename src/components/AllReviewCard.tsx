@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useReviews } from "@/hooks/useReviews";
-import Rating from "@/app/mypage/components/mypage/Rating";
+import Rating from "@/app/mypage/components/Rating";
 import { formatToKoreanTime } from "@/utils/date";
 
 export default function AllReviewCard() {
