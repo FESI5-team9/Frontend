@@ -35,12 +35,16 @@ export default function MypageCard({
   return (
     <div className="relative flex w-full flex-col gap-4 tablet:h-[153px] tablet:flex-row">
       {/* 반투명 오버레이 */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-black bg-opacity-70">
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-6 rounded-3xl bg-black bg-opacity-70">
         <span className="text-center text-sm font-semibold text-white">
           모집 취소된 모임이에요,
           <br />
-          다음 기회에 만나요 🙏
+          다음 기회에 만나요🙏
         </span>
+        <button className="flex h-[36px] w-[116px] items-center justify-center gap-0.5 rounded-xl bg-[#FFF7ED]">
+          <Image src="/images/bye.svg" width={24} height={24} alt="bye 이모지" />
+          <span className="text-xs text-[#FF9E48]">모임 보내주기</span>
+        </button>
       </div>
       <div className="relative flex h-[153px] w-full items-center justify-center overflow-hidden rounded-3xl tablet:w-[280px]">
         <Image src={image} fill objectFit="cover" alt="모임 이미지" />
