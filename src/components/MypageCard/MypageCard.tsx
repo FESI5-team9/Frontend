@@ -35,7 +35,7 @@ export default function MypageCard({
   return (
     <div className="relative flex w-full flex-col gap-4 tablet:h-[153px] tablet:flex-row">
       {/* 반투명 오버레이 */}
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-6 rounded-3xl bg-black bg-opacity-70">
+      <div className="absolute inset-0 z-10 flex h-[340px] flex-col items-center justify-center gap-6 rounded-3xl bg-black bg-opacity-70">
         <span className="text-center text-sm font-semibold text-white">
           모집 취소된 모임이에요,
           <br />
