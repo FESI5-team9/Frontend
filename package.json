@@ -65,12 +65,5 @@
       "prettier --write",
       "eslint --fix"
     ]
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "jest-environment-jsdom",
-    "testEnvironmentOptions": {
-      "url": "http://localhost:3000"
-    }
   }
 }
