@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+  const accessToken = request.cookies.get("access-token")?.value;
+
   const url = new URL(request.url);
   const searchParams = url.searchParams;
 
@@ -8,11 +10,12 @@ export async function GET(request: NextRequest) {
   const queryPrefix = queryString ? "?" : "";
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/gatherings/by${queryPrefix}${queryString}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/gatherings/by/${params.id}${queryPrefix}${queryString}`,
     {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
       },
     },
   );
