@@ -50,6 +50,7 @@ export default function FixedBottomBar({
 
     try {
       await joinGathering(gatheringId);
+      alert("모임에 참여되었습니다.");
       setStatus("cancelJoin");
     } catch (err) {
       console.error("Failed to join gathering:", err);
@@ -59,6 +60,7 @@ export default function FixedBottomBar({
   const handleLeave = async () => {
     try {
       await LeaveGathering(gatheringId);
+      alert("모임 참여가 취소되었습니다.");
       setStatus("join");
     } catch (err) {
       console.error("Failed to leave gathering:", err);
@@ -67,8 +69,11 @@ export default function FixedBottomBar({
 
   const handleCancel = async () => {
     try {
-      await CancelGathering(gatheringId);
-      alert("모임 취소가 완료되었습니다.");
+      if (confirm("모임을 취소하시겠습니까?")) {
+        await CancelGathering(gatheringId);
+        alert("모임 취소가 완료되었습니다.");
+        setStatus("canceled");
+      }
     } catch (err) {
       console.error("Failed to cancel gathering:", err);
     }
@@ -109,12 +114,6 @@ export default function FixedBottomBar({
           </Button>
         )}
 
-        {status === "closed" && (
-          <Button className="h-11 w-[115px] bg-[#9CA3AF] text-white tablet:grow-0" disabled>
-            참여 마감
-          </Button>
-        )}
-
         {status === "host" && (
           <div className="flex w-full gap-2 tablet:w-[238px]">
             <Button
@@ -132,8 +131,17 @@ export default function FixedBottomBar({
           </div>
         )}
 
-        {/* 임시로 상태만 보여줌 */}
-        {status === "canceled" && <div>취소된 모임</div>}
+        {status === "closed" && (
+          <Button className="h-11 w-[115px] bg-[#9CA3AF] text-white tablet:grow-0" disabled>
+            참여 마감
+          </Button>
+        )}
+
+        {status === "canceled" && (
+          <Button className="h-11 w-[124px] bg-[#9CA3AF] text-white tablet:grow-0" disabled>
+            취소된 모임
+          </Button>
+        )}
       </div>
     </div>
   );
