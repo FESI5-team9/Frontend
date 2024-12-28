@@ -4,8 +4,8 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
-import useQueryBuilder from "@/hooks/useUrlParams";
 import { signout } from "@/apis/authApi";
+import useQueryBuilder from "@/hooks/useUrlParams";
 import useUserStore from "@/store/userStore";
 
 export default function Gnb() {
@@ -63,7 +63,7 @@ export default function Gnb() {
               setIsMenuOpen(!isMenuOpen);
             }}
           >
-            <Image src="/icons/hamburger.svg" fill alt="메뉴 버튼" layout="fixed" />
+            <Image src="/icons/hamburger.svg" fill alt="메뉴 버튼" />
           </button>
           {isMenuOpen && (
             // 드롭다운 시안이 나오면 디자인 수정(현재 임시)
