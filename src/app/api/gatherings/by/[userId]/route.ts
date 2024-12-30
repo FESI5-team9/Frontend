@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest, { params }: { params: { userId: string } }) {
+  const { userId } = params;
   const url = new URL(request.url);
-  const params = url.searchParams;
+  const searchParams = url.searchParams;
 
-  const queryString = new URLSearchParams(params).toString();
+  const queryString = new URLSearchParams(searchParams).toString();
   const queryPrefix = queryString ? "?" : "";
 
   const accessToken = request.cookies.get("access-token")?.value;
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/my/gathering${queryPrefix}${queryString}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/gatherings/by/${userId}${queryPrefix}${queryString}`,
     {
       method: "GET",
       headers: {
