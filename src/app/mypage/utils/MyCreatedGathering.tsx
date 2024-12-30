@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { recruitGathering } from "@/apis/assignGatheringApi";
-import { getMyGathering } from "@/apis/searchGatheringApi";
+import { getUserGathering } from "@/apis/searchGatheringApi";
 import Button from "@/components/Button/Button";
+import useUserStore from "@/store/userStore";
 import { GatheringsRes } from "@/types/api/gatheringApi";
 import { formatToKoreanTime } from "@/utils/date";
 
 export default function MyCreatedGathering() {
+  const userId = useUserStore(state => state.id);
   const [gatheringData, setGatheringData] = useState<GatheringsRes | undefined>(undefined);
 
   const handleGatheringStatus = async (id: number) => {
@@ -29,6 +31,8 @@ export default function MyCreatedGathering() {
 
   useEffect(() => {
     async function fetchGatheringData() {
+      if (!userId) return;
+
       const params = {
         size: 10,
         page: 0,
@@ -37,13 +41,13 @@ export default function MyCreatedGathering() {
       };
 
       try {
-        const response = await getMyGathering(params);
+        const response = await getUserGathering(userId, params);
         setGatheringData(response);
       } catch (error) {}
     }
 
     fetchGatheringData();
-  }, []);
+  }, [userId]);
 
   if (!gatheringData) {
     return <div>아직 만든 모임이 없습니다.</div>;
