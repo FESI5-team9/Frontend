@@ -21,8 +21,16 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["kakao.maps.d.ts", "jest"]
+    "types": ["kakao.maps.d.ts", "jest", "cypress"]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "jest.config.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "jest.config.js",
+    "cypress/**/*.tsx",
+    "./cypress/**/*"
+  ],
   "exclude": ["node_modules"]
 }

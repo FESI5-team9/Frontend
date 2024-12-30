@@ -11,8 +11,11 @@ interface SignInResponse {
 }
 
 async function getTokensFromSigninApi(signInData: SignInRequestBody) {
+  const code = signInData.code;
+  const encodedCode = encodeURIComponent(code);
+
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/auth/signin/${signInData.social}?code=${signInData.code}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/auth/signin/${signInData.social}?code=${encodedCode}`,
   );
 
   if (!response.ok) {
