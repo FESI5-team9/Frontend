@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Gnb from "@/components/Gnb";
+import GoogleAnalytics from "@/lib/GoogleAnalytics";
 import "./globals.css";
 import ReactQueryProviders from "./providers";
 
@@ -24,6 +25,9 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${pretendard.className} pt-[60px]`}>
+        {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS ? (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS} />
+        ) : null}
         <ReactQueryProviders>
           <Gnb />
           {children}
