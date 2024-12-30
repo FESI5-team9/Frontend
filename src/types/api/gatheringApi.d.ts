@@ -79,7 +79,7 @@ Pick<ResponseOption, "host" | "favorite" | "open" | "participants">;
 export type CreateGathering = RequestBase & {
   name?: string;
   dateTime?: string;
-  openParticipantCount?: string;
+  openParticipantCount?: number;
   capacity?: number;
   image?: string;
   address1?: string;
