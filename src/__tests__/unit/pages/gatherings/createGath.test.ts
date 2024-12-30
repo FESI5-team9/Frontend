@@ -1,5 +1,5 @@
-import { CreateGatheringFormData } from "@/hooks/CreateGathering/formHandler";
 import { CreateGatheringSchema } from "@/utils/createGathSchema";
+import { CreateGatheringFormData } from "@/utils/formHandler";
 
 describe("CreateGatheringSchema", () => {
   const validData: CreateGatheringFormData = {
