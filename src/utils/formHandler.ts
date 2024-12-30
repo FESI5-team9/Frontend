@@ -117,8 +117,8 @@ export const handleKeywordChange = (
 ) => {
   setKeywordInput(value);
 };
-
-export const handleKeywordAdditionTest = (
+//키워드 추가 함수
+export const handleKeywordAddition = (
   value: string,
   keywords: string[],
   setKeywordValue: React.Dispatch<string>,
@@ -135,28 +135,6 @@ export const handleKeywordAdditionTest = (
     if (!keywords.includes(newKeyword)) {
       setValue("keyword", [...keywords, newKeyword]); // React Hook Form 상태 업데이트
     }
-  }
-};
-
-// 키워드 추가 핸들러 함수
-export const handleKeywordAddition = (
-  value: string,
-  setFormData: Dispatch<SetStateAction<CreateGatheringFormData>>,
-  setKeywordInput: Dispatch<SetStateAction<string>>,
-) => {
-  if (value.endsWith(" ") && value.startsWith("#")) {
-    const newKeyword = value.trim().slice(1); // '#' 제거 후 공백 제거
-
-    // 빈 키워드 방지: newKeyword가 공백 또는 빈 문자열이면 추가하지 않음
-    if (newKeyword.length === 0) {
-      setKeywordInput(""); // 입력 필드 초기화만 수행
-      return;
-    }
-    setFormData(prev => ({
-      ...prev,
-      keyword: [...(prev.keyword || []), newKeyword],
-    }));
-    setKeywordInput(""); // 입력 필드 초기화
   }
 };
 
@@ -181,6 +159,9 @@ export const handleSubmitToServer = async (
   Object.entries(data).forEach(([key, value]) => {
     if (key === "image" && value instanceof File) {
       formDataToSend.append(key, value); // File 객체 추가
+    } else if (key === "keyword" && Array.isArray(value)) {
+      // keyword를 배열 그대로 추가
+      formDataToSend.append(key, value.join(",")); // 콤마로 구분된 문자열로 변환
     } else if (value !== null && value !== undefined) {
       formDataToSend.append(key, Array.isArray(value) ? JSON.stringify(value) : String(value));
     }
@@ -192,7 +173,6 @@ export const handleSubmitToServer = async (
       body: formDataToSend,
     });
     if (!response.ok) throw new Error("서버 응답 오류!");
-
     alert("모임이 성공적으로 생성되었습니다!");
     setIsOpen(false);
   } catch (error) {

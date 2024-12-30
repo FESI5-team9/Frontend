@@ -4,8 +4,8 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
-import useQueryBuilder from "@/hooks/useUrlParams";
 import { signout } from "@/apis/authApi";
+import useQueryBuilder from "@/hooks/useUrlParams";
 import useUserStore from "@/store/userStore";
 
 export default function Gnb() {
@@ -54,7 +54,7 @@ export default function Gnb() {
   return (
     <header>
       <div className="tablet:h-15 fixed top-0 z-30 flex h-[60px] w-full items-center justify-center bg-yellow-primary text-black">
-        <div className="mx-auto flex w-full items-center justify-between gap-6 px-4 tablet:w-[744px] tablet:px-1.5 desktop:w-[1200px]">
+        <div className="mx-auto flex w-full items-center justify-between gap-6 px-4 tablet:w-[744px] tablet:justify-normal tablet:gap-0 tablet:px-1.5 desktop:w-[1200px]">
           {/* 햄버거 버튼 */}
           <button
             type="button"
@@ -63,7 +63,7 @@ export default function Gnb() {
               setIsMenuOpen(!isMenuOpen);
             }}
           >
-            <Image src="/icons/hamburger.svg" fill alt="메뉴 버튼" layout="fixed" />
+            <Image src="/icons/hamburger.svg" fill alt="메뉴 버튼" />
           </button>
           {isMenuOpen && (
             // 드롭다운 시안이 나오면 디자인 수정(현재 임시)
@@ -122,19 +122,19 @@ export default function Gnb() {
               </Link>
             </div>
           </div>
-          <div className="relative flex w-[350px] items-center tablet:hidden">
+          <div className="flex-shrink-1 relative flex h-[38px] w-[350px] items-center tablet:ml-auto tablet:mr-5 tablet:w-[297px] desktop:mr-6 desktop:w-[510px]">
             <input
               type="text"
               onChange={e => setSearchValue(e.target.value)}
               onKeyDown={e => {
                 if (e.key === "Enter") {
-                  e.preventDefault(); // 기본 동작 방지
-                  handleSearch(searchValue); // 버튼 클릭 동작 실행
+                  e.preventDefault();
+                  handleSearch(searchValue);
                 }
               }}
               placeholder="검색어를 입력해주세요."
               aria-label="검색어 입력"
-              className="mx-auto h-[38px] w-full rounded-full px-4 tablet:w-[297px] desktop:w-[510px]"
+              className="mx-auto h-full w-full rounded-full px-4"
             />
             <button
               type="submit"
@@ -146,33 +146,8 @@ export default function Gnb() {
             </button>
           </div>
 
-          <div className="relative flex flex-col gap-2">
+          <div className="relative flex items-center">
             <div className="flex items-center gap-4 tablet:gap-5 desktop:gap-6">
-              <div className="relative hidden items-center tablet:flex">
-                <input
-                  value={searchValue}
-                  onChange={e => setSearchValue(e.target.value)}
-                  onKeyDown={e => {
-                    if (e.key === "Enter") {
-                      e.preventDefault(); // 기본 동작 방지
-                      handleSearch(searchValue); // 버튼 클릭 동작 실행
-                    }
-                  }}
-                  type="text"
-                  placeholder="검색어를 입력해주세요."
-                  aria-label="검색어 입력"
-                  className="h-[38px] w-[251px] rounded-full px-4 tablet:w-[297px] desktop:w-[510px]"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleSearch(searchValue)}
-                  aria-label="검색 실행"
-                  className="absolute right-4"
-                >
-                  <Image src="/icons/magnifier.svg" width={24} height={24} alt="검색" />
-                </button>
-              </div>
-
               {id ? (
                 // 로그인 상태면 유저 프로필
                 <button

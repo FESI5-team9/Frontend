@@ -4,19 +4,19 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import {
-  CreateGatheringFormData,
-  handleKeywordAdditionTest,
-  handleKeywordChange,
-  handleKeywordDelete,
-  handleSubmitToServer,
-} from "@/hooks/CreateGathering/formHandler";
 import Button from "@/components/Button/Button";
 import Calendar from "@/components/Calendar/Calendar";
 import Kakao from "@/components/Kakaomap/Kakao";
 import Modal from "@/components/Modal";
 import useDateStore from "@/store/dateStore";
 import { CreateGatheringSchema } from "@/utils/createGathSchema";
+import {
+  CreateGatheringFormData,
+  handleKeywordAddition,
+  handleKeywordChange,
+  handleKeywordDelete,
+  handleSubmitToServer,
+} from "@/utils/formHandler";
 import { categoryList, timeChips } from "../../../constants/categoryList";
 import { Input } from "./Input";
 
@@ -145,9 +145,9 @@ export default function CreateGathering({
         {/* 이미지 업로드 */}
         <div className="flex flex-col gap-1">
           <p>이미지</p>
-          <div className="flex flex-row gap-2">
+          <div className="flex flex-row items-center gap-2">
             {/* 파일 이름 표시 */}
-            <div className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap rounded-lg border border-gray-100 bg-gray-100 px-2 py-2 text-gray-400">
+            <div className="relative flex-1 overflow-hidden text-ellipsis whitespace-nowrap rounded-lg border border-gray-100 bg-gray-100 px-2 py-2 text-gray-400">
               {(() => {
                 // 브라우저 환경 확인 후 파일 정보 접근
                 if (typeof window !== "undefined") {
@@ -156,12 +156,26 @@ export default function CreateGathering({
                 }
                 return "이미지를 첨부해주세요";
               })()}
+              {/* X 버튼 */}
+              {watch("image") && (
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-gray-200 text-white hover:bg-gray-500"
+                  onClick={() => {
+                    setValue("image", null); // 파일 초기화
+                  }}
+                >
+                  &times;
+                </button>
+              )}
             </div>
+
+            {/* 파일 인풋 (숨김) */}
             <input
               type="file"
               id="fileInput"
               accept="image/*"
-              className="hidden border"
+              className="hidden"
               onChange={e => {
                 const files = e.target.files;
                 if (files && files[0]) {
@@ -191,6 +205,7 @@ export default function CreateGathering({
               파일 찾기
             </button>
           </div>
+
           {errors.image && <p className="text-red-500">{errors.image.message}</p>}
         </div>
 
@@ -331,14 +346,14 @@ export default function CreateGathering({
 
         {/* 키워드 */}
         <div className="flex flex-col gap-1 pb-4 font-medium">
-          <div className="flex flex-row items-center gap-2">
+          <div className="mb-2 flex flex-row flex-wrap items-center gap-2">
             <p>관련 해시태그</p>
             {/* 키워드 리스트 */}
-            <div className="flex h-[30px] flex-row items-center gap-1">
+            <div className="flex flex-row flex-wrap items-center gap-1">
               {keywords.map((word, index) => (
                 <div
                   key={index}
-                  className="text- group relative flex items-center rounded-xl border bg-yellow-200 px-2 py-1"
+                  className="group relative flex items-center rounded-xl border bg-yellow-200 px-2 py-1"
                 >
                   {word}
                   {/* X표시: 기본 hidden, 그룹 호버 시 나타남 */}
@@ -366,12 +381,7 @@ export default function CreateGathering({
               onKeyDown={e => {
                 if (e.key === " ") {
                   e.preventDefault();
-                  handleKeywordAdditionTest(
-                    e.currentTarget.value,
-                    keywords,
-                    setKeywordValue,
-                    setValue,
-                  );
+                  handleKeywordAddition(e.currentTarget.value, keywords, setKeywordValue, setValue);
                 }
               }}
               className="w-full rounded-lg border p-2"
