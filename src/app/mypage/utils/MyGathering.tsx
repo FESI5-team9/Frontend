@@ -1,10 +1,11 @@
 import { useGatherings } from "@/hooks/useGatherings";
 import MypageCard from "@/components/MypageCard/MypageCard";
+import { SkeletonUncompleted } from "../components/Skeleton";
 
 export const MyGathering = () => {
   const { gatherings, loading, error } = useGatherings();
 
-  if (loading) return <p>로딩 중...</p>;
+  if (loading) return <SkeletonUncompleted />;
   if (error) return <p>{error}</p>;
 
   return gatherings.map((gathering, index) => (
