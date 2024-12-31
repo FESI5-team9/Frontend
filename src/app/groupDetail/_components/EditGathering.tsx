@@ -3,18 +3,18 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import {
-  CreateGatheringFormData,
-  handleKeywordAdditionTest,
-  handleKeywordChange,
-  handleKeywordDelete,
-} from "@/hooks/CreateGathering/formHandler";
 import Button from "@/components/Button/Button";
 import Modal from "@/components/Modal";
 import { Input } from "@/app/(home)/_components/Input";
 import { GatheringDetailRes } from "@/types/api/gatheringApi";
 import { CreateGatheringSchema } from "@/utils/createGathSchema";
 import { formatToKoreanTime } from "@/utils/date";
+import {
+  CreateGatheringFormData,
+  handleKeywordAddition,
+  handleKeywordChange,
+  handleKeywordDelete,
+} from "@/utils/formHandler";
 import { categoryList } from "../../../constants/categoryList";
 
 const ReadOnlyInput = ({ value }: { value: string | number }) => {
@@ -247,12 +247,7 @@ export default function EditGathering({
               onKeyDown={e => {
                 if (e.key === " ") {
                   e.preventDefault();
-                  handleKeywordAdditionTest(
-                    e.currentTarget.value,
-                    keywords,
-                    setKeywordValue,
-                    setValue,
-                  );
+                  handleKeywordAddition(e.currentTarget.value, keywords, setKeywordValue, setValue);
                 }
               }}
               className="w-full rounded-lg border p-2"

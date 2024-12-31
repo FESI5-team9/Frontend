@@ -89,7 +89,8 @@ export async function getMyJoinedGatherings(params: GetMyJoinedGatherings) {
 }
 
 // 사용자가 생성한 모임 조회
-export async function getUserGathering(userId: number, params: GetUserGatheringParticipants) {
+export async function getUserGathering(params: GetUserGatheringParticipants) {
+  const { userId, ...queryParams } = params;
   const searchParams = new URLSearchParams();
   if (queryParams) {
     buildQueryParams(searchParams, queryParams);

@@ -1,5 +1,4 @@
 //Base
-
 // requestBase
 export type RequestBase = {
   type?: "CAFE" | "RESTAURANT" | "PUB" | "VEGAN"; // 모임 종류
@@ -8,7 +7,6 @@ export type RequestBase = {
 
 export type PaginationParams = {
   // 페이지네이션
-  userId?: number;
   size?: number; // 한번에 불러오는 갯수
   page?: number; // 부르는 페이지
   sort?: string; // 데이터 정렬방식
@@ -150,6 +148,8 @@ export type GatheringsFavoriteRes = GatheringsRes;
 
 // 사용자가 생성한 모임 조회
 // requestBase
-export type GetUserGatheringParticipants = PaginationParams;
+export type GetUserGatheringParticipants = PaginationParams & {
+  userId?: number;
+};
 // response
 export type GetUserGatheringParticipantsRes = GatheringsRes;

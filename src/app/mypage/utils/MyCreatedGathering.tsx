@@ -6,12 +6,11 @@ import { recruitGathering } from "@/apis/assignGatheringApi";
 import { getUserGathering } from "@/apis/searchGatheringApi";
 import Button from "@/components/Button/Button";
 import useUserStore from "@/store/userStore";
-import { GatheringsRes } from "@/types/api/gatheringApi";
+import { GatheringsRes, GetUserGatheringParticipants } from "@/types/api/gatheringApi";
 import { formatToKoreanTime } from "@/utils/date";
 import { SkeletonUncompleted } from "../components/Skeleton";
 
 export default function MyCreatedGathering() {
-  const userId = useUserStore(state => state.id);
   const [gatheringData, setGatheringData] = useState<GatheringsRes | undefined>(undefined);
   const { id } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
@@ -36,19 +35,19 @@ export default function MyCreatedGathering() {
 
   useEffect(() => {
     async function fetchGatheringData() {
-      if (!userId) return;
+      if (id === null) return;
 
-      const params = {
-        userId: id || undefined,
+      const params: GetUserGatheringParticipants = {
+        userId: id,
         size: 10,
         page: 0,
         sort: "dateTime",
-        direction: "desc" as const,
+        direction: "desc",
       };
 
       setIsLoading(true);
       try {
-        const response = await getUserGathering(userId, params);
+        const response = await getUserGathering(params);
         setGatheringData(response);
       } catch (error) {
       } finally {
@@ -57,7 +56,7 @@ export default function MyCreatedGathering() {
     }
 
     fetchGatheringData();
-  }, [userId]);
+  }, [id]);
   if (isLoading) return <SkeletonUncompleted />;
 
   if (!gatheringData) {
