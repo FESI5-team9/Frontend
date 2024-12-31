@@ -91,8 +91,8 @@ export async function getMyJoinedGatherings(params: GetMyJoinedGatherings) {
 // 사용자가 생성한 모임 조회
 export async function getUserGathering(userId: number, params: GetUserGatheringParticipants) {
   const searchParams = new URLSearchParams();
-  if (params) {
-    buildQueryParams(searchParams, params);
+  if (queryParams) {
+    buildQueryParams(searchParams, queryParams);
   }
   const response = await fetchWithMiddleware(
     `/api/gatherings/by/${userId}?${searchParams.toString()}`,

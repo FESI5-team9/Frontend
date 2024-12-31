@@ -8,6 +8,7 @@ export type RequestBase = {
 
 export type PaginationParams = {
   // 페이지네이션
+  userId?: number;
   size?: number; // 한번에 불러오는 갯수
   page?: number; // 부르는 페이지
   sort?: string; // 데이터 정렬방식
