@@ -54,7 +54,9 @@ export async function signout() {
 export async function updateUserProfile(body: PutUsers): Promise<User> {
   const formData = new FormData();
   if (body.nickname) formData.append("nickname", body.nickname);
-  if (body.image) formData.append("image", body.image);
+  if (body.image) {
+    formData.append("image", body.image);
+  }
 
   const response = await fetchWithMiddleware("/api/user", {
     method: "PUT",

@@ -38,8 +38,8 @@ export default function Mypage() {
   const handleUpdateProfile = async () => {
     try {
       const updatedUser = await updateUserProfile({
-        nickname: nickname || userProfile?.nickname || "",
-        image: selectedFile || undefined,
+        nickname: nickname || userProfile?.nickname,
+        image: selectedFile,
       });
       setUserProfile(updatedUser);
       setIsModalOpen(false);

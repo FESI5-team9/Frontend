@@ -1,7 +1,7 @@
 export type User = {
   id: number;
   email: string;
-  nickname: string;
+  nickname?: string;
   image?: string;
   createdAt: string;
   updatedAt: string;
@@ -20,5 +20,5 @@ export type LoginRes = {
 };
 
 export type PutUsers = Pick<User, "nickname"> & {
-  image?: File;
+  image?: File | null;
 };
