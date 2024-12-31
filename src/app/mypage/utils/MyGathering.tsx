@@ -1,10 +1,11 @@
 import { useGatherings } from "@/hooks/useGatherings";
 import MypageCard from "@/components/MypageCard/MypageCard";
+import { SkeletonUncompleted } from "../components/Skeleton";
 
 export const MyGathering = () => {
   const { gatherings, loading, error } = useGatherings();
 
-  if (loading) return <p>로딩 중...</p>;
+  if (loading) return <SkeletonUncompleted />;
   if (error) return <p>{error}</p>;
 
   return gatherings.map((gathering, index) => (
@@ -18,6 +19,7 @@ export const MyGathering = () => {
         image={gathering.image}
         participantCount={gathering.participantCount}
         capacity={gathering.capacity}
+        canceledAt={gathering.canceledAt}
       />
       {/* 구분선 추가 (마지막 요소 제외) */}
       {index !== gatherings.length - 1 && (

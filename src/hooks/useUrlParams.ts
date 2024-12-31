@@ -16,10 +16,7 @@ const useQueryBuilder = () => {
       }
     }
 
-    // 현재 경로를 명시적으로 설정하여 `/`가 붙지 않도록 처리
-    const basePath = window.location.pathname !== "/" ? window.location.pathname : "";
-
-    router.push(`${basePath}?${currentParams.toString()}`); // 새로운 URL로 이동
+    router.push(`/?${currentParams.toString()}`); // 새로운 URL로 이동
   };
 
   return updateQueryParams;
