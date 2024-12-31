@@ -5,20 +5,26 @@ import Image from "next/image";
 import { recruitGathering } from "@/apis/assignGatheringApi";
 import { getMyGathering } from "@/apis/searchGatheringApi";
 import Button from "@/components/Button/Button";
+import useUserStore from "@/store/userStore";
 import { GatheringsRes } from "@/types/api/gatheringApi";
 import { formatToKoreanTime } from "@/utils/date";
+import { SkeletonUncompleted } from "../components/Skeleton";
 
 export default function MyCreatedGathering() {
   const [gatheringData, setGatheringData] = useState<GatheringsRes | undefined>(undefined);
+  const { id } = useUserStore();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleGatheringStatus = async (id: number) => {
+  const handleGatheringStatus = async (gatheringId: number) => {
     try {
-      const response = await recruitGathering(id, "RECRUITMENT_COMPLETED");
+      const response = await recruitGathering(gatheringId, "RECRUITMENT_COMPLETED");
       if (response) {
         setGatheringData(prevData => {
           if (!prevData) return prevData;
           return prevData.map(gathering =>
-            gathering.id === id ? { ...gathering, status: "RECRUITMENT_COMPLETED" } : gathering,
+            gathering.id === gatheringId
+              ? { ...gathering, status: "RECRUITMENT_COMPLETED" }
+              : gathering,
           );
         });
       } else {
@@ -30,20 +36,27 @@ export default function MyCreatedGathering() {
   useEffect(() => {
     async function fetchGatheringData() {
       const params = {
+        userId: id || undefined,
         size: 10,
         page: 0,
         sort: "dateTime",
         direction: "desc" as const,
       };
 
+      setIsLoading(true);
       try {
         const response = await getMyGathering(params);
         setGatheringData(response);
-      } catch (error) {}
+      } catch (error) {
+      } finally {
+        setIsLoading(false);
+      }
     }
 
     fetchGatheringData();
-  }, []);
+  }, [id]);
+
+  if (isLoading) return <SkeletonUncompleted />;
 
   if (!gatheringData) {
     return <div>아직 만든 모임이 없습니다.</div>;

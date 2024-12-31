@@ -37,6 +37,7 @@ export interface MypageCardProps {
   participantCount: number;
   capacity: number;
   keywords?: string[];
+  canceledAt?: string;
 }
 
 export interface AllReviewCardProps {
