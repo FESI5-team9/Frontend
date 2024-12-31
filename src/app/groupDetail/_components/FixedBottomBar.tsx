@@ -10,10 +10,17 @@ import { GatheringDetailRes, Participant } from "@/types/api/gatheringApi";
 type FixedBottomBarProps = {
   data: GatheringDetailRes;
   gatheringId: number;
+  toggleEditModal: () => void;
 };
 
-export default function FixedBottomBar({ data, gatheringId }: FixedBottomBarProps) {
-  const [status, setStatus] = useState<"join" | "cancelJoin" | "closed" | "host">("join");
+export default function FixedBottomBar({
+  data,
+  gatheringId,
+  toggleEditModal,
+}: FixedBottomBarProps) {
+  const [status, setStatus] = useState<"join" | "cancelJoin" | "closed" | "host" | "canceled">(
+    "join",
+  );
 
   const userInfo = useUserStore();
   const router = useRouter();
@@ -25,8 +32,11 @@ export default function FixedBottomBar({ data, gatheringId }: FixedBottomBarProp
   );
 
   const determineStatus = useCallback(() => {
-    if (data.host) setStatus("host");
-    else if (data.status === "RECRUITING") {
+    if (data.canceledAt) {
+      setStatus("canceled");
+    } else if (data.host) {
+      setStatus("host");
+    } else if (data.status === "RECRUITING") {
       setStatus(checkParticipationStatus(data.participants) ? "cancelJoin" : "join");
     } else setStatus("closed");
   }, [checkParticipationStatus, data]);
@@ -40,6 +50,7 @@ export default function FixedBottomBar({ data, gatheringId }: FixedBottomBarProp
 
     try {
       await joinGathering(gatheringId);
+      alert("모임에 참여되었습니다.");
       setStatus("cancelJoin");
     } catch (err) {
       console.error("Failed to join gathering:", err);
@@ -49,6 +60,7 @@ export default function FixedBottomBar({ data, gatheringId }: FixedBottomBarProp
   const handleLeave = async () => {
     try {
       await LeaveGathering(gatheringId);
+      alert("모임 참여가 취소되었습니다.");
       setStatus("join");
     } catch (err) {
       console.error("Failed to leave gathering:", err);
@@ -57,25 +69,18 @@ export default function FixedBottomBar({ data, gatheringId }: FixedBottomBarProp
 
   const handleCancel = async () => {
     try {
-      await CancelGathering(gatheringId);
+      if (confirm("모임을 취소하시겠습니까?")) {
+        await CancelGathering(gatheringId);
+        alert("모임 취소가 완료되었습니다.");
+        setStatus("canceled");
+      }
     } catch (err) {
       console.error("Failed to cancel gathering:", err);
     }
   };
 
-  const handleShare = async () => {
-    try {
-      const currentUrl = window.location.href;
-      await navigator.clipboard.writeText(currentUrl);
-      alert("URL이 클립보드에 복사되었습니다!");
-    } catch (error) {
-      console.error("URL 복사 실패", error);
-      alert("URL 복사 실패");
-    }
-  };
-
   return (
-    <div className="fixed bottom-0 left-0 z-[999] max-h-[134px] w-full border-t-2 bg-white tablet:h-[84px] desktop:h-[87px]">
+    <div className="fixed bottom-0 left-0 z-[2] max-h-[134px] w-full border-t-2 bg-white tablet:h-[84px] desktop:h-[87px]">
       <div
         className={`mx-auto flex max-w-[744px] ${status === "host" ? "flex-wrap" : "flex-nowrap"} items-center justify-between gap-[14px] px-4 py-5 tablet:px-6 tablet:py-5 desktop:px-12`}
       >
@@ -109,12 +114,6 @@ export default function FixedBottomBar({ data, gatheringId }: FixedBottomBarProp
           </Button>
         )}
 
-        {status === "closed" && (
-          <Button className="h-11 w-[115px] bg-[#9CA3AF] text-white tablet:grow-0" disabled>
-            참여 마감
-          </Button>
-        )}
-
         {status === "host" && (
           <div className="flex w-full gap-2 tablet:w-[238px]">
             <Button
@@ -125,11 +124,23 @@ export default function FixedBottomBar({ data, gatheringId }: FixedBottomBarProp
             </Button>
             <Button
               className="h-11 w-[115px] grow bg-yellow-primary text-[#262626] tablet:w-[115px] tablet:grow-0"
-              onClick={handleShare}
+              onClick={toggleEditModal}
             >
-              공유하기
+              수정하기
             </Button>
           </div>
+        )}
+
+        {status === "closed" && (
+          <Button className="h-11 w-[115px] bg-[#9CA3AF] text-white tablet:grow-0" disabled>
+            참여 마감
+          </Button>
+        )}
+
+        {status === "canceled" && (
+          <Button className="h-11 w-[124px] bg-[#9CA3AF] text-white tablet:grow-0" disabled>
+            취소된 모임
+          </Button>
         )}
       </div>
     </div>

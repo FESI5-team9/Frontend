@@ -32,7 +32,7 @@ export async function createGathering(body: CreateGathering, image?: File) {
   if (image) {
     formData.append("image", image, image.name);
   }
-  const response = await fetch("/api/gatherings", {
+  const response = await fetchWithMiddleware("/api/gatherings", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -80,7 +80,7 @@ export async function editGathering(id: number, body: CreateGathering, image?: F
   if (image) {
     formData.append("image", image, image.name);
   }
-  const response = await fetch(`/api/gatherings/${id}`, {
+  const response = await fetchWithMiddleware(`/api/gatherings/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

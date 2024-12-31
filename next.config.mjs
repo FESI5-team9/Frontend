@@ -8,6 +8,15 @@ const nextConfig = {
         pathname: "/**", // 모든 경로 허용
       },
     ],
+    // unoptimized: true, // Next.js의 이미지 최적화 비활성화
+  },
+  async headers() {
+    return [
+      {
+        source: "/_next/image(.*)",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+    ];
   },
 };
 

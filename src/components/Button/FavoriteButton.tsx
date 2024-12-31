@@ -28,17 +28,16 @@ export default function FavoriteButton({ gatheringId, initialFavorite }: Favorit
   const submitFavorite = useCallback(async () => {
     if (!userInfo.id) return router.push("/signin");
 
-    try {
-      if (isFavorite) {
-        await deleteFavoriteGathering(gatheringId);
-      } else {
-        await getFavoriteGathering(gatheringId);
-      }
-      setIsFavorite(prev => !prev);
-      await updateFavoriteCount(); // 상태 갱신 (개수만 갱신)
-    } catch (error) {
-      console.error("Error updating favorite status", error);
+    if (isFavorite) {
+      const response = await deleteFavoriteGathering(gatheringId);
+      if (response.code) return alert(response.message);
+    } else {
+      const response = await getFavoriteGathering(gatheringId);
+      if (response.code) return alert(response.message);
     }
+
+    setIsFavorite(prev => !prev);
+    await updateFavoriteCount(); // 상태 갱신 (개수만 갱신)
   }, [isFavorite, gatheringId, userInfo.id, router, updateFavoriteCount]);
 
   return (

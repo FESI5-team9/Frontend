@@ -14,6 +14,7 @@ export default function MypageCard({
   image,
   participantCount,
   capacity,
+  canceledAt,
 }: MypageCardProps) {
   const isDateTime = dateTime;
   const dateString = "MM월 dd일";
@@ -33,11 +34,25 @@ export default function MypageCard({
   };
 
   return (
-    <div className="flex w-full flex-col gap-4 tablet:h-[153px] tablet:flex-row">
-      <div className="relative flex h-[153px] w-full items-center justify-center overflow-hidden rounded-3xl tablet:w-[280px]">
+    <div className="relative flex w-full flex-col gap-4 tablet:h-[153px] tablet:flex-row">
+      {/* 반투명 오버레이 */}
+      {canceledAt && (
+        <div className="absolute inset-0 z-10 flex h-[340px] flex-col items-center justify-center gap-6 rounded-3xl bg-black bg-opacity-70 tablet:h-[173px]">
+          <span className="text-center text-sm font-semibold text-white">
+            모집 취소된 모임이에요,
+            <br />
+            다음 기회에 만나요🙏
+          </span>
+          <button className="flex h-[36px] w-[116px] items-center justify-center gap-0.5 rounded-xl bg-[#FFF7ED]">
+            <Image src="/images/bye.svg" width={24} height={24} alt="bye 이모지" />
+            <span className="text-xs text-[#FF9E48]">모임 보내주기</span>
+          </button>
+        </div>
+      )}
+      <div className="relative flex h-[153px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-3xl tablet:w-[280px]">
         <Image src={image} fill objectFit="cover" alt="모임 이미지" />
       </div>
-      <div className="flex flex-col">
+      <div className="flex w-full flex-col">
         <div className="mb-3 flex gap-2">
           <Chip
             type="state"
@@ -80,17 +95,19 @@ export default function MypageCard({
             </div>
           </div>
         </div>
-        <div className="w-[120px]">
-          <Button
-            size="small"
-            isFilled
-            onClick={() => {
-              handleLeaveGathering();
-            }}
-            className="border border-orange-primary px-0 text-[14px] text-orange-primary"
-          >
-            모임 취소하기
-          </Button>
+        <div className="flex justify-end">
+          <div className="w-[120px]">
+            <Button
+              size="small"
+              isFilled
+              onClick={() => {
+                handleLeaveGathering();
+              }}
+              className="border border-orange-primary px-0 text-[14px] text-orange-primary"
+            >
+              예약 취소하기
+            </Button>
+          </div>
         </div>
       </div>
     </div>
