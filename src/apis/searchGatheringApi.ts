@@ -5,11 +5,12 @@ import {
   GatheringsRes,
   GetGatheringParticipants,
   GetGatheringParticipantsRes,
-  GetMyGatheringParticipantsRes,
   GetMyJoinedGatherings,
   GetMyJoinedGatheringsRes,
   GetSearchGatheringRes,
   GetSearchGatherings,
+  GetUserGatheringParticipants,
+  GetUserGatheringParticipantsRes,
 } from "@/types/api/gatheringApi";
 import fetchWithMiddleware from "./fetchWithMiddleware";
 
@@ -87,8 +88,8 @@ export async function getMyJoinedGatherings(params: GetMyJoinedGatherings) {
   return data;
 }
 
-// 내가 만든 모임 조회
-export async function getMyGathering(params: GetGatheringParticipants) {
+// 사용자가 생성한 모임 조회
+export async function getUserGathering(params: GetUserGatheringParticipants) {
   const { userId, ...queryParams } = params;
   const searchParams = new URLSearchParams();
   if (queryParams) {
@@ -97,6 +98,6 @@ export async function getMyGathering(params: GetGatheringParticipants) {
   const response = await fetchWithMiddleware(
     `/api/gatherings/by/${userId}?${searchParams.toString()}`,
   );
-  const data: GetMyGatheringParticipantsRes = await response.json();
+  const data: GetUserGatheringParticipantsRes = await response.json();
   return data;
 }

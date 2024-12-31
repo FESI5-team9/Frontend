@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { recruitGathering } from "@/apis/assignGatheringApi";
-import { getMyGathering } from "@/apis/searchGatheringApi";
+import { getUserGathering } from "@/apis/searchGatheringApi";
 import Button from "@/components/Button/Button";
 import useUserStore from "@/store/userStore";
-import { GatheringsRes } from "@/types/api/gatheringApi";
+import { GatheringsRes, GetUserGatheringParticipants } from "@/types/api/gatheringApi";
 import { formatToKoreanTime } from "@/utils/date";
 import { SkeletonUncompleted } from "../components/Skeleton";
 
@@ -35,17 +35,19 @@ export default function MyCreatedGathering() {
 
   useEffect(() => {
     async function fetchGatheringData() {
-      const params = {
-        userId: id || undefined,
+      if (id === null) return;
+
+      const params: GetUserGatheringParticipants = {
+        userId: id,
         size: 10,
         page: 0,
         sort: "dateTime",
-        direction: "desc" as const,
+        direction: "desc",
       };
 
       setIsLoading(true);
       try {
-        const response = await getMyGathering(params);
+        const response = await getUserGathering(params);
         setGatheringData(response);
       } catch (error) {
       } finally {
@@ -55,7 +57,6 @@ export default function MyCreatedGathering() {
 
     fetchGatheringData();
   }, [id]);
-
   if (isLoading) return <SkeletonUncompleted />;
 
   if (!gatheringData) {
