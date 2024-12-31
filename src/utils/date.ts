@@ -69,23 +69,3 @@ export const getRemainingHours = (isoDeadline: string): string => {
     return "유효하지 않은 날짜 형식입니다.";
   }
 };
-
-export const getTimeDiff = (deadline: string) => {
-  const targetDate = new Date(deadline);
-  const now = new Date();
-
-  if (isNaN(targetDate.getTime())) {
-    console.error("Invalid date format:", deadline);
-    return null;
-  }
-
-  const diffMs = targetDate.getTime() - now.getTime();
-
-  if (diffMs <= 0) return; // 시간이 지난 경우
-
-  const diffMinutes = Math.floor((diffMs / (1000 * 60)) % 60);
-  const diffHours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  return { diffMinutes, diffHours, diffDays };
-};
