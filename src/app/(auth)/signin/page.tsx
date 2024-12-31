@@ -13,16 +13,6 @@ import PopupComponent from "@/app/(auth)/_components/PopupComponent";
 import { Login } from "@/types/api/authApi";
 import baseSchema from "@/utils/schema";
 
-export const metadata = {
-  title: "MNM 로그인하기",
-  description: "로그인하고 맛집을 공유해보세요.",
-  openGraph: {
-    title: "MNM 로그인하기",
-    description: "로그인하고 맛집을 공유해보세요.",
-    url: "https://muckitlist.vercel.app/signin",
-  },
-};
-
 type LoginFormData = z.infer<typeof baseSchema>;
 const loginSchema = baseSchema.pick({ email: true, password: true });
 
