@@ -89,11 +89,14 @@ export async function getMyJoinedGatherings(params: GetMyJoinedGatherings) {
 
 // 내가 만든 모임 조회
 export async function getMyGathering(params: GetGatheringParticipants) {
+  const { userId, ...queryParams } = params;
   const searchParams = new URLSearchParams();
-  if (params) {
-    buildQueryParams(searchParams, params);
+  if (queryParams) {
+    buildQueryParams(searchParams, queryParams);
   }
-  const response = await fetchWithMiddleware(`/api/my/gathering?${searchParams.toString()}`);
+  const response = await fetchWithMiddleware(
+    `/api/gatherings/by/${userId}?${searchParams.toString()}`,
+  );
   const data: GetMyGatheringParticipantsRes = await response.json();
   return data;
 }

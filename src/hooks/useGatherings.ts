@@ -1,4 +1,3 @@
-// useGatherings.ts
 import { useEffect, useState } from "react";
 import { getMyJoinedGatherings } from "@/apis/searchGatheringApi";
 import { GetMyJoinedGatheringsRes } from "@/types/api/gatheringApi";
