@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import fetchWithMiddleware from "@/apis/fetchWithMiddleware";
 import Button from "@/components/Button/Button";
 import Modal from "@/components/Modal";
 import { Input } from "@/app/(home)/_components/Input";
@@ -30,10 +31,12 @@ const ReadOnlyInput = ({ value }: { value: string | number }) => {
 export default function EditGathering({
   isOpen,
   setIsOpen,
+  setIsEditted,
   initialData,
 }: {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsEditted: React.Dispatch<React.SetStateAction<boolean>>;
   initialData: GatheringDetailRes;
 }) {
   const [keywordValue, setKeywordValue] = useState("");
@@ -76,8 +79,12 @@ export default function EditGathering({
       if (value === initialData[key as keyof GatheringDetailRes]) return;
 
       if (key === "image") {
-        if (value instanceof File) formData.append(key, value);
-        else formData.append(key, "");
+        if (value instanceof File) {
+          formData.append(key, value);
+        } else {
+          const emptyImageFile = new File([""], "empty.png", { type: "image/png" });
+          formData.append(key, emptyImageFile);
+        }
       } else if (key === "keyword" && Array.isArray(value)) {
         const areArraysEqual =
           value.length === initialData.keyword.length &&
@@ -96,7 +103,22 @@ export default function EditGathering({
       return;
     }
 
-    // await editGathering(id, form);
+    try {
+      const response = await fetchWithMiddleware(`/api/gatherings/${initialData.id}`, {
+        method: "PUT",
+        body: formData,
+      });
+      if (!response.ok) {
+        console.error("HTTP Error:", response.status, response.statusText);
+        return alert("예기치 않은 오류가 발생했습니다. 다시 시도해주시기 바랍니다.");
+      }
+      alert("모임이 수정되었습니다.");
+      setIsOpen(false);
+      setIsEditted(true);
+    } catch (error) {
+      console.error("error", error);
+      alert("예기치 않은 오류가 발생했습니다. 다시 시도해주시기 바랍니다.");
+    }
   };
 
   return (

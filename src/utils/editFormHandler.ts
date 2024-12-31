@@ -16,6 +16,7 @@ export const handleKeywordChange = (
 ) => {
   setKeywordInput(value);
 };
+
 //키워드 추가 함수
 export const handleKeywordAddition = (
   value: string,

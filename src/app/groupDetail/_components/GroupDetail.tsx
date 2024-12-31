@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import { getGatheringDetail } from "@/apis/searchGatheringApi";
@@ -16,16 +16,25 @@ import DetailSkeleton from "./Skeleton/DetailSkeleton";
 
 function GroupDetail({ paramsId }: { paramsId: number }) {
   const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
+  const [isEditted, setIsEditted] = useState<boolean>(false);
 
   const {
     data: detail,
     isLoading: isDetailLoading,
     error: detailError,
+    refetch,
   }: UseQueryResult<GatheringDetailRes, Error> = useQuery({
     queryKey: ["gatheringDetail", paramsId],
     queryFn: () => getGatheringDetail(Number(paramsId)),
     staleTime: 1000 * 60 * 5,
   });
+
+  useEffect(() => {
+    if (isEditted) {
+      refetch();
+      setIsEditted(false);
+    }
+  }, [isEditted, refetch]);
 
   if (detailError)
     return (
@@ -106,7 +115,12 @@ function GroupDetail({ paramsId }: { paramsId: number }) {
       )}
 
       {detail && isEditOpen && (
-        <EditGathering isOpen={isEditOpen} setIsOpen={setIsEditOpen} initialData={detail} />
+        <EditGathering
+          setIsEditted={setIsEditted}
+          isOpen={isEditOpen}
+          setIsOpen={setIsEditOpen}
+          initialData={detail}
+        />
       )}
     </div>
   );
