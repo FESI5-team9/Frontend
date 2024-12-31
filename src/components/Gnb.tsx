@@ -134,7 +134,7 @@ export default function Gnb() {
               }}
               placeholder="검색어를 입력해주세요."
               aria-label="검색어 입력"
-              className="mx-auto h-full w-full rounded-full px-4"
+              className="mx-auto h-full w-full rounded-full px-4 outline-none focus:outline-yellow-400"
             />
             <button
               type="submit"
