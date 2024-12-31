@@ -43,10 +43,18 @@ function GroupDetail({ paramsId }: { paramsId: number }) {
           <div
             className={`desktop:grid-areas-custom grid gap-6 py-4 tablet:grid-cols-2 tablet:gap-6 tablet:p-6 desktop:px-[62px]`}
           >
-            <div
-              style={{ backgroundImage: `url(${detail.image})` }}
-              className="desktop:grid-area-topLeft relative min-h-[180px] overflow-hidden rounded-3xl border border-white bg-gray-200 bg-cover bg-center bg-no-repeat tablet:min-h-[270px] desktop:mb-20"
-            >
+            <div className="desktop:grid-area-topLeft relative min-h-[180px] overflow-hidden rounded-3xl border border-white bg-gray-200 bg-cover bg-center bg-no-repeat tablet:min-h-[270px] desktop:mb-20">
+              <Image
+                src={detail.image || "/images/default-gathering.svg"}
+                alt="모임 이미지"
+                fill
+                style={{
+                  objectFit: "cover",
+                  objectPosition: "center",
+                }}
+                className="z-0"
+                priority
+              />
               <ClosingTimeTag deadline={detail.registrationEnd} />
             </div>
 
@@ -61,7 +69,7 @@ function GroupDetail({ paramsId }: { paramsId: number }) {
                 <div className="flex items-center gap-1">
                   <div className="h-6 w-6 rounded-full">
                     <Image
-                      src={detail.user.image ? detail.user.image : "/images/profile.svg"}
+                      src={detail.user.image || "/images/profile.svg"}
                       alt="작성자"
                       width={24}
                       height={24}

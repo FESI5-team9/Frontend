@@ -80,11 +80,9 @@ export async function editGathering(id: number, body: CreateGathering, image?: F
   if (image) {
     formData.append("image", image, image.name);
   }
+
   const response = await fetchWithMiddleware(`/api/gatherings/${id}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: formData,
   });
   const data: GatheringRes = await response.json();
