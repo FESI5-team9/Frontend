@@ -12,9 +12,11 @@ const pretendard = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "먹킷리스트",
-  description: "먹킷리스트",
-  referrer: "no-referrer-when-downgrade",
+  title: "MealAndMate",
+  description: "Meal And Mate 에서 여러분의 맛집을 공유해봐요!",
+  icons: {
+    icon: "@/app/favicon.ico",
+  },
 };
 
 export default function RootLayout({

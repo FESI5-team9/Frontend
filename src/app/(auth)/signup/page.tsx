@@ -12,6 +12,16 @@ import Input from "@/components/Input/Input";
 import PopupComponent from "@/app/(auth)/_components/PopupComponent";
 import baseSchema from "@/utils/schema";
 
+export const metadata = {
+  title: "회원가입 페이지",
+  description: "회원가입하고 맛집을 공유해보세요.",
+  openGraph: {
+    title: "회원가입 페이지",
+    description: "회원가입하고 맛집을 공유해보세요.",
+    url: "https://muckitlist.vercel.app/signup",
+  },
+};
+
 function Signup() {
   const [emailVerified, setEmailVerified] = useState<boolean | null>(null);
   const [nicknameVerified, setNicknameVerified] = useState<boolean | null>(null);
