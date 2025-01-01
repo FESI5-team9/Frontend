@@ -146,17 +146,16 @@ export default function Mypage() {
       </div>
       {/* 모달 컴포넌트 */}
       <Modal title="프로필 수정하기" isOpen={isModalOpen} onClose={toggleModal}>
-        <div className="flex flex-col gap-6">
+        <div className="mt-2 flex flex-col gap-6">
           <div className="relative">
-            <span className="flex h-[56px] w-[56px] items-center justify-center overflow-hidden rounded-full">
+            <span className="relative flex h-[56px] w-[56px] items-center justify-center overflow-hidden rounded-full outline outline-gray-300">
               <Image
                 src={
                   selectedFile
                     ? URL.createObjectURL(selectedFile)
                     : userProfile?.image || "/images/lemonProfile.svg"
                 }
-                width={56}
-                height={56}
+                fill
                 alt="프로필 이미지"
                 className=""
               />
@@ -179,22 +178,24 @@ export default function Mypage() {
               onChange={handleFileChange}
             />
           </div>
-          <span className="">닉네임</span>
-          <input
-            value={nickname}
-            onChange={e => setNickname(e.target.value)}
-            placeholder={userProfile?.nickname}
-            className="h-11 w-full bg-gray-50 py-[10px] pl-4 text-gray-900"
-          ></input>
+          <div className="flex flex-col gap-4">
+            <span className="">닉네임</span>
+            <input
+              value={nickname}
+              onChange={e => setNickname(e.target.value)}
+              placeholder={userProfile?.nickname}
+              className="h-11 w-full rounded-2xl bg-gray-50 py-[10px] pl-4 text-gray-900 focus:outline focus:outline-yellow-primary"
+            ></input>
+          </div>
           <div className="flex gap-4">
             <Button
               onClick={toggleModal}
               isFilled
-              className="h-11 w-[130px] border border-orange-primary text-orange-primary"
+              className="h-11 w-full border border-orange-primary text-orange-primary"
             >
               취소
             </Button>
-            <Button onClick={handleUpdateProfile} className="h-11 w-[130px] bg-gray-400 text-white">
+            <Button onClick={handleUpdateProfile} className="h-11 w-full bg-gray-400 text-white">
               수정하기
             </Button>
           </div>
