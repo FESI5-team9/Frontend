@@ -1,8 +1,9 @@
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
+import { getReviews, getReviewsRating } from "@/apis/reviewsApi";
 import { getGatheringDetail } from "@/apis/searchGatheringApi";
-import GroupDetail from "../_components/GroupDetail";
+import GroupDetail from "@/app/groupDetail/_components/GroupDetail";
 
 async function getGatheringServer(id: string) {
   const accessToken = cookies().get("access-token")?.value;
@@ -45,6 +46,16 @@ async function GroupDetailPage({ params }: { params: { id: string } }) {
   await queryClient.prefetchQuery({
     queryKey: ["gatheringDetail", id],
     queryFn: () => getGatheringDetail(id),
+  });
+
+  await queryClient.prefetchQuery({
+    queryKey: ["gatheringReviews", id],
+    queryFn: () => getReviews({ gatheringId: id, size: 4, page: 0 }),
+  });
+
+  await queryClient.prefetchQuery({
+    queryKey: ["gatheringReviewRating", id],
+    queryFn: () => getReviewsRating({ gatheringId: id }),
   });
 
   return (

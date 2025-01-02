@@ -3,19 +3,20 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import fetchWithMiddleware from "@/apis/fetchWithMiddleware";
 import Button from "@/components/Button/Button";
 import Modal from "@/components/Modal";
 import { Input } from "@/app/(home)/_components/Input";
+import { categoryList } from "@/constants/categoryList";
 import { GatheringDetailRes } from "@/types/api/gatheringApi";
-import { CreateGatheringSchema } from "@/utils/createGathSchema";
 import { formatToKoreanTime } from "@/utils/date";
 import {
-  CreateGatheringFormData,
+  EditGatheringFormData,
   handleKeywordAddition,
   handleKeywordChange,
   handleKeywordDelete,
-} from "@/utils/formHandler";
-import { categoryList } from "../../../constants/categoryList";
+} from "@/utils/editFormHandler";
+import { EditGatheringSchema } from "@/utils/editGathSchema";
 
 const ReadOnlyInput = ({ value }: { value: string | number }) => {
   return (
@@ -30,16 +31,27 @@ const ReadOnlyInput = ({ value }: { value: string | number }) => {
 export default function EditGathering({
   isOpen,
   setIsOpen,
+  setIsEditted,
   initialData,
 }: {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsEditted: React.Dispatch<React.SetStateAction<boolean>>;
   initialData: GatheringDetailRes;
 }) {
   const [keywordValue, setKeywordValue] = useState("");
 
-  const { name, type, dateTime, address2, keyword, capacity, openParticipantCount, description } =
-    initialData;
+  const {
+    name,
+    image,
+    type,
+    dateTime,
+    address2,
+    keyword,
+    capacity,
+    openParticipantCount,
+    description,
+  } = initialData;
 
   const {
     register,
@@ -48,23 +60,71 @@ export default function EditGathering({
     watch,
     trigger,
     formState: { errors, touchedFields, isSubmitted, isValid },
-  } = useForm<CreateGatheringFormData>({
-    resolver: zodResolver(CreateGatheringSchema),
+  } = useForm<EditGatheringFormData>({
+    resolver: zodResolver(EditGatheringSchema),
     defaultValues: {
       name,
       description,
       keyword,
+      image: image || null,
     },
   });
 
   const keywords = watch("keyword") || [];
 
+  const testSubmitEdit = async (data: EditGatheringFormData) => {
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (value === initialData[key as keyof GatheringDetailRes]) return;
+
+      if (key === "image") {
+        if (value instanceof File) {
+          formData.append(key, value);
+        } else {
+          const emptyImageFile = new File([""], "empty.png", { type: "image/png" });
+          formData.append(key, emptyImageFile);
+        }
+      } else if (key === "keyword" && Array.isArray(value)) {
+        const areArraysEqual =
+          value.length === initialData.keyword.length &&
+          value.every((item, index) => item === initialData.keyword[index]);
+        if (areArraysEqual) return;
+
+        formData.append(key, value.join(",")); // 콤마로 구분된 문자열로 변환
+      } else if (value !== null && value !== undefined) {
+        formData.append(key, Array.isArray(value) ? JSON.stringify(value) : String(value));
+      }
+    });
+
+    // FormData가 비어 있는지 확인
+    if (!formData.keys().next().value) {
+      alert("변경된 내용이 없습니다.");
+      return;
+    }
+
+    try {
+      const response = await fetchWithMiddleware(`/api/gatherings/${initialData.id}`, {
+        method: "PUT",
+        body: formData,
+      });
+      if (!response.ok) {
+        console.error("HTTP Error:", response.status, response.statusText);
+        return alert("예기치 않은 오류가 발생했습니다. 다시 시도해주시기 바랍니다.");
+      }
+      alert("모임이 수정되었습니다.");
+      setIsOpen(false);
+      setIsEditted(true);
+    } catch (error) {
+      console.error("error", error);
+      alert("예기치 않은 오류가 발생했습니다. 다시 시도해주시기 바랍니다.");
+    }
+  };
+
   return (
     <Modal title="모임 만들기" isOpen={isOpen} onClose={() => setIsOpen(false)}>
       <form
-        onSubmit={handleSubmit(data => {
-          alert(data);
-        })}
+        onSubmit={handleSubmit(testSubmitEdit)}
         className="flex flex-col gap-4 overflow-y-scroll pb-6 font-medium"
       >
         {/* 모임 이름 */}
@@ -88,32 +148,41 @@ export default function EditGathering({
           {errors.name && <p className="text-red-500">{errors.name.message}</p>}
         </div>
 
-        {/* 장소 */}
-        <div className="flex w-full flex-col gap-1">
-          <p>장소</p>
-          <ReadOnlyInput value={address2} />
-        </div>
-
-        {/* 이미지 업로드 */}
+        {/* 이미지 */}
         <div className="flex flex-col gap-1">
           <p>이미지</p>
-          <div className="flex flex-row gap-2">
+          <div className="flex flex-row items-center gap-2">
             {/* 파일 이름 표시 */}
-            <div className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap rounded-lg border border-gray-100 bg-gray-100 px-2 py-2 text-gray-400">
+            <div className="relative flex-1 overflow-hidden text-ellipsis whitespace-nowrap rounded-lg border border-gray-100 bg-gray-100 px-2 py-2 text-gray-400">
               {(() => {
                 // 브라우저 환경 확인 후 파일 정보 접근
                 if (typeof window !== "undefined") {
-                  const file = watch("image") as File | null; // File로 변경
-                  return file ? file.name : "이미지를 첨부해주세요";
+                  const file = watch("image") as File | null | string; // File로 변경
+                  if (typeof file == "string") return file;
+                  else return file ? file.name : "이미지를 첨부해주세요";
                 }
                 return "이미지를 첨부해주세요";
               })()}
+              {/* X 버튼 */}
+              {watch("image") && (
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-gray-200 text-white hover:bg-gray-500"
+                  onClick={() => {
+                    setValue("image", null); // 파일 초기화
+                  }}
+                >
+                  &times;
+                </button>
+              )}
             </div>
+
+            {/* 파일 인풋 (숨김) */}
             <input
               type="file"
               id="fileInput"
               accept="image/*"
-              className="hidden border"
+              className="hidden"
               onChange={e => {
                 const files = e.target.files;
                 if (files && files[0]) {
@@ -143,49 +212,8 @@ export default function EditGathering({
               파일 찾기
             </button>
           </div>
+
           {errors.image && <p className="text-red-500">{errors.image.message}</p>}
-        </div>
-
-        {/* 카테고리 선택 */}
-        <div className="flex flex-col gap-1">
-          <p>카테고리</p>
-          <div className="flex flex-row gap-2">
-            {categoryList.map((category, index) => (
-              <div
-                key={index}
-                className={`flex select-none items-center gap-3 rounded-lg px-2 py-1.5 font-medium ${
-                  type === category.link
-                    ? "border border-black bg-black text-white"
-                    : "border border-gray-300 bg-gray-100 text-black"
-                }`}
-              >
-                <span className="flex h-5 w-5 items-center justify-center rounded-xl border border-gray-300 bg-white">
-                  <span className={`${type === category.link ? "text-orange-500" : "hidden"}`}>
-                    ✔
-                  </span>
-                </span>
-                {category.name}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 날짜 */}
-        <div className="flex flex-col gap-1">
-          <p>날짜</p>
-          <ReadOnlyInput value={formatToKoreanTime(dateTime, "MM월 d일 HH:mm")} />
-        </div>
-
-        {/* 모집 정원 */}
-        <div className="flex w-full flex-col">
-          <p>모집 정원</p>
-          <ReadOnlyInput value={capacity} />
-        </div>
-
-        {/* 최소 인원 */}
-        <div className="flex w-full flex-col">
-          <p>최소 인원</p>
-          <ReadOnlyInput value={openParticipantCount} />
         </div>
 
         {/* 설명 */}
@@ -234,6 +262,7 @@ export default function EditGathering({
               ))}
             </div>
           </div>
+
           {/* 키워드 입력 */}
           <div className="flex items-center gap-2">
             <Input
@@ -253,6 +282,54 @@ export default function EditGathering({
               className="w-full rounded-lg border p-2"
             />
           </div>
+        </div>
+
+        {/* 장소 */}
+        <div className="flex w-full flex-col gap-1">
+          <p>장소</p>
+          <ReadOnlyInput value={address2} />
+        </div>
+
+        {/* 카테고리 선택 */}
+        <div className="flex flex-col gap-1">
+          <p>카테고리</p>
+          <div className="flex flex-row gap-2">
+            {categoryList.map((category, index) => (
+              <div
+                key={index}
+                className={`flex select-none items-center gap-3 rounded-lg px-2 py-1.5 font-medium ${
+                  type === category.link
+                    ? "border border-black bg-black text-white"
+                    : "border border-gray-300 bg-gray-100 text-black"
+                }`}
+              >
+                <span className="flex h-5 w-5 items-center justify-center rounded-xl border border-gray-300 bg-white">
+                  <span className={`${type === category.link ? "text-gray-500" : "hidden"}`}>
+                    ✔
+                  </span>
+                </span>
+                {category.name}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 날짜 */}
+        <div className="flex flex-col gap-1">
+          <p>날짜</p>
+          <ReadOnlyInput value={formatToKoreanTime(dateTime, "MM월 d일 HH:mm")} />
+        </div>
+
+        {/* 모집 정원 */}
+        <div className="flex w-full flex-col">
+          <p>모집 정원</p>
+          <ReadOnlyInput value={capacity} />
+        </div>
+
+        {/* 최소 인원 */}
+        <div className="flex w-full flex-col">
+          <p>최소 인원</p>
+          <ReadOnlyInput value={openParticipantCount} />
         </div>
 
         <Button

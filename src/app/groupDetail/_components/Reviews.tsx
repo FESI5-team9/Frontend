@@ -59,37 +59,36 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
     refetch();
   };
 
-  if (reviewsError)
+  if (reviewsError || ratingError)
     return (
       <div className="flex w-full items-center justify-center">
-        <p>Error occurred while fetching reviews data.</p>
-      </div>
-    );
-
-  if (ratingError)
-    return (
-      <div className="flex w-full items-center justify-center">
-        <p>Error occurred while fetching review rating data.</p>
+        <p>예기치 않은 오류가 발생했습니다. 다시 시도해주시기 바랍니다.</p>
       </div>
     );
 
   return (
-    <div className="border-t border-[#e5e7eb] bg-white px-4 py-6 tablet:col-span-2 tablet:px-6 tablet:pb-[87px]">
+    <div className="bg-white px-4 py-6 tablet:col-span-2 tablet:px-6 tablet:pb-[87px]">
       <div className="min-h-[500px]">
         <h3 className="mb-5 text-lg font-semibold">
           리뷰 <span>{isRatingLoading || `(${totalReviews})`}</span>
         </h3>
 
-        {isRatingLoading ? (
-          <ReviewRatingSkeleton />
-        ) : (
-          ratingData && (
-            <ReviewRatingComponent ratingData={ratingData[0]} totalReviews={totalReviews || 0} />
-          )
-        )}
-
         {reviews && reviews.length > 0 ? (
-          <div>
+          <div className="mt-4">
+            {isRatingLoading ? (
+              <div className="border-y border-[#E5E7EB]">
+                <ReviewRatingSkeleton />
+              </div>
+            ) : (
+              ratingData && (
+                <div className="border-y border-[#E5E7EB]">
+                  <ReviewRatingComponent
+                    ratingData={ratingData[0]}
+                    totalReviews={totalReviews || 0}
+                  />
+                </div>
+              )
+            )}
             <div className="flex flex-col gap-[10px]">
               {reviews.map(review => (
                 <div key={review.id} className="border-b-2 border-dashed border-[#F3F4F6] pb-4">
@@ -114,11 +113,9 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
                     <p className="text-sm font-medium">{review.comment}</p>
                     <div className="flex items-center gap-1 text-xs font-medium">
                       <div className="flex items-center gap-1">
-                        <div className="h-6 w-6 rounded-full bg-gray-400">
+                        <div className="h-6 w-6 rounded-full">
                           <Image
-                            src={
-                              review.user.image ? review.user.image : "/images/default-profile.svg"
-                            }
+                            src={review.user.image || "/images/profile.svg"}
                             alt="작성자"
                             width={24}
                             height={24}

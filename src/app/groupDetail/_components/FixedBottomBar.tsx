@@ -34,12 +34,12 @@ export default function FixedBottomBar({
   const determineStatus = useCallback(() => {
     if (data.canceledAt) {
       setStatus("canceled");
-    } else if (data.host) {
+    } else if (data.host || data.user.id === userInfo.id) {
       setStatus("host");
     } else if (data.status === "RECRUITING") {
       setStatus(checkParticipationStatus(data.participants) ? "cancelJoin" : "join");
     } else setStatus("closed");
-  }, [checkParticipationStatus, data]);
+  }, [checkParticipationStatus, data, userInfo]);
 
   useEffect(() => {
     determineStatus();
