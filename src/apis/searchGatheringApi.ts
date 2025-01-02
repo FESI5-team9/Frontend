@@ -83,7 +83,7 @@ export async function getMyJoinedGatherings(params: GetMyJoinedGatherings) {
     buildQueryParams(searchParams, params);
   }
   const response = await fetchWithMiddleware(`/api/gatherings/joined?${searchParams.toString()}`);
-  const data: GetMyJoinedGatheringsRes[] = await response.json();
+  const data: GetMyJoinedGatheringsRes = await response.json();
   return data;
 }
 

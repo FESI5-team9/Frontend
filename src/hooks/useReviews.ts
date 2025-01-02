@@ -13,7 +13,7 @@ export const DIRECTION = {
 
 export const useReviews = () => {
   const [completedReviews, setCompletedReviews] = useState<ReviewRes[]>();
-  const [unCompletedReviews, setUnCompletedReviews] = useState<GetMyJoinedGatheringsRes[]>();
+  const [unCompletedReviews, setUnCompletedReviews] = useState<GetMyJoinedGatheringsRes>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const { id } = useUserStore();
