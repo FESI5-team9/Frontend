@@ -26,7 +26,6 @@ export default function ButtonJoin({
         return;
       }
       joinGathering(id);
-      alert("모임을 참여했습니다! 🎉");
       setIsParticipation(true);
       onUpdate();
       setToast(true);
@@ -39,7 +38,6 @@ export default function ButtonJoin({
       } else {
         alert(errorMessage || "참여에 실패했습니다. 다시 시도해주세요.");
       }
-
       console.error("참여 실패:", errorMessage);
     }
   }

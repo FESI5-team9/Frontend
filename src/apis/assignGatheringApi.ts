@@ -49,6 +49,7 @@ export async function joinGathering(id: number) {
     method: "POST",
   });
   const data = await response.json();
+  alert(data.message);
   return data;
 }
 
