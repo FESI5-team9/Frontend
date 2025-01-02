@@ -4,7 +4,7 @@ import { ReviewRes } from "@/types/api/reviews";
 
 interface RenderContentProps {
   completedReviews: ReviewRes[];
-  unCompletedReview: GetMyJoinedGatheringsRes;
+  unCompletedReview: GetMyJoinedGatheringsRes[];
 }
 
 export default function myReviews({ completedReviews, unCompletedReview }: RenderContentProps) {
