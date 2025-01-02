@@ -109,62 +109,64 @@ export default function MyCreatedGathering() {
           : "시간 없음";
 
         return (
-          <div
-            key={gathering.id}
-            className="flex w-full flex-col gap-4 tablet:h-[153px] tablet:flex-row"
-          >
-            <div className="relative flex h-[153px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-3xl tablet:w-[280px]">
-              <Image
-                src={gathering.image || "/images/image.png"}
-                fill
-                objectFit="cover"
-                alt="모임 이미지"
-                className=""
-              />
-            </div>
-            <div className="flex w-full flex-col justify-between">
-              <div className="flex gap-3">
-                <div className="mb-[18px] flex flex-col gap-1.5">
-                  <span className="flex items-center gap-2 text-lg font-semibold">
-                    <span className="inline-block max-w-[135px] truncate tablet:max-w-[170px] desktop:max-w-[300px]">
-                      {gathering.name}
+          <>
+            <div
+              key={gathering.id}
+              className="flex w-full flex-col gap-4 tablet:h-[153px] tablet:flex-row"
+            >
+              <div className="relative flex h-[153px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-3xl tablet:w-[280px]">
+                <Image
+                  src={gathering.image || "/images/image.png"}
+                  fill
+                  objectFit="cover"
+                  alt="모임 이미지"
+                  className=""
+                />
+              </div>
+              <div className="flex w-full flex-col justify-between">
+                <div className="flex gap-3">
+                  <div className="mb-[18px] flex flex-col gap-1.5">
+                    <span className="flex items-center gap-2 text-lg font-semibold">
+                      <span className="inline-block max-w-[135px] truncate tablet:max-w-[170px] desktop:max-w-[300px]">
+                        {gathering.name}
+                      </span>
+                      <span className="inline-block">|</span>
+                      <span className="text-#3C3C3C inline-block max-w-[135px] truncate text-sm tablet:max-w-[155px] desktop:max-w-[300px]">
+                        &nbsp;{`${gathering.location} ${gathering.address1}`}
+                      </span>
                     </span>
-                    <span className="inline-block">|</span>
-                    <span className="text-#3C3C3C inline-block max-w-[135px] truncate text-sm tablet:max-w-[155px] desktop:max-w-[300px]">
-                      &nbsp;{`${gathering.location} ${gathering.address1}`}
-                    </span>
-                  </span>
-                  <div className="flex items-center gap-3">
-                    <span className="text-#3C3C3C flex gap-3 text-sm">{`${date} · ${time}`}</span>
-                    <span className="flex gap-0.5">
-                      <Image
-                        src="/icons/person.svg"
-                        width={16}
-                        height={16}
-                        alt="참여 인원"
-                        className="inline-block"
-                      />
-                      <span className="inline-block text-sm">{`${gathering.participantCount}/${gathering.capacity}`}</span>
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-#3C3C3C flex gap-3 text-sm">{`${date} · ${time}`}</span>
+                      <span className="flex gap-0.5">
+                        <Image
+                          src="/icons/person.svg"
+                          width={16}
+                          height={16}
+                          alt="참여 인원"
+                          className="inline-block"
+                        />
+                        <span className="inline-block text-sm">{`${gathering.participantCount}/${gathering.capacity}`}</span>
+                      </span>
+                    </div>
                   </div>
                 </div>
+                <div className="ml-auto flex tablet:justify-end tablet:pb-1">
+                  <Button
+                    size="small"
+                    bgColor="disabled"
+                    onClick={() => handleGatheringStatus(gathering.id)}
+                    className="w-[120px] px-0 text-sm text-white"
+                  >
+                    {gathering.status === "RECRUITMENT_COMPLETED" ? "마감 완료" : "조기 마감"}
+                  </Button>
+                </div>
               </div>
-              <div className="ml-auto flex tablet:justify-end tablet:pb-1">
-                <Button
-                  size="small"
-                  bgColor="disabled"
-                  onClick={() => handleGatheringStatus(gathering.id)}
-                  className="w-[120px] px-0 text-sm text-white"
-                >
-                  {gathering.status === "RECRUITMENT_COMPLETED" ? "마감 완료" : "조기 마감"}
-                </Button>
-              </div>
-              {/* 구분선 추가 (마지막 요소 제외) */}
-              {index !== gatheringData.length - 1 && (
-                <div className="mb-5 mt-4 border-[1.6px] border-dashed border-gray-200"></div>
-              )}
             </div>
-          </div>
+            {/* 구분선 추가 (마지막 요소 제외) */}
+            {index !== gatheringData.length - 1 && (
+              <div className="mb-5 mt-5 border-[1.6px] border-dashed border-gray-200"></div>
+            )}
+          </>
         );
       })}
       {hasMore && <div ref={observerRef} className="h-10 w-full"></div>}

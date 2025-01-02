@@ -192,7 +192,7 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
                       </div>
                     </div>
                     {index !== review.length - 1 && (
-                      <div className="mb-[21px] mt-[10px] border-[1.6px] border-dashed border-gray-200"></div>
+                      <div className="mb-5 mt-5 border-[1.6px] border-dashed border-gray-200"></div>
                     )}
                   </div>
                 );
@@ -233,8 +233,9 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
                         <div className="mt-auto hidden border-[2px] border-dashed border-gray-200 tablet:block"></div>
                       </div>
                     </div>
+                    {/* 구분선 추가 (마지막 요소 제외) */}
                     {index !== reviewed.length - 1 && (
-                      <div className="mb-4 mt-5 border-[1.6px] border-dashed border-gray-200 tablet:hidden"></div>
+                      <div className="mb-5 mt-5 border-[1.6px] border-dashed border-gray-200 tablet:hidden"></div>
                     )}
                   </div>
                 );
