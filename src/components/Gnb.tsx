@@ -155,7 +155,12 @@ export default function Gnb() {
                   aria-label="유저 프로필"
                   onClick={() => setIsProfileClick(!isProfileClick)}
                 >
-                  <Image src={image || "/images/profile.svg"} fill objectFit="cover" alt="프로필" />
+                  <Image
+                    src={image || "/images/profile.svg"}
+                    fill
+                    style={{ objectFit: "cover" }}
+                    alt="프로필"
+                  />
                 </button>
               ) : (
                 // 비로그인 상태면 로그인 링크
