@@ -1,7 +1,34 @@
+import { Metadata } from "next";
+import { cookies } from "next/headers";
 import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
 import { getReviews, getReviewsRating } from "@/apis/reviewsApi";
 import { getGatheringDetail } from "@/apis/searchGatheringApi";
 import GroupDetail from "@/app/groupDetail/_components/GroupDetail";
+
+async function getGatheringServer(id: string) {
+  const accessToken = cookies().get("access-token")?.value;
+
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/gatherings/${id}`, {
+    headers: {
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+    },
+  });
+  return response.json();
+}
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const { name, description } = await getGatheringServer(params.id);
+
+  return {
+    title: `${name} 상세 페이지`,
+    description: description,
+    openGraph: {
+      title: `${name} 상세 페이지`,
+      description: description,
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}/groupDetail/${params.id}`,
+    },
+  };
+}
 
 async function GroupDetailPage({ params }: { params: { id: string } }) {
   const queryClient = new QueryClient();
