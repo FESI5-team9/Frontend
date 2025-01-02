@@ -100,7 +100,7 @@ export default function MyCreatedGathering() {
 
   return (
     <>
-      {gatheringData.map((gathering, _index) => {
+      {gatheringData.map((gathering, index) => {
         const date = gathering.dateTime
           ? formatToKoreanTime(gathering.dateTime, "M월 dd일")
           : "날짜 없음";
@@ -159,6 +159,10 @@ export default function MyCreatedGathering() {
                   {gathering.status === "RECRUITMENT_COMPLETED" ? "마감 완료" : "조기 마감"}
                 </Button>
               </div>
+              {/* 구분선 추가 (마지막 요소 제외) */}
+              {index !== gatheringData.length - 1 && (
+                <div className="mb-5 mt-4 border-[1.6px] border-dashed border-gray-200"></div>
+              )}
             </div>
           </div>
         );
