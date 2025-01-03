@@ -59,7 +59,11 @@ export default function AllReviewCard({ reviews }: { reviews: ReviewsRes }) {
               </span>
               <div className="mt-2 flex items-center">
                 <div className="relative mr-2 h-6 w-6 overflow-hidden rounded-full">
-                  <Image src={item.user.image || "/images/profile.svg"} fill alt="프로필 이미지" />
+                  <Image
+                    src={item.user.image || "/images/default-profile.svg"}
+                    fill
+                    alt="프로필 이미지"
+                  />
                 </div>
                 <span className="inline-block text-xs text-gray-700">{item.user.nickname}</span>
                 <span className="ml-2 mr-3 inline-block">|</span>

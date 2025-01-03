@@ -20,17 +20,15 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
-  const body = await request.json();
-
   const accessToken = request.cookies.get("access-token")?.value;
+  const body = await request.formData();
 
   const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/gatherings/${params.id}`, {
     method: "PUT",
     headers: {
-      "Content-Type": "application/json",
-      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+      Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify(body),
+    body: body,
   });
 
   if (response.ok) {

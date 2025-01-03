@@ -46,15 +46,18 @@ export async function signin(body: Login) {
 
 // 회원가입
 export async function signout() {
-  await fetch("/api/auth/signout", {
+  await fetchWithMiddleware("/api/auth/signout", {
     method: "POST",
   });
 }
 // 유저 정보 수정
 export async function updateUserProfile(body: PutUsers): Promise<User> {
   const formData = new FormData();
+
   if (body.nickname) formData.append("nickname", body.nickname);
-  if (body.image) formData.append("image", body.image);
+  if (body.image) {
+    formData.append("image", body.image);
+  }
 
   const response = await fetchWithMiddleware("/api/user", {
     method: "PUT",

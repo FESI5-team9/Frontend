@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json", // 기존 tsconfig를 확장
+  "compilerOptions": {
+    "jsx": "react-jsx" // Jest 테스트 환경에서만 JSX 변환 방식 설정
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "jest.config.ts", "setupTests.ts"]
+}

@@ -21,16 +21,17 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["kakao.maps.d.ts", "jest", "cypress"]
+    "types": ["kakao.maps.d.ts", "jest", "cypress", "node"]
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "jest.config.js",
+    "jest.config.ts",
     "cypress/**/*.tsx",
-    "./cypress/**/*"
+    // "./cypress/**/*",
+    "src/store/useToastStore.tsx"
   ],
   "exclude": ["node_modules"]
 }
