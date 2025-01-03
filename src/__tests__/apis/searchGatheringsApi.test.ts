@@ -161,7 +161,7 @@ describe("searchGatheringApi 테스트", () => {
       sort: "dateTime",
       direction: "desc" as const,
     };
-    const result = await getUserGathering(1, params);
+    const result = await getUserGathering({ userId: 1, ...params });
 
     expect(fetchWithMiddleware).toHaveBeenCalledWith(
       "/api/gatherings/by/1?size=10&page=0&sort=dateTime&direction=desc",

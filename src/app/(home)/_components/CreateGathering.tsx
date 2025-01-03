@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -32,6 +32,7 @@ export default function CreateGathering({
   const [selectedService, setSelectedService] = useState<string>("RESTAURANT"); // 선택된 카테고리
   const [keywordValue, setKeywordValue] = useState("");
   const { firstDate } = useDateStore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -163,6 +164,9 @@ export default function CreateGathering({
                   className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-gray-200 text-white hover:bg-gray-500"
                   onClick={() => {
                     setValue("image", null); // 파일 초기화
+                    if (fileInputRef.current) {
+                      fileInputRef.current.value = ""; // input 초기화
+                    }
                   }}
                 >
                   &times;
@@ -173,6 +177,7 @@ export default function CreateGathering({
             {/* 파일 인풋 (숨김) */}
             <input
               type="file"
+              ref={fileInputRef}
               id="fileInput"
               accept="image/*"
               className="hidden"
