@@ -72,11 +72,10 @@ export default function Mypage() {
         </div>
         <div className="h-[178px] w-full rounded-3xl border-[2px] border-gray-300 bg-white tablet:h-[172px]">
           <div className="relative">
-            <span className="absolute left-[24px] top-[57px] flex h-[56px] w-[56px] items-center justify-center overflow-hidden rounded-full bg-white">
+            <span className="absolute left-[24px] top-[57px] flex h-[56px] w-[56px] items-center justify-center overflow-hidden rounded-full bg-white outline outline-gray-300">
               <Image
                 src={userProfile?.image || "/images/default-profile.svg"}
-                width={56}
-                height={56}
+                fill
                 alt="프로필 이미지"
                 className=""
               />
