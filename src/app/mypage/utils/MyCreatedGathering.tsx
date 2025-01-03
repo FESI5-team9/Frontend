@@ -66,8 +66,8 @@ export default function MyCreatedGathering() {
   };
 
   useEffect(() => {
-    fetchGatheringData(page); // 함수 호출 추가
-  }, [page]);
+    fetchGatheringData(page);
+  }, [page, id]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -79,7 +79,7 @@ export default function MyCreatedGathering() {
       { threshold: 1.0 },
     );
 
-    const currentObserverRef = observerRef.current;
+    const currentObserverRef = observerRef.current; // 로컬 변수에 저장
 
     if (currentObserverRef) {
       observer.observe(currentObserverRef);
@@ -87,7 +87,7 @@ export default function MyCreatedGathering() {
 
     return () => {
       if (currentObserverRef) {
-        observer.unobserve(currentObserverRef);
+        observer.unobserve(currentObserverRef); // 로컬 변수 사용
       }
     };
   }, [hasMore, isLoading]);

@@ -9,6 +9,7 @@ import Modal from "@/components/Modal";
 import Rating from "@/app/mypage/components/Rating";
 import SelectRating from "@/app/mypage/components/SelectRating";
 import { SkeletonCompleted, SkeletonUncompleted } from "@/app/mypage/components/Skeleton";
+import useToastStore from "@/store/useToastStore";
 import { AllReviewCardProps, GetMyJoinedGatheringWithReview } from "@/types/components/card";
 import { formatToKoreanTime } from "@/utils/date";
 
@@ -19,7 +20,8 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
   const [selectedReview, setSelectedReview] = useState<GetMyJoinedGatheringWithReview | null>(null);
   const [reviewRating, setReviewRating] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [, forceUpdate] = useReducer(x => x + 1, 0); // 리뷰 카드 refactor 시 사용 예정
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
+  const addToast = useToastStore(state => state.addToast);
 
   const handleOpenModal = (reviewId: GetMyJoinedGatheringWithReview) => {
     setSelectedReview(reviewId);
@@ -55,11 +57,17 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
       };
 
       await addReviews(body);
-      alert("리뷰가 성공적으로 등록되었습니다!");
+      addToast({
+        message: "리뷰가 작성되었습니다.",
+        type: "success",
+      });
       handleCloseModal();
-      forceUpdate(); // 리뷰 카드 refactor 시 사용
+      forceUpdate();
     } catch (error) {
-      alert("리뷰 등록 중 오류가 발생했습니다.");
+      addToast({
+        message: "리뷰 작성에 실패했습니다. 다시 작성해 주세요.",
+        type: "error",
+      });
     }
   };
 
