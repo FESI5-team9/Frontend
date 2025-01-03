@@ -134,7 +134,7 @@ export default function Gnb() {
               }}
               placeholder="검색어를 입력해주세요."
               aria-label="검색어 입력"
-              className="mx-auto h-full w-full rounded-full px-4"
+              className="mx-auto h-full w-full rounded-full px-4 outline-none focus:outline-yellow-400"
             />
             <button
               type="submit"
@@ -155,7 +155,12 @@ export default function Gnb() {
                   aria-label="유저 프로필"
                   onClick={() => setIsProfileClick(!isProfileClick)}
                 >
-                  <Image src={image || "/images/profile.svg"} fill objectFit="cover" alt="프로필" />
+                  <Image
+                    src={image || "/images/profile.svg"}
+                    fill
+                    style={{ objectFit: "cover" }}
+                    alt="프로필"
+                  />
                 </button>
               ) : (
                 // 비로그인 상태면 로그인 링크

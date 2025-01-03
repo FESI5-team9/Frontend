@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { recruitGathering } from "@/apis/assignGatheringApi";
-import { getMyGathering } from "@/apis/searchGatheringApi";
+import { getUserGathering } from "@/apis/searchGatheringApi";
 import Button from "@/components/Button/Button";
 import useUserStore from "@/store/userStore";
 import { GatheringsRes } from "@/types/api/gatheringApi";
@@ -46,7 +46,7 @@ export default function MyCreatedGathering() {
 
     setIsLoading(true);
     try {
-      const response = await getMyGathering(params);
+      const response = await getUserGathering(params);
       if (response.length > 0) {
         setGatheringData(prevData => {
           // 중복 제거 로직: 기존 데이터와 새 데이터의 ID를 기준으로 중복 필터링
@@ -79,7 +79,7 @@ export default function MyCreatedGathering() {
       { threshold: 1.0 },
     );
 
-    const currentObserverRef = observerRef.current; // 로컬 변수에 저장
+    const currentObserverRef = observerRef.current;
 
     if (currentObserverRef) {
       observer.observe(currentObserverRef);
@@ -87,7 +87,7 @@ export default function MyCreatedGathering() {
 
     return () => {
       if (currentObserverRef) {
-        observer.unobserve(currentObserverRef); // 로컬 변수 사용
+        observer.unobserve(currentObserverRef);
       }
     };
   }, [hasMore, isLoading]);

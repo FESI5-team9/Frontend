@@ -46,7 +46,7 @@ export async function signin(body: Login) {
 
 // 회원가입
 export async function signout() {
-  await fetch("/api/auth/signout", {
+  await fetchWithMiddleware("/api/auth/signout", {
     method: "POST",
   });
 }
