@@ -22,6 +22,8 @@ export default function MypageCard({
   const gatheringDate = formatToKoreanTime(isDateTime, dateString);
   const gatheringTime = formatToKoreanTime(isDateTime, timeString);
 
+  const isPast = new Date(dateTime) < new Date(); // 모임 시간과 현재 시간 비교
+
   const handleLeaveGathering = async () => {
     if (id) {
       try {
@@ -36,12 +38,12 @@ export default function MypageCard({
   return (
     <div className="relative flex w-full flex-col gap-4 tablet:h-[153px] tablet:flex-row">
       {/* 반투명 오버레이 */}
-      {canceledAt && (
+      {(canceledAt || isPast) && (
         <div className="absolute inset-0 z-10 flex h-[340px] flex-col items-center justify-center gap-6 rounded-3xl bg-black bg-opacity-70 tablet:h-[173px]">
           <span className="text-center text-sm font-semibold text-white">
-            모집 취소된 모임이에요,
-            <br />
-            다음 기회에 만나요🙏
+            {canceledAt
+              ? "모집 취소된 모임이에요, /n다음 기회에 만나요🙏"
+              : "종료된 모임이에요, /n다음 기회에 만나요🙏"}
           </span>
           <button className="flex h-[36px] w-[116px] items-center justify-center gap-0.5 rounded-xl bg-[#FFF7ED]">
             <Image src="/images/bye.svg" width={24} height={24} alt="bye 이모지" />
