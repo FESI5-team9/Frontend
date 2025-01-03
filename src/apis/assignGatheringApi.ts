@@ -89,7 +89,14 @@ export async function editGathering(id: number, body: CreateGathering, image?: F
 
 // 모임 상태 변경
 export async function recruitGathering(id: number, status: "RECRUITING" | "RECRUITMENT_COMPLETED") {
-  const response = await fetchWithMiddleware(`/api/gatherings/${id}/recruit?status=${status}`);
+  const response = await fetchWithMiddleware(`/api/gatherings/${id}/recruit`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ status }),
+  });
+
   const data = await response.json();
   return data;
 }
