@@ -9,7 +9,7 @@
   // jest setupTests 파일에 대한 eslint 규칙을 무시(test.tsx를 쓰기 위함)
   "overrides": [
     {
-      "files": ["setupTests.ts"],
+      "files": ["setupTests.ts", "cypress/**/*.cy.ts"],
       "rules": {
         "import/no-extraneous-dependencies": "off"
       }
@@ -64,7 +64,6 @@
         "allowTemplateLiterals": true // 템플릿 리터럴(백틱) 허용
       }
     ],
-    "quotes": "off", // ESLint 기본 quotes 규칙 비활성화
 
     // React 관련 규칙
     "react/react-in-jsx-scope": "off", // React 17+ 에서는 불필요

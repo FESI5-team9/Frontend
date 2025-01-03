@@ -8,6 +8,7 @@ export async function getFavoriteGathering(id: number) {
     method: "POST",
   });
   const data = await response.json();
+  alert(data.message);
   return data;
 }
 
@@ -17,6 +18,7 @@ export async function deleteFavoriteGathering(id: number) {
     method: "DELETE",
   });
   const data = await response.json();
+  alert(data.message);
   return data;
 }
 

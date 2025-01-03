@@ -3,11 +3,7 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import {
-  deleteFavoriteGathering,
-  getFavoriteGathering,
-  getFavoriteGatherings,
-} from "@/apis/favoriteGatheringApi";
+import { deleteFavoriteGathering, getFavoriteGathering } from "@/apis/favoriteGatheringApi";
 import useUserStore from "@/store/userStore";
 
 export default function FavoriteButton({ gatheringId, initialFavorite }: FavoriteButtonProps) {
@@ -18,27 +14,24 @@ export default function FavoriteButton({ gatheringId, initialFavorite }: Favorit
 
   const updateFavoriteCount = useCallback(async () => {
     try {
-      const favoriteGatherings = await getFavoriteGatherings({ size: 10, page: 0 }); // 서버에서 찜한 모임 목록 가져오기
-      userInfo.setFavoriteGatheringCount(favoriteGatherings.length); // 상태 갱신 (개수만 저장)
+      const response = await (isFavorite
+        ? deleteFavoriteGathering(gatheringId)
+        : getFavoriteGathering(gatheringId));
+      if (response.code !== "HOST_CANNOT_FAVORITE") {
+        setIsFavorite(prev => !prev);
+      }
     } catch (error) {
-      console.error("Failed to update favorite count:", error);
+      console.error("업데이트 실패", error);
     }
-  }, [userInfo]);
+  }, [gatheringId, isFavorite]); // 의존성 배열은 그대로
 
   const submitFavorite = useCallback(async () => {
-    if (!userInfo.id) return router.push("/signin");
-
-    if (isFavorite) {
-      const response = await deleteFavoriteGathering(gatheringId);
-      if (response.code) return alert(response.message);
-    } else {
-      const response = await getFavoriteGathering(gatheringId);
-      if (response.code) return alert(response.message);
+    if (!userInfo) {
+      router.push("/signin");
+      return;
     }
-
-    setIsFavorite(prev => !prev);
-    await updateFavoriteCount(); // 상태 갱신 (개수만 갱신)
-  }, [isFavorite, gatheringId, userInfo.id, router, updateFavoriteCount]);
+    await updateFavoriteCount();
+  }, [userInfo, router, updateFavoriteCount]);
 
   return (
     <>

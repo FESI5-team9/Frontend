@@ -30,7 +30,8 @@
     ".next/types/**/*.ts",
     "jest.config.ts",
     "cypress/**/*.tsx",
-    "./cypress/**/*"
+    // "./cypress/**/*",
+    "src/store/useToastStore.tsx"
   ],
-  "exclude": ["./cypress.config.ts", "cypress", "**/*.cy.tsx", "node_modules"]
+  "exclude": ["node_modules"]
 }

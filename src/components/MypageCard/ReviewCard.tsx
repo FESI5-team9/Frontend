@@ -6,6 +6,7 @@ import { addReviews } from "@/apis/reviewsApi";
 import Button from "@/components/Button/Button";
 import Chip from "@/components/Chips";
 import Modal from "@/components/Modal";
+import Toast from "@/components/Toast";
 import Rating from "@/app/mypage/components/Rating";
 import SelectRating from "@/app/mypage/components/SelectRating";
 import { SkeletonCompleted, SkeletonUncompleted } from "@/app/mypage/components/Skeleton";
@@ -40,12 +41,18 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
   // 리뷰 등록
   const handleSubmit = async () => {
     if (!reviewRating) {
-      alert("별점을 선택해주세요.");
+      addToast({
+        message: "점수를 선택해주세요!",
+        type: "notification",
+      });
       return;
     }
 
     if (!reviewText.trim()) {
-      alert("리뷰 내용을 입력해주세요.");
+      addToast({
+        message: "소감을 작성해주세요!",
+        type: "notification",
+      });
       return;
     }
 
@@ -265,7 +272,7 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
             <div className="flex flex-col gap-3">
               <h3 className="text-gray-900">경험에 대해 남겨주세요.</h3>
               <textarea
-                className="w-full rounded-lg bg-gray-50 p-2"
+                className="w-full rounded-lg bg-gray-50 p-2 focus:outline focus:outline-yellow-primary"
                 rows={4}
                 placeholder="남겨주신 리뷰는 프로그램 운영 및 다른 회원 분들께 큰 도움이 됩니다."
                 value={reviewText}
@@ -294,6 +301,7 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
           </div>
         </Modal>
       </div>
+      <Toast />
     </>
   );
 }
