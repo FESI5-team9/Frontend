@@ -4,6 +4,8 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { deleteFavoriteGathering, getFavoriteGathering } from "@/apis/favoriteGatheringApi";
+import Toast from "@/components/Toast";
+import useToastStore from "@/store/useToastStore";
 import useUserStore from "@/store/userStore";
 
 export default function FavoriteButton({ gatheringId, initialFavorite }: FavoriteButtonProps) {
@@ -11,26 +13,31 @@ export default function FavoriteButton({ gatheringId, initialFavorite }: Favorit
 
   const router = useRouter();
   const userInfo = useUserStore();
+  const addToast = useToastStore(state => state.addToast);
 
   const updateFavoriteCount = useCallback(async () => {
     try {
       const response = await (isFavorite
         ? deleteFavoriteGathering(gatheringId)
         : getFavoriteGathering(gatheringId));
-      if (response.code !== "HOST_CANNOT_FAVORITE") {
+
+      if (response.code) {
+        addToast({ message: response.message, type: "error" });
+        return;
+      } else {
         setIsFavorite(prev => !prev);
       }
     } catch (error) {
       console.error("업데이트 실패", error);
     }
-  }, [gatheringId, isFavorite]); // 의존성 배열은 그대로
+  }, [gatheringId, isFavorite, addToast]); // 의존성 배열은 그대로
 
   const submitFavorite = useCallback(async () => {
-    if (!userInfo) {
+    if (!userInfo.id) {
       router.push("/signin");
-      return;
+    } else {
+      await updateFavoriteCount();
     }
-    await updateFavoriteCount();
   }, [userInfo, router, updateFavoriteCount]);
 
   return (
@@ -60,6 +67,7 @@ export default function FavoriteButton({ gatheringId, initialFavorite }: Favorit
           transition={{ duration: 0.3 }}
         />
       </motion.button>
+      <Toast />
     </>
   );
 }

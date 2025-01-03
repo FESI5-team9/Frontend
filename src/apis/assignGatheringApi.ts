@@ -63,25 +63,10 @@ export async function LeaveGathering(id: number) {
 }
 
 // 모임 수정
-export async function editGathering(id: number, body: CreateGathering, image?: File) {
-  const formData = new FormData();
-
-  Object.entries(body).forEach(([key, value]) => {
-    if (key === "keyword" && Array.isArray(value)) {
-      value.forEach(item => formData.append(key, item));
-    } else if (key === "image" && value instanceof File) {
-      formData.append(key, value);
-    } else if (value !== undefined && value !== null) {
-      formData.append(key, value.toString());
-    }
-  });
-  if (image) {
-    formData.append("image", image, image.name);
-  }
-
+export async function editGathering(id: number, body: FormData) {
   const response = await fetchWithMiddleware(`/api/gatherings/${id}`, {
     method: "PUT",
-    body: formData,
+    body,
   });
   const data: GatheringRes = await response.json();
   return data;
