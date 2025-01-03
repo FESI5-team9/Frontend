@@ -1,65 +1,100 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { recruitGathering } from "@/apis/assignGatheringApi";
 import { getUserGathering } from "@/apis/searchGatheringApi";
 import Button from "@/components/Button/Button";
 import useUserStore from "@/store/userStore";
-import { GatheringsRes, GetUserGatheringParticipants } from "@/types/api/gatheringApi";
+import { GatheringsRes } from "@/types/api/gatheringApi";
 import { formatToKoreanTime } from "@/utils/date";
 import { SkeletonUncompleted } from "../components/Skeleton";
 
 export default function MyCreatedGathering() {
-  const [gatheringData, setGatheringData] = useState<GatheringsRes | undefined>(undefined);
+  const [gatheringData, setGatheringData] = useState<GatheringsRes>([]);
   const { id } = useUserStore();
   const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const observerRef = useRef<HTMLDivElement | null>(null);
 
   const handleGatheringStatus = async (gatheringId: number) => {
     try {
       const response = await recruitGathering(gatheringId, "RECRUITMENT_COMPLETED");
       if (response) {
-        setGatheringData(prevData => {
-          if (!prevData) return prevData;
-          return prevData.map(gathering =>
+        setGatheringData(prevData =>
+          prevData.map(gathering =>
             gathering.id === gatheringId
               ? { ...gathering, status: "RECRUITMENT_COMPLETED" }
               : gathering,
-          );
-        });
+          ),
+        );
       } else {
         alert("모임 상태 변경에 실패했습니다.");
       }
     } catch (err) {}
   };
 
-  useEffect(() => {
-    async function fetchGatheringData() {
-      if (id === null) return;
+  const fetchGatheringData = async (currentPage: number) => {
+    const params = {
+      userId: id || undefined,
+      size: 5,
+      page: currentPage,
+      sort: "dateTime",
+      direction: "desc" as const,
+    };
 
-      const params: GetUserGatheringParticipants = {
-        userId: id,
-        size: 10,
-        page: 0,
-        sort: "dateTime",
-        direction: "desc",
-      };
-
-      setIsLoading(true);
-      try {
-        const response = await getUserGathering(params);
-        setGatheringData(response);
-      } catch (error) {
-      } finally {
-        setIsLoading(false);
+    setIsLoading(true);
+    try {
+      const response = await getUserGathering(params);
+      if (response.length > 0) {
+        setGatheringData(prevData => {
+          // 중복 제거 로직: 기존 데이터와 새 데이터의 ID를 기준으로 중복 필터링
+          const newData = response.filter(
+            newItem => !prevData.some(existingItem => existingItem.id === newItem.id),
+          );
+          return [...prevData, ...newData];
+        });
+      } else {
+        setHasMore(false);
       }
+    } catch (error) {
+      setHasMore(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGatheringData(page); // 함수 호출 추가
+  }, [page]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasMore && !isLoading) {
+          setPage(prevPage => prevPage + 1);
+        }
+      },
+      { threshold: 1.0 },
+    );
+
+    const currentObserverRef = observerRef.current;
+
+    if (currentObserverRef) {
+      observer.observe(currentObserverRef);
     }
 
-    fetchGatheringData();
-  }, [id]);
-  if (isLoading) return <SkeletonUncompleted />;
+    return () => {
+      if (currentObserverRef) {
+        observer.unobserve(currentObserverRef);
+      }
+    };
+  }, [hasMore, isLoading]);
 
-  if (!gatheringData) {
+  if (isLoading && gatheringData.length === 0) return <SkeletonUncompleted />;
+
+  if (!gatheringData || gatheringData.length === 0) {
     return <div>아직 만든 모임이 없습니다.</div>;
   }
 
@@ -127,12 +162,14 @@ export default function MyCreatedGathering() {
                 </div>
               </div>
             </div>
+            {/* 구분선 추가 (마지막 요소 제외) */}
             {index !== gatheringData.length - 1 && (
-              <div className="desktop:-[18px] mb-[19px] mt-4 border-[1.6px] border-dashed border-gray-200 tablet:mb-6 tablet:mt-5 desktop:mt-5"></div>
+              <div className="mb-5 mt-5 border-[1.6px] border-dashed border-gray-200"></div>
             )}
           </>
         );
       })}
+      {hasMore && <div ref={observerRef} className="h-10 w-full"></div>}
     </>
   );
 }
