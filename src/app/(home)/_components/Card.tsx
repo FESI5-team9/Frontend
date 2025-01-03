@@ -15,7 +15,10 @@ export default function Card({
   onUpdate: () => void;
 }) {
   return (
-    <div className="border-gray relative flex w-full transform flex-col rounded-2xl border-y-2 bg-white transition-transform duration-200 hover:shadow-xl tablet:h-[156px] tablet:w-full tablet:flex-row">
+    <div
+      className="relative flex w-full transform flex-col rounded-2xl border-y-2 border-gray-200 bg-white transition-transform duration-200 hover:shadow-xl tablet:h-[156px] tablet:w-full tablet:flex-row"
+      data-testid="card"
+    >
       {/* 카드 내용 */}
       <Link prefetch={false} href={`groupDetail/${cardData.id}`} className="relative flex">
         <Image
