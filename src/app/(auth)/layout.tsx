@@ -4,6 +4,16 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import Gnb from "@/components/Gnb";
 
+export const metadata = {
+  title: "로그인 페이지",
+  description: "로그인하고 맛집을 공유해보세요.",
+  openGraph: {
+    title: "로그인 페이지",
+    description: "로그인하고 맛집을 공유해보세요.",
+    url: "https://muckitlist.vercel.app/signin",
+  },
+};
+
 function SignRootLayout({
   children,
 }: Readonly<{

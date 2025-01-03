@@ -1,5 +1,4 @@
 //Base
-
 // requestBase
 export type RequestBase = {
   type?: "CAFE" | "RESTAURANT" | "PUB" | "VEGAN"; // 모임 종류
@@ -79,7 +78,7 @@ Pick<ResponseOption, "host" | "favorite" | "open" | "participants">;
 export type CreateGathering = RequestBase & {
   name?: string;
   dateTime?: string;
-  openParticipantCount?: string;
+  openParticipantCount?: number;
   capacity?: number;
   image?: string;
   address1?: string;
@@ -102,6 +101,7 @@ Pick<ResponseOption, "host">;
 // request
 export type Gatherings = RequestBase &
 PaginationParams & {
+  createdBy?: string; // 모임 생성일
   id?: number[]; // 모임 아이디를 배열로 받음 -> 여러개의 모임 불러오기 가능
   startDate?: string; // 검색기간 시작날
   endDate?: string; // 검색기간 마지막날
@@ -146,8 +146,10 @@ Pick<ResponseOption, "joinedAt" | "isCompleted" | "isReviewed">
 // response
 export type GatheringsFavoriteRes = GatheringsRes;
 
-// 내가 만든 모임 목록 조회
+// 사용자가 생성한 모임 조회
 // requestBase
-export type GetMyGatheringParticipants = PaginationParams;
+export type GetUserGatheringParticipants = PaginationParams & {
+  userId?: number;
+};
 // response
-export type GetMyGatheringParticipantsRes = GatheringsRes;
+export type GetUserGatheringParticipantsRes = GatheringsRes;

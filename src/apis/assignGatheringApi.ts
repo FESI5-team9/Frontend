@@ -32,7 +32,7 @@ export async function createGathering(body: CreateGathering, image?: File) {
   if (image) {
     formData.append("image", image, image.name);
   }
-  const response = await fetch("/api/gatherings", {
+  const response = await fetchWithMiddleware("/api/gatherings", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -67,10 +67,7 @@ export async function editGathering(id: number, body: CreateGathering, image?: F
   const formData = new FormData();
 
   Object.entries(body).forEach(([key, value]) => {
-    if (key === "location" && value) {
-      const mappedRegion = getRegionMapping(value as DistrictName);
-      formData.append(key, mappedRegion);
-    } else if (key === "keyword" && Array.isArray(value)) {
+    if (key === "keyword" && Array.isArray(value)) {
       value.forEach(item => formData.append(key, item));
     } else if (key === "image" && value instanceof File) {
       formData.append(key, value);
@@ -81,11 +78,9 @@ export async function editGathering(id: number, body: CreateGathering, image?: F
   if (image) {
     formData.append("image", image, image.name);
   }
-  const response = await fetch(`/api/gatherings/${id}`, {
+
+  const response = await fetchWithMiddleware(`/api/gatherings/${id}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: formData,
   });
   const data: GatheringRes = await response.json();

@@ -2,6 +2,16 @@ import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query
 import { getReviewStats, getReviews } from "@/apis/reviewsApi";
 import AllReviews from "./_components/AllReviews";
 
+export const metadata = {
+  title: "리뷰 페이지",
+  description: "다른사람들이 체험한 리뷰를 확인해보세요.",
+  openGraph: {
+    title: "리뷰 페이지",
+    description: "다른사람들이 체험한 리뷰를 확인해보세요.",
+    url: "https://muckitlist.vercel.app/reviews",
+  },
+};
+
 async function fetchInitialReviews() {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/reviews?type=RESTAURANT&page=0&size=5&sort=createdAt`,

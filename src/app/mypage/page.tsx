@@ -72,18 +72,15 @@ export default function Mypage() {
         </div>
         <div className="h-[178px] w-full rounded-3xl border-[2px] border-gray-300 bg-white tablet:h-[172px]">
           <div className="relative">
-            {userProfile?.image ? (
-              <span className="absolute left-[24px] top-[56px] flex h-[56px] w-[56px] items-center justify-center overflow-hidden rounded-full outline outline-[2px] outline-gray-300">
-                <Image src={userProfile.image} fill alt="프로필 이미지" className="" />
-              </span>
-            ) : (
-              <span
-                className="absolute left-[24px] top-[54px] flex h-[56px] w-[56px] items-center justify-center overflow-hidden rounded-full"
-                style={{ boxShadow: "0 4px 6px rgba(0, 0, 0, 0.3)" }}
-              >
-                <Image src="/images/lemonProfile.svg" fill alt="기본 프로필 이미지" className="" />
-              </span>
-            )}
+            <span className="absolute left-[24px] top-[57px] flex h-[56px] w-[56px] items-center justify-center overflow-hidden rounded-full bg-white">
+              <Image
+                src={userProfile?.image || "/images/default-profile.svg"}
+                width={56}
+                height={56}
+                alt="프로필 이미지"
+                className=""
+              />
+            </span>
           </div>
           <div className="flex h-[58px] justify-between rounded-t-3xl border-b-[2px] border-b-gray-300 bg-[#FFFACD] px-[25px] py-4 text-base text-gray-900">
             <span className="flex items-center text-lg font-semibold text-gray-900">내 프로필</span>
@@ -153,7 +150,7 @@ export default function Mypage() {
                 src={
                   selectedFile
                     ? URL.createObjectURL(selectedFile)
-                    : userProfile?.image || "/images/lemonProfile.svg"
+                    : userProfile?.image || "/images/default-profile.svg"
                 }
                 width={56}
                 height={56}
