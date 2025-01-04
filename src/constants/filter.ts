@@ -16,8 +16,8 @@ export const SORT_OPTIONS = [
 ];
 
 export const DIRECTION_OPTIONS = [
-  { ko: "최신 순", eng: "desc" },
-  { ko: "오래된 순", eng: "asc" },
+  { ko: "마감 여유", eng: "desc" },
+  { ko: "마감 임박", eng: "asc" },
 ];
 
 export const REVIEW_SORT_OPTIONS = [

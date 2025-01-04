@@ -9,6 +9,7 @@ import Calendar from "@/components/Calendar/Calendar";
 import Kakao from "@/components/Kakaomap/Kakao";
 import Modal from "@/components/Modal";
 import useDateStore from "@/store/dateStore";
+import useToastStore from "@/store/useToastStore";
 import { CreateGatheringSchema } from "@/utils/createGathSchema";
 import {
   CreateGatheringFormData,
@@ -33,6 +34,7 @@ export default function CreateGathering({
   const [keywordValue, setKeywordValue] = useState("");
   const { firstDate } = useDateStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const addToast = useToastStore(state => state.addToast);
 
   const {
     register,
@@ -69,7 +71,7 @@ export default function CreateGathering({
   return (
     <Modal title="모임 만들기" isOpen={isOpen} onClose={() => setIsOpen(false)}>
       <form
-        onSubmit={handleSubmit(data => handleSubmitToServer(data, setIsOpen))}
+        onSubmit={handleSubmit(data => handleSubmitToServer(data, setIsOpen, addToast))}
         className="flex flex-col gap-4 overflow-y-scroll pb-6 font-medium"
       >
         {/* 모임 이름 */}

@@ -152,6 +152,7 @@ export const handleKeywordDelete = (
 export const handleSubmitToServer = async (
   data: CreateGatheringFormData,
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
+  addToast: (toast: { message: string; type: "success" | "error" }) => void,
 ) => {
   const formDataToSend = new FormData();
 
@@ -173,11 +174,14 @@ export const handleSubmitToServer = async (
       body: formDataToSend,
     });
     if (!response.ok) throw new Error("서버 응답 오류!");
-    alert("모임이 성공적으로 생성되었습니다!");
     setIsOpen(false);
+    addToast({ message: "모임이 성공적으로 생성되었습니다!", type: "success" });
   } catch (error) {
     console.error("Error submitting form:", error);
-    alert("오류가 발생했습니다. 다시 시도해주세요.");
+    addToast({
+      message: error instanceof Error ? error.message : "오류가 발생했습니다. 다시 시도해주세요.",
+      type: "error",
+    });
   }
 };
 

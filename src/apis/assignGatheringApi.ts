@@ -39,6 +39,11 @@ export async function createGathering(body: CreateGathering, image?: File) {
     },
     body: formData,
   });
+  if (!response.ok) {
+    // HTTP 상태 코드가 200-299가 아닌 경우 에러 throw
+    const errorData = await response.json();
+    throw new Error(errorData.message || "모임 생성에 실패했습니다.");
+  }
   const data: GatheringRes = await response.json();
   return data;
 }
@@ -48,8 +53,12 @@ export async function joinGathering(id: number) {
   const response = await fetchWithMiddleware(`/api/gatherings/${id}/join`, {
     method: "POST",
   });
+  if (!response.ok) {
+    // HTTP 상태 코드가 200-299가 아닌 경우 에러 throw
+    const errorData = await response.json();
+    throw new Error(errorData.message || "모임 참여에 실패했습니다.");
+  }
   const data = await response.json();
-  alert(data.message);
   return data;
 }
 
