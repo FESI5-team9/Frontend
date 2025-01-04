@@ -74,7 +74,7 @@ export default function Mypage() {
           <div className="relative">
             <span className="absolute left-[24px] top-[57px] flex h-[56px] w-[56px] items-center justify-center overflow-hidden rounded-full bg-white outline outline-gray-300">
               <Image
-                src={userProfile?.image || "/images/default-profile.svg"}
+                src={userProfile?.image || "/images/lemonProfile.svg"}
                 fill
                 alt="프로필 이미지"
                 className=""

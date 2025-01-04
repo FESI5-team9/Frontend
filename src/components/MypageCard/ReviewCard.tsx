@@ -133,7 +133,7 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
                     <div className="flex w-full flex-col gap-4 tablet:flex-row">
                       <div className="relative h-[153px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-3xl tablet:w-[272px]">
                         <Image
-                          src={reviewItem.image}
+                          src={reviewItem.image || "/images/default-gathering.svg"}
                           fill
                           objectFit="cover"
                           alt="모임 이미지"

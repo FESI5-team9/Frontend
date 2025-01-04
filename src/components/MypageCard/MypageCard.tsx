@@ -56,7 +56,12 @@ export default function MypageCard({
           </div>
         )}
         <div className="relative flex h-[153px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-3xl tablet:w-[280px]">
-          <Image src={image} fill objectFit="cover" alt="모임 이미지" />
+          <Image
+            src={image || "/images/default-gathering.svg"}
+            fill
+            objectFit="cover"
+            alt="모임 이미지"
+          />
         </div>
         <div className="flex w-full flex-col">
           <div className="mb-3 flex gap-2">
