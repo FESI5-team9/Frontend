@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
+import { useRouter } from "next/navigation";
 import { UseFormSetValue } from "react-hook-form";
 import fetchWithMiddleware from "@/apis/fetchWithMiddleware";
 
@@ -153,6 +154,7 @@ export const handleSubmitToServer = async (
   data: CreateGatheringFormData,
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
   addToast: (toast: { message: string; type: "success" | "error" }) => void,
+  router: ReturnType<typeof useRouter>,
 ) => {
   const formDataToSend = new FormData();
 
@@ -173,9 +175,16 @@ export const handleSubmitToServer = async (
       method: "POST",
       body: formDataToSend,
     });
+    const responseData = await response.json();
     if (!response.ok) throw new Error("서버 응답 오류!");
     setIsOpen(false);
     addToast({ message: "모임이 성공적으로 생성되었습니다!", type: "success" });
+    // router.push로 이동
+    if (responseData?.id) {
+      router.push(`/groupDetail/${responseData.id}`);
+    } else {
+      throw new Error("서버에서 ID를 반환하지 않았습니다.");
+    }
   } catch (error) {
     console.error("Error submitting form:", error);
     addToast({

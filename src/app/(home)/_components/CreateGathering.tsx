@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import Button from "@/components/Button/Button";
@@ -35,6 +36,7 @@ export default function CreateGathering({
   const { firstDate } = useDateStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const addToast = useToastStore(state => state.addToast);
+  const router = useRouter();
 
   const {
     register,
@@ -71,7 +73,7 @@ export default function CreateGathering({
   return (
     <Modal title="모임 만들기" isOpen={isOpen} onClose={() => setIsOpen(false)}>
       <form
-        onSubmit={handleSubmit(data => handleSubmitToServer(data, setIsOpen, addToast))}
+        onSubmit={handleSubmit(data => handleSubmitToServer(data, setIsOpen, addToast, router))}
         className="flex flex-col gap-4 overflow-y-scroll pb-6 font-medium"
       >
         {/* 모임 이름 */}
