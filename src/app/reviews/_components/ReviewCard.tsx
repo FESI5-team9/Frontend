@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { ReviewsRes } from "@/types/api/reviews";
 import { formatToKoreanTime } from "@/utils/date";
 
@@ -35,18 +36,20 @@ export default function AllReviewCard({ reviews }: { reviews: ReviewsRes }) {
             key={item.id}
             className="flex h-[348px] w-full flex-col gap-6 tablet:mb-6 tablet:h-[153px] tablet:flex-row"
           >
-            <div className="relative flex h-[153px] w-[272px] max-w-[272px] items-center justify-center overflow-hidden rounded-3xl shadow-lg transition-transform duration-300 hover:scale-110">
-              <Image
-                src={
-                  item.gathering.image && typeof item.gathering.image === "string"
-                    ? item.gathering.image
-                    : "/images/default-gathering.svg"
-                }
-                fill
-                alt="이미지"
-                className="object-cover"
-              />
-            </div>
+            <Link href={`/groupDetail/${item.gathering.id}`}>
+              <div className="relative flex h-[153px] w-[272px] max-w-[272px] cursor-pointer items-center justify-center overflow-hidden rounded-3xl shadow-lg transition hover:scale-110">
+                <Image
+                  src={
+                    item.gathering.image && typeof item.gathering.image === "string"
+                      ? item.gathering.image
+                      : "/images/default-gathering.svg"
+                  }
+                  fill
+                  alt="이미지"
+                  className="object-cover"
+                />
+              </div>
+            </Link>
             <div className="flex flex-1 flex-col">
               <div>
                 <Rating score={item.score} />
