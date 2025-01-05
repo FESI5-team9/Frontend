@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { joinGathering } from "@/apis/assignGatheringApi";
+import useToastStore from "@/store/useToastStore";
 import useUserStore from "@/store/userStore";
 
 export default function ButtonJoin({
@@ -15,30 +16,22 @@ export default function ButtonJoin({
   onUpdate: () => void;
 }) {
   const [isParticipation, setIsParticipation] = useState(participation);
-  const [, setToast] = useState(false);
+  const addToast = useToastStore(state => state.addToast);
+
   const { id: userId } = useUserStore(); // 로그인 상태 확인
   const router = useRouter();
 
   async function handleJoinGathering() {
     try {
-      if (!userId) {
-        router.push("/signin");
-        return;
-      }
-      joinGathering(id);
+      const response = await joinGathering(id);
       setIsParticipation(true);
       onUpdate();
-      setToast(true);
+      addToast({ message: response.message, type: "success" });
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "알 수 없는 에러가 발생했습니다.";
-
-      if (errorMessage === "이미 참여한 모임입니다.") {
-        alert("이미 참여가 된 모임입니다.");
-      } else {
-        alert(errorMessage || "참여에 실패했습니다. 다시 시도해주세요.");
-      }
       console.error("참여 실패:", errorMessage);
+      addToast({ message: errorMessage, type: "error" });
     }
   }
 
