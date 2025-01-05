@@ -1,18 +1,12 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { deleteFavoriteGathering, getFavoriteGathering } from "@/apis/favoriteGatheringApi";
-import Toast from "@/components/Toast";
 import useToastStore from "@/store/useToastStore";
-import useUserStore from "@/store/userStore";
 
 export default function FavoriteButton({ gatheringId, initialFavorite }: FavoriteButtonProps) {
   const [isFavorite, setIsFavorite] = useState<boolean>(initialFavorite);
-
-  const router = useRouter();
-  const userInfo = useUserStore();
   const addToast = useToastStore(state => state.addToast);
 
   const updateFavoriteCount = useCallback(async () => {
@@ -20,30 +14,21 @@ export default function FavoriteButton({ gatheringId, initialFavorite }: Favorit
       const response = await (isFavorite
         ? deleteFavoriteGathering(gatheringId)
         : getFavoriteGathering(gatheringId));
-
-      if (response.code) {
-        addToast({ message: response.message, type: "error" });
-        return;
-      } else {
+      if (response.code !== "HOST_CANNOT_FAVORITE") {
         setIsFavorite(prev => !prev);
+        addToast({ message: response.message, type: "success" });
+      } else {
+        addToast({ message: response.message, type: "error" });
       }
     } catch (error) {
       console.error("업데이트 실패", error);
     }
   }, [gatheringId, isFavorite, addToast]); // 의존성 배열은 그대로
 
-  const submitFavorite = useCallback(async () => {
-    if (!userInfo.id) {
-      router.push("/signin");
-    } else {
-      await updateFavoriteCount();
-    }
-  }, [userInfo, router, updateFavoriteCount]);
-
   return (
     <>
       <motion.button
-        onClick={submitFavorite}
+        onClick={updateFavoriteCount}
         className={`relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full outline-none ${isFavorite || "border-2 border-[#E5E7EB] bg-white"}`}
         initial={{ scale: 1 }}
         whileTap={{ scale: 0.9 }} // 클릭 시 약간의 축소 효과
@@ -67,7 +52,6 @@ export default function FavoriteButton({ gatheringId, initialFavorite }: Favorit
           transition={{ duration: 0.3 }}
         />
       </motion.button>
-      <Toast />
     </>
   );
 }

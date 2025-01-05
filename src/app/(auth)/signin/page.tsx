@@ -32,7 +32,9 @@ function LoginPage() {
     const response = await signin(data);
 
     if (response.ok) {
-      router.push("/");
+      const redirectTo = new URLSearchParams(window.location.search).get("redirect") || "/";
+      router.push(redirectTo);
+      router.refresh();
     } else {
       setIsPopupOpen("login-failed");
     }
