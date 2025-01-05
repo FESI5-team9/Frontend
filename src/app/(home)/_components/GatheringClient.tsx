@@ -4,16 +4,19 @@ import { useEffect, useMemo, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { getGatherings } from "@/apis/searchGatheringApi";
+import Toast from "@/components/Toast";
 import Card from "@/app/(home)/_components/Card";
 import CardSkeleton from "@/app/(home)/_components/Skeleton/SKCard";
+import useUserStore from "@/store/userStore";
 import { GetGathering } from "@/types/components/card";
+import SKCardList from "./Skeleton/SKCardList";
 
 type GatheringFilters = Record<string, string | number | null>;
 
 export default function GatheringClient() {
   const queryClient = useQueryClient();
-
   const searchParams = useSearchParams();
+  const userId = useUserStore(state => state.id);
 
   // 필터 메모이제이션
   const filters = useMemo(() => {
@@ -34,13 +37,12 @@ export default function GatheringClient() {
         f[key] = value;
       }
     });
-    f.size = 4; // 페이지 크기
     return f;
   }, [searchParams]);
 
   // React Query의 useInfiniteQuery를 사용한 페이지네이션 및 캐싱
   const { data, fetchNextPage, hasNextPage, isFetching, isLoading } = useInfiniteQuery({
-    queryKey: ["gatherings", filters], // queryKey 통일
+    queryKey: ["gatherings", filters, userId], // queryKey 통일
     queryFn: async ({ pageParam = 0 }) => {
       const result = await getGatherings({ ...filters, page: pageParam });
 
@@ -53,9 +55,15 @@ export default function GatheringClient() {
     initialPageParam: 0, // 첫 페이지 초기값
     getNextPageParam: lastPage => lastPage.nextPage, // 다음 페이지 설정
     refetchOnMount: "always",
-    staleTime: 0,
+    staleTime: 5 * 60 * 1000, // 캐시 만료 시간
     refetchOnWindowFocus: true, // 윈도우 포커스 시 새로고침
   });
+
+  useEffect(() => {
+    if (userId) {
+      queryClient.invalidateQueries({ queryKey: ["gatherings"] });
+    }
+  }, [userId, queryClient]);
 
   // IntersectionObserver로 무한 스크롤 구현
   const observerRef = useRef<HTMLDivElement | null>(null);
@@ -74,7 +82,7 @@ export default function GatheringClient() {
   }, [fetchNextPage, hasNextPage, isFetching]);
 
   const handleUpdate = () => {
-    queryClient.refetchQueries({ queryKey: ["favoriteGathering"] });
+    queryClient.refetchQueries({ queryKey: ["gatherings"] });
   };
 
   // 데이터 병합 및 중복 제거
@@ -85,8 +93,8 @@ export default function GatheringClient() {
   // 데이터 없을 때 화면 표시
   if (isLoading) {
     return (
-      <div className="flex h-[60vh] flex-col items-center justify-center text-gray-400">
-        <p>로딩 중...</p>
+      <div className="gathering-list my-6 flex flex-col gap-3">
+        <SKCardList />
       </div>
     );
   }
@@ -107,7 +115,7 @@ export default function GatheringClient() {
       ))}
       {isFetching &&
         Array.from({ length: 4 }).map((_, index) => <CardSkeleton key={`skeleton-${index}`} />)}
-
+      <Toast />
       <div ref={observerRef} className="h-10 w-full bg-transparent"></div>
     </div>
   );
