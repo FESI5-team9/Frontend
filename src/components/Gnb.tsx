@@ -67,29 +67,19 @@ export default function Gnb() {
           </button>
           {isMenuOpen && (
             // 드롭다운 시안이 나오면 디자인 수정(현재 임시)
-            <div className="absolute -bottom-[100px] flex h-[100px] w-[60px] flex-col items-center justify-center gap-[10px] bg-yellow-400">
-              <Link
-                href={"/"}
-                className="hover:text-white"
-                aria-label="모임 찾기"
-                onClick={handleMenuClose}
-              >
+            <div className="absolute -bottom-[100px] flex h-[100px] w-[110px] flex-col items-start justify-center gap-[10px] rounded-2xl bg-white pl-3 text-sm">
+              <Link href={"/"} className="" aria-label="모임 찾기" onClick={handleMenuClose}>
                 모임 찾기
               </Link>
               <Link
                 href={"/myFavorite/gathering"}
-                className="hover:text-white"
+                className=""
                 aria-label="찜한 모임"
                 onClick={handleMenuClose}
               >
                 찜한 모임
               </Link>
-              <Link
-                href={"/reviews"}
-                className="hover:text-white"
-                aria-label="모든 리뷰"
-                onClick={handleMenuClose}
-              >
+              <Link href={"/reviews"} className="" aria-label="모든 리뷰" onClick={handleMenuClose}>
                 모든 리뷰
               </Link>
             </div>
