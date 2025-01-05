@@ -15,8 +15,8 @@ export default async function fetchWithMiddleware(url: string, options: RequestI
     });
 
     if (!refreshResponse.ok) {
-      // refresh 실패시 로그인 페이지로
-      window.location.href = "/";
+      // refresh 실패시 로그인 페이지로 이동,리다이렉트 페이지 기억
+      window.location.href = `/signin?redirect=${encodeURIComponent(window.location.pathname)}`;
       throw new Error("Token refresh failed");
     }
 

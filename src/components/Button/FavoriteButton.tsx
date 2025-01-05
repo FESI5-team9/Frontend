@@ -1,16 +1,13 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { deleteFavoriteGathering, getFavoriteGathering } from "@/apis/favoriteGatheringApi";
-import useUserStore from "@/store/userStore";
+import useToastStore from "@/store/useToastStore";
 
 export default function FavoriteButton({ gatheringId, initialFavorite }: FavoriteButtonProps) {
   const [isFavorite, setIsFavorite] = useState<boolean>(initialFavorite);
-
-  const router = useRouter();
-  const userInfo = useUserStore();
+  const addToast = useToastStore(state => state.addToast);
 
   const updateFavoriteCount = useCallback(async () => {
     try {
@@ -19,24 +16,19 @@ export default function FavoriteButton({ gatheringId, initialFavorite }: Favorit
         : getFavoriteGathering(gatheringId));
       if (response.code !== "HOST_CANNOT_FAVORITE") {
         setIsFavorite(prev => !prev);
+        addToast({ message: response.message, type: "success" });
+      } else {
+        addToast({ message: response.message, type: "error" });
       }
     } catch (error) {
       console.error("업데이트 실패", error);
     }
-  }, [gatheringId, isFavorite]); // 의존성 배열은 그대로
-
-  const submitFavorite = useCallback(async () => {
-    if (!userInfo) {
-      router.push("/signin");
-      return;
-    }
-    await updateFavoriteCount();
-  }, [userInfo, router, updateFavoriteCount]);
+  }, [gatheringId, isFavorite, addToast]); // 의존성 배열은 그대로
 
   return (
     <>
       <motion.button
-        onClick={submitFavorite}
+        onClick={updateFavoriteCount}
         className={`relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full outline-none ${isFavorite || "border-2 border-[#E5E7EB] bg-white"}`}
         initial={{ scale: 1 }}
         whileTap={{ scale: 0.9 }} // 클릭 시 약간의 축소 효과

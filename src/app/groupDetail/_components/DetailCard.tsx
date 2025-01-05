@@ -34,7 +34,7 @@ export default function DetailCard({ gathering }: GatheringProp) {
       <div className="flex flex-col justify-between border-b-2 border-dashed border-[#E5E7EB]">
         <div className="flex w-full items-start justify-between">
           <div className="flex max-w-[360px] flex-col gap-1">
-            <p className="text-lg font-semibold">{gathering.name}</p>
+            <h1 className="text-lg font-semibold">{gathering.name}</h1>
             <p className="text-sm text-[#3C3C3C]">{gathering.address2}</p>
             <div className="mt-1 flex gap-2">
               <Chip

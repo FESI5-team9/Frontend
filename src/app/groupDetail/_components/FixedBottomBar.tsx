@@ -11,12 +11,14 @@ type FixedBottomBarProps = {
   data: GatheringDetailRes;
   gatheringId: number;
   toggleEditModal: () => void;
+  onShowToast: (message: string, type: "success" | "error" | "notification") => void;
 };
 
 export default function FixedBottomBar({
   data,
   gatheringId,
   toggleEditModal,
+  onShowToast,
 }: FixedBottomBarProps) {
   const [status, setStatus] = useState<"join" | "cancelJoin" | "closed" | "host" | "canceled">(
     "join",
@@ -39,43 +41,65 @@ export default function FixedBottomBar({
     } else if (data.status === "RECRUITING") {
       setStatus(checkParticipationStatus(data.participants) ? "cancelJoin" : "join");
     } else setStatus("closed");
-  }, [checkParticipationStatus, data, userInfo]);
+  }, [checkParticipationStatus, data, userInfo.id]);
 
   useEffect(() => {
     determineStatus();
-  }, [data, determineStatus]);
+  }, [data, determineStatus, userInfo.id]);
+
+  function handleApiError<T extends object>(
+    response: T | { code?: string; message?: string },
+  ): boolean {
+    if ("code" in response && response.code) {
+      console.error("HTTP Error:", response.message);
+      onShowToast(response.message as string, "error");
+      return true;
+    }
+    return false;
+  }
 
   const handleJoin = async () => {
     if (!userInfo.id) return router.push("/signin");
 
     try {
-      await joinGathering(gatheringId);
-      alert("모임에 참여되었습니다.");
+      const response = await joinGathering(gatheringId);
+      if (handleApiError(response)) return;
+      onShowToast("모임에 참여되었습니다.", "success");
       setStatus("cancelJoin");
     } catch (err) {
       console.error("Failed to join gathering:", err);
+      onShowToast("예기치 않은 오류가 발생했습니다. 다시 시도해주시기 바랍니다.", "error");
     }
   };
 
   const handleLeave = async () => {
+    if (!userInfo.id) return router.push("/signin");
+
     try {
-      await LeaveGathering(gatheringId);
-      alert("모임 참여가 취소되었습니다.");
+      const response = await LeaveGathering(gatheringId);
+      if (handleApiError(response)) return;
+      onShowToast("모임 참여가 취소되었습니다.", "success");
       setStatus("join");
     } catch (err) {
       console.error("Failed to leave gathering:", err);
+      onShowToast("예기치 않은 오류가 발생했습니다. 다시 시도해주시기 바랍니다.", "error");
     }
   };
 
   const handleCancel = async () => {
+    if (!userInfo.id) return router.push("/signin");
+
     try {
       if (confirm("모임을 취소하시겠습니까?")) {
-        await CancelGathering(gatheringId);
-        alert("모임 취소가 완료되었습니다.");
+        const response = await CancelGathering(gatheringId);
+        if (handleApiError(response)) return;
+        onShowToast("모임이 취소되었습니다.", "success");
         setStatus("canceled");
+        router.replace("/");
       }
     } catch (err) {
       console.error("Failed to cancel gathering:", err);
+      onShowToast("예기치 않은 오류가 발생했습니다. 다시 시도해주시기 바랍니다.", "error");
     }
   };
 
