@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-  const status = request.nextUrl.searchParams.get("status");
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+  const body = await request.json();
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/gatherings/${params.id}/recruit?status=${status}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/gatherings/${params.id}/recruit`,
     {
-      method: "GET",
+      method: "POST",
       headers: {
         Authorization: `Bearer ${request.cookies.get("access-token")?.value}`,
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify(body),
     },
   );
 
