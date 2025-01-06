@@ -86,7 +86,7 @@ export default function DetailCard({ gathering }: GatheringProp) {
                       key={index}
                       className="-ml-3 h-[29px] w-[29px] cursor-pointer rounded-full bg-cover bg-center"
                       style={{
-                        backgroundImage: `url(${person.image ? person.image : "/images/profile.svg"})`,
+                        backgroundImage: `url(${person.image || "/images/profile.svg"})`,
                       }}
                     ></div>
                   ),
@@ -109,7 +109,7 @@ export default function DetailCard({ gathering }: GatheringProp) {
                       <div
                         className="h-[24px] w-[24px] rounded-full bg-cover bg-center"
                         style={{
-                          backgroundImage: `url(${person.image ? person.image : "/images/profile.svg"})`,
+                          backgroundImage: `url(${person.image || "/images/profile.svg"})`,
                         }}
                       ></div>
                       <p className="text-sm font-semibold"> {person.nickname}</p>

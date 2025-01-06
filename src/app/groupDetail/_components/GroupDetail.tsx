@@ -75,14 +75,12 @@ function GroupDetail({ paramsId }: { paramsId: number }) {
               <p className="text-sm font-medium">{detail.description}</p>
               <div className="flex items-center gap-1 text-xs font-medium">
                 <div className="flex items-center gap-1">
-                  <div className="h-6 w-6 rounded-full">
-                    <Image
-                      src={detail.user.image || "/images/profile.svg"}
-                      alt="작성자"
-                      width={24}
-                      height={24}
-                    />
-                  </div>
+                  <div
+                    className="h-6 w-6 rounded-full bg-cover bg-center"
+                    style={{
+                      backgroundImage: `url(${detail.user.image || "/images/profile.svg"})`,
+                    }}
+                  ></div>
                   <span>{detail.user.nickname}</span>
                 </div>
                 <span className="text-[#3C3C3C]">|</span>
