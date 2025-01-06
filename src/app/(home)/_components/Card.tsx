@@ -25,7 +25,7 @@ export default function Card({
           src={
             cardData.image && cardData.image.trim() !== ""
               ? cardData.image
-              : "/images/mainPage/ex-images/muckit.svg"
+              : "/images/default-gathering.svg"
           }
           alt="food"
           width={272}

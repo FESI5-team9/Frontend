@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import fetchWithMiddleware from "@/apis/fetchWithMiddleware";
+import { editGathering } from "@/apis/assignGatheringApi";
 import Button from "@/components/Button/Button";
 import Modal from "@/components/Modal";
 import { Input } from "@/app/(home)/_components/Input";
 import { categoryList } from "@/constants/categoryList";
+import useUserStore from "@/store/userStore";
 import { GatheringDetailRes } from "@/types/api/gatheringApi";
 import { formatToKoreanTime } from "@/utils/date";
 import {
@@ -17,6 +19,13 @@ import {
   handleKeywordDelete,
 } from "@/utils/editFormHandler";
 import { EditGatheringSchema } from "@/utils/editGathSchema";
+
+type EditGatheringProps = {
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  initialData: GatheringDetailRes;
+  onShowToast: (message: string, type: "success" | "error" | "notification") => void;
+};
 
 const ReadOnlyInput = ({ value }: { value: string | number }) => {
   return (
@@ -31,14 +40,9 @@ const ReadOnlyInput = ({ value }: { value: string | number }) => {
 export default function EditGathering({
   isOpen,
   setIsOpen,
-  setIsEditted,
   initialData,
-}: {
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsEditted: React.Dispatch<React.SetStateAction<boolean>>;
-  initialData: GatheringDetailRes;
-}) {
+  onShowToast,
+}: EditGatheringProps) {
   const [keywordValue, setKeywordValue] = useState("");
 
   const {
@@ -52,6 +56,8 @@ export default function EditGathering({
     openParticipantCount,
     description,
   } = initialData;
+
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -71,60 +77,96 @@ export default function EditGathering({
   });
 
   const keywords = watch("keyword") || [];
+  const userInfo = useUserStore();
 
-  const testSubmitEdit = async (data: EditGatheringFormData) => {
+  useEffect(() => {
+    if (!userInfo.id) return setIsOpen(false);
+  }, [userInfo.id, setIsOpen]);
+
+  const createFormData = (data: EditGatheringFormData): FormData => {
     const formData = new FormData();
 
     Object.entries(data).forEach(([key, value]) => {
       if (value === initialData[key as keyof GatheringDetailRes]) return;
 
-      if (key === "image") {
-        if (value instanceof File) {
-          formData.append(key, value);
-        } else {
+      switch (key) {
+        case "image":
           const emptyImageFile = new File([""], "empty.png", { type: "image/png" });
-          formData.append(key, emptyImageFile);
-        }
-      } else if (key === "keyword" && Array.isArray(value)) {
-        const areArraysEqual =
-          value.length === initialData.keyword.length &&
-          value.every((item, index) => item === initialData.keyword[index]);
-        if (areArraysEqual) return;
+          formData.append(key, value instanceof File ? value : emptyImageFile);
+          break;
 
-        formData.append(key, value.join(",")); // 콤마로 구분된 문자열로 변환
-      } else if (value !== null && value !== undefined) {
-        formData.append(key, Array.isArray(value) ? JSON.stringify(value) : String(value));
+        case "keyword":
+          const areArraysEqual =
+            value.length === initialData.keyword.length &&
+            value.every((item: string, index: number) => item === initialData.keyword[index]);
+
+          if (Array.isArray(value) && !areArraysEqual) {
+            formData.append(key, value.join(",")); // 콤마로 구분된 문자열 추가
+          }
+
+          break;
+
+        default:
+          if (value !== null && value !== undefined) {
+            formData.append(key, Array.isArray(value) ? JSON.stringify(value) : String(value));
+          }
       }
     });
 
-    // FormData가 비어 있는지 확인
+    return formData;
+  };
+
+  const handleSubmitEdit = async (data: EditGatheringFormData) => {
+    if (!userInfo.id) return setIsOpen(false);
+
+    const formData = createFormData(data);
+
     if (!formData.keys().next().value) {
-      alert("변경된 내용이 없습니다.");
+      onShowToast("변경된 내용이 없습니다.", "error");
       return;
     }
 
-    try {
-      const response = await fetchWithMiddleware(`/api/gatherings/${initialData.id}`, {
-        method: "PUT",
-        body: formData,
-      });
-      if (!response.ok) {
-        console.error("HTTP Error:", response.status, response.statusText);
-        return alert("예기치 않은 오류가 발생했습니다. 다시 시도해주시기 바랍니다.");
+    const isImageModified = formData.has("image");
+
+    function handleApiError<T extends object>(
+      response: T | { code?: string; message?: string },
+    ): boolean {
+      if ("code" in response && response.code) {
+        console.error("HTTP Error:", response.message);
+        onShowToast(response.message as string, "error");
+        return true;
       }
-      alert("모임이 수정되었습니다.");
+      return false;
+    }
+
+    try {
+      const response = await editGathering(initialData.id, formData);
+      if (handleApiError(response)) return;
+
+      if (isImageModified) {
+        await queryClient.invalidateQueries({ queryKey: ["gatheringDetail"] });
+      } else {
+        queryClient.setQueryData(
+          ["gatheringDetail", initialData.id],
+          (oldData: GatheringDetailRes) => ({
+            ...oldData,
+            ...data,
+          }),
+        );
+      }
+
+      onShowToast("모임이 수정되었습니다.", "success");
       setIsOpen(false);
-      setIsEditted(true);
     } catch (error) {
       console.error("error", error);
-      alert("예기치 않은 오류가 발생했습니다. 다시 시도해주시기 바랍니다.");
+      onShowToast("예기치 않은 오류가 발생했습니다. 다시 시도해주시기 바랍니다.", "error");
     }
   };
 
   return (
-    <Modal title="모임 만들기" isOpen={isOpen} onClose={() => setIsOpen(false)}>
+    <Modal title="모임 수정" isOpen={isOpen} onClose={() => setIsOpen(false)}>
       <form
-        onSubmit={handleSubmit(testSubmitEdit)}
+        onSubmit={handleSubmit(handleSubmitEdit)}
         className="flex flex-col gap-4 overflow-y-scroll pb-6 font-medium"
       >
         {/* 모임 이름 */}
@@ -240,14 +282,14 @@ export default function EditGathering({
 
         {/* 키워드 */}
         <div className="flex flex-col gap-1 pb-4 font-medium">
-          <div className="flex flex-row items-center gap-2">
+          <div className="mb-2 flex flex-row flex-wrap items-center gap-2">
             <p>관련 해시태그</p>
             {/* 키워드 리스트 */}
-            <div className="flex h-[30px] flex-row items-center gap-1">
+            <div className="flex flex-row flex-wrap items-center gap-1">
               {keywords.map((word, index) => (
                 <div
                   key={index}
-                  className="text- group relative flex items-center rounded-xl border bg-yellow-200 px-2 py-1"
+                  className="group relative flex items-center rounded-xl border bg-yellow-200 px-2 py-1"
                 >
                   {word}
                   {/* X표시: 기본 hidden, 그룹 호버 시 나타남 */}

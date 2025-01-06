@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { ReviewsRes } from "@/types/api/reviews";
 import { formatToKoreanTime } from "@/utils/date";
 
@@ -35,18 +36,20 @@ export default function AllReviewCard({ reviews }: { reviews: ReviewsRes }) {
             key={item.id}
             className="flex h-[348px] w-full flex-col gap-6 tablet:mb-6 tablet:h-[153px] tablet:flex-row"
           >
-            <div className="relative flex h-[153px] w-[272px] max-w-[272px] items-center justify-center overflow-hidden rounded-3xl">
-              <Image
-                src={
-                  typeof item.gathering.image === "string"
-                    ? item.gathering.image
-                    : "/images/image.png"
-                }
-                fill
-                alt="이미지"
-                className="object-cover"
-              />
-            </div>
+            <Link href={`/groupDetail/${item.gathering.id}`}>
+              <div className="relative flex h-[153px] w-[272px] max-w-[272px] cursor-pointer items-center justify-center overflow-hidden rounded-3xl shadow-lg transition hover:scale-110">
+                <Image
+                  src={
+                    item.gathering.image && typeof item.gathering.image === "string"
+                      ? item.gathering.image
+                      : "/images/default-gathering.svg"
+                  }
+                  fill
+                  alt="이미지"
+                  className="object-cover"
+                />
+              </div>
+            </Link>
             <div className="flex flex-1 flex-col">
               <div>
                 <Rating score={item.score} />
@@ -58,12 +61,8 @@ export default function AllReviewCard({ reviews }: { reviews: ReviewsRes }) {
                 {`${item.gathering.name} · ${item.gathering.location}`}
               </span>
               <div className="mt-2 flex items-center">
-                <div className="relative mr-2 h-6 w-6 overflow-hidden rounded-full">
-                  <Image
-                    src={item.user.image || "/images/default-profile.svg"}
-                    fill
-                    alt="프로필 이미지"
-                  />
+                <div className="relative mr-2 h-6 w-6 overflow-hidden rounded-full shadow-lg">
+                  <Image src={item.user.image || "/images/profile.svg"} fill alt="프로필 이미지" />
                 </div>
                 <span className="inline-block text-xs text-gray-700">{item.user.nickname}</span>
                 <span className="ml-2 mr-3 inline-block">|</span>

@@ -34,7 +34,7 @@ export default function DetailCard({ gathering }: GatheringProp) {
       <div className="flex flex-col justify-between border-b-2 border-dashed border-[#E5E7EB]">
         <div className="flex w-full items-start justify-between">
           <div className="flex max-w-[360px] flex-col gap-1">
-            <p className="text-lg font-semibold">{gathering.name}</p>
+            <h1 className="text-lg font-semibold">{gathering.name}</h1>
             <p className="text-sm text-[#3C3C3C]">{gathering.address2}</p>
             <div className="mt-1 flex gap-2">
               <Chip
@@ -86,7 +86,7 @@ export default function DetailCard({ gathering }: GatheringProp) {
                       key={index}
                       className="-ml-3 h-[29px] w-[29px] cursor-pointer rounded-full bg-cover bg-center"
                       style={{
-                        backgroundImage: `url(${person.image ? person.image : "/images/profile.svg"})`,
+                        backgroundImage: `url(${person.image || "/images/profile.svg"})`,
                       }}
                     ></div>
                   ),
@@ -109,7 +109,7 @@ export default function DetailCard({ gathering }: GatheringProp) {
                       <div
                         className="h-[24px] w-[24px] rounded-full bg-cover bg-center"
                         style={{
-                          backgroundImage: `url(${person.image ? person.image : "/images/profile.svg"})`,
+                          backgroundImage: `url(${person.image || "/images/profile.svg"})`,
                         }}
                       ></div>
                       <p className="text-sm font-semibold"> {person.nickname}</p>

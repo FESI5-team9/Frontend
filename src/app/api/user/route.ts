@@ -26,7 +26,7 @@ export async function PUT(request: NextRequest) {
   const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/user`, {
     method: "PUT",
     headers: {
-      "Content-Type": "application/json",
+      accept: "application/json",
       ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
     },
     body: formData,

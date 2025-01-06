@@ -75,20 +75,18 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
 
         {reviews && reviews.length > 0 ? (
           <div className="mt-4">
-            {isRatingLoading ? (
-              <div className="border-y border-[#E5E7EB]">
+            <div className="mb-4 border-y border-[#E5E7EB]">
+              {isRatingLoading ? (
                 <ReviewRatingSkeleton />
-              </div>
-            ) : (
-              ratingData && (
-                <div className="border-y border-[#E5E7EB]">
+              ) : (
+                ratingData && (
                   <ReviewRatingComponent
                     ratingData={ratingData[0]}
                     totalReviews={totalReviews || 0}
                   />
-                </div>
-              )
-            )}
+                )
+              )}
+            </div>
             <div className="flex flex-col gap-[10px]">
               {reviews.map(review => (
                 <div key={review.id} className="border-b-2 border-dashed border-[#F3F4F6] pb-4">
@@ -113,14 +111,12 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
                     <p className="text-sm font-medium">{review.comment}</p>
                     <div className="flex items-center gap-1 text-xs font-medium">
                       <div className="flex items-center gap-1">
-                        <div className="h-6 w-6 rounded-full">
-                          <Image
-                            src={review.user.image || "/images/profile.svg"}
-                            alt="작성자"
-                            width={24}
-                            height={24}
-                          />
-                        </div>
+                        <div
+                          className="h-6 w-6 rounded-full bg-cover bg-center"
+                          style={{
+                            backgroundImage: `url(${review.user.image || "/images/profile.svg"})`,
+                          }}
+                        ></div>
                         <span className="text-[#3d3d3d]">{review.user.nickname}</span>
                       </div>
                       <span className="text-[#3C3C3C]">|</span>
@@ -133,7 +129,7 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
                 </div>
               ))}
             </div>
-            <div className="mt-5 flex w-full items-center justify-center gap-2">
+            <div className="mt-5 flex w-full items-center justify-center gap-4">
               <button
                 className="flex h-6 w-6 items-center justify-center"
                 type="button"
@@ -142,7 +138,7 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
                 <Image src="/icons/chevron_left.svg" width={22} height={22} alt="이전" />
               </button>
               <div className="flex items-center justify-between gap-3">
-                <p>{page + 1}</p>
+                <p className="font-semibold">{page + 1}</p>
                 <p className="text-[#9CA3AF]">/</p>
                 <p className="text-[#9CA3AF]">{isRatingLoading || totalPages}</p>
               </div>
