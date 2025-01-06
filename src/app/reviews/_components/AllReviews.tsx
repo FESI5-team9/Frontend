@@ -91,10 +91,10 @@ function AllReviews({ initialData }: AllReviewsProps) {
     <>
       <div className="mb-1 flex flex-row items-center gap-4 px-2 tablet:px-0">
         <Image
-          src="/images/mainPage/head.svg"
+          src="/images/lemon_logo.png"
           width={72}
           height={72}
-          className="h-auto w-auto"
+          className="h-[72px] w-[72px] rounded-full bg-[#FFFACD]"
           alt="head"
           priority
         />
