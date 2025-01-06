@@ -160,7 +160,7 @@ export default function FixedBottomBar({
 
         {status === "closed" && (
           <Button className="h-11 w-[115px] bg-[#9CA3AF] text-white tablet:grow-0" disabled>
-            참여 마감
+            마감 완료
           </Button>
         )}
 
