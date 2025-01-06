@@ -156,7 +156,7 @@ export default function Gnb() {
                 // 비로그인 상태면 로그인 링크
                 <Link
                   href={"/signin"}
-                  className="text-sm font-semibold hover:text-white tablet:text-base"
+                  className="whitespace-nowrap text-sm font-semibold hover:text-white tablet:text-base"
                   aria-label="로그인"
                 >
                   로그인
