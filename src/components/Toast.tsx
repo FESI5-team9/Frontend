@@ -13,17 +13,17 @@ function Toast() {
           key={toast.id}
           className={`rounded-lg px-4 py-2 text-sm font-medium shadow-lg ${
             toast.type === "success"
-              ? "bg-yellow-primary"
+              ? "bg-yellow-primary text-black"
               : toast.type === "error"
-                ? "bg-red-400"
-                : "bg-blue-400"
-          } text-white`}
+                ? "bg-red-400 text-white"
+                : "bg-blue-400 text-white"
+          }`}
           role="alert"
         >
           <div className="flex items-center justify-between space-x-2">
             <span className="t">{toast.message}</span>
             <button
-              className="ml-2 text-white hover:text-gray-200"
+              className={`ml-2 hover:text-gray-200 ${toast.type === "success" ? "text-black" : "text-white"}`}
               onClick={() => removeToast(toast.id)}
             >
               ✕
