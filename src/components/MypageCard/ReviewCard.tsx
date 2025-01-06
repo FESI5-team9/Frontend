@@ -6,9 +6,11 @@ import { addReviews } from "@/apis/reviewsApi";
 import Button from "@/components/Button/Button";
 import Chip from "@/components/Chips";
 import Modal from "@/components/Modal";
+import Toast from "@/components/Toast";
 import Rating from "@/app/mypage/components/Rating";
 import SelectRating from "@/app/mypage/components/SelectRating";
 import { SkeletonCompleted, SkeletonUncompleted } from "@/app/mypage/components/Skeleton";
+import useToastStore from "@/store/useToastStore";
 import { AllReviewCardProps, GetMyJoinedGatheringWithReview } from "@/types/components/card";
 import { formatToKoreanTime } from "@/utils/date";
 
@@ -19,7 +21,8 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
   const [selectedReview, setSelectedReview] = useState<GetMyJoinedGatheringWithReview | null>(null);
   const [reviewRating, setReviewRating] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [, forceUpdate] = useReducer(x => x + 1, 0); // 리뷰 카드 refactor 시 사용 예정
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
+  const addToast = useToastStore(state => state.addToast);
 
   const handleOpenModal = (reviewId: GetMyJoinedGatheringWithReview) => {
     setSelectedReview(reviewId);
@@ -38,12 +41,18 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
   // 리뷰 등록
   const handleSubmit = async () => {
     if (!reviewRating) {
-      alert("별점을 선택해주세요.");
+      addToast({
+        message: "점수를 선택해주세요!",
+        type: "notification",
+      });
       return;
     }
 
     if (!reviewText.trim()) {
-      alert("리뷰 내용을 입력해주세요.");
+      addToast({
+        message: "소감을 작성해주세요!",
+        type: "notification",
+      });
       return;
     }
 
@@ -55,11 +64,17 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
       };
 
       await addReviews(body);
-      alert("리뷰가 성공적으로 등록되었습니다!");
+      addToast({
+        message: "리뷰가 작성되었습니다.",
+        type: "success",
+      });
       handleCloseModal();
-      forceUpdate(); // 리뷰 카드 refactor 시 사용
+      forceUpdate();
     } catch (error) {
-      alert("리뷰 등록 중 오류가 발생했습니다.");
+      addToast({
+        message: "리뷰 작성에 실패했습니다. 다시 작성해 주세요.",
+        type: "error",
+      });
     }
   };
 
@@ -118,7 +133,7 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
                     <div className="flex w-full flex-col gap-4 tablet:flex-row">
                       <div className="relative h-[153px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-3xl tablet:w-[272px]">
                         <Image
-                          src={reviewItem.image}
+                          src={reviewItem.image || "/images/default-gathering.svg"}
                           fill
                           objectFit="cover"
                           alt="모임 이미지"
@@ -257,7 +272,7 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
             <div className="flex flex-col gap-3">
               <h3 className="text-gray-900">경험에 대해 남겨주세요.</h3>
               <textarea
-                className="w-full rounded-lg bg-gray-50 p-2"
+                className="w-full rounded-lg bg-gray-50 p-2 focus:outline focus:outline-yellow-primary"
                 rows={4}
                 placeholder="남겨주신 리뷰는 프로그램 운영 및 다른 회원 분들께 큰 도움이 됩니다."
                 value={reviewText}
@@ -286,6 +301,7 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
           </div>
         </Modal>
       </div>
+      <Toast />
     </>
   );
 }

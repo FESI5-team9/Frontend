@@ -5,6 +5,8 @@ import Image from "next/image";
 import { recruitGathering } from "@/apis/assignGatheringApi";
 import { getUserGathering } from "@/apis/searchGatheringApi";
 import Button from "@/components/Button/Button";
+import Toast from "@/components/Toast";
+import useToastStore from "@/store/useToastStore";
 import useUserStore from "@/store/userStore";
 import { GatheringsRes } from "@/types/api/gatheringApi";
 import { formatToKoreanTime } from "@/utils/date";
@@ -17,6 +19,7 @@ export default function MyCreatedGathering() {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const observerRef = useRef<HTMLDivElement | null>(null);
+  const addToast = useToastStore(state => state.addToast);
 
   const handleGatheringStatus = async (gatheringId: number) => {
     try {
@@ -29,8 +32,9 @@ export default function MyCreatedGathering() {
               : gathering,
           ),
         );
+        addToast({ message: "모임이 조기 마감 되었습니다.", type: "success" });
       } else {
-        alert("모임 상태 변경에 실패했습니다.");
+        addToast({ message: "모임 마감되지 않았습니다. 다시 시도해 주세요.", type: "error" });
       }
     } catch (err) {}
   };
@@ -66,8 +70,8 @@ export default function MyCreatedGathering() {
   };
 
   useEffect(() => {
-    fetchGatheringData(page); // 함수 호출 추가
-  }, [page]);
+    fetchGatheringData(page);
+  }, [page, id]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -79,7 +83,7 @@ export default function MyCreatedGathering() {
       { threshold: 1.0 },
     );
 
-    const currentObserverRef = observerRef.current;
+    const currentObserverRef = observerRef.current; // 로컬 변수에 저장
 
     if (currentObserverRef) {
       observer.observe(currentObserverRef);
@@ -87,7 +91,7 @@ export default function MyCreatedGathering() {
 
     return () => {
       if (currentObserverRef) {
-        observer.unobserve(currentObserverRef);
+        observer.unobserve(currentObserverRef); // 로컬 변수 사용
       }
     };
   }, [hasMore, isLoading]);
@@ -170,6 +174,7 @@ export default function MyCreatedGathering() {
         );
       })}
       {hasMore && <div ref={observerRef} className="h-10 w-full"></div>}
+      <Toast />
     </>
   );
 }

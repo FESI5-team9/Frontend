@@ -48,7 +48,7 @@ export const MyGathering = () => {
           </div>
         );
       })}
-      {loading && hasMore && <SkeletonUncompleted />};
+      {loading && hasMore && <SkeletonUncompleted />}
     </div>
   );
 };

@@ -46,8 +46,10 @@ export const useReviews = () => {
   };
 
   useEffect(() => {
-    fetchReviews();
-  }, []);
+    if (id) {
+      fetchReviews();
+    }
+  }, [id]);
 
   return {
     completedReviews,
