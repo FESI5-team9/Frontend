@@ -282,14 +282,14 @@ export default function EditGathering({
 
         {/* 키워드 */}
         <div className="flex flex-col gap-1 pb-4 font-medium">
-          <div className="flex flex-row items-center gap-2">
+          <div className="mb-2 flex flex-row flex-wrap items-center gap-2">
             <p>관련 해시태그</p>
             {/* 키워드 리스트 */}
-            <div className="flex h-[30px] flex-row items-center gap-1">
+            <div className="flex flex-row flex-wrap items-center gap-1">
               {keywords.map((word, index) => (
                 <div
                   key={index}
-                  className="text- group relative flex items-center rounded-xl border bg-yellow-200 px-2 py-1"
+                  className="group relative flex items-center rounded-xl border bg-yellow-200 px-2 py-1"
                 >
                   {word}
                   {/* X표시: 기본 hidden, 그룹 호버 시 나타남 */}
