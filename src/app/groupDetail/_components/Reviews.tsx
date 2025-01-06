@@ -75,20 +75,18 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
 
         {reviews && reviews.length > 0 ? (
           <div className="mt-4">
-            {isRatingLoading ? (
-              <div className="border-y border-[#E5E7EB]">
+            <div className="mb-4 border-y border-[#E5E7EB]">
+              {isRatingLoading ? (
                 <ReviewRatingSkeleton />
-              </div>
-            ) : (
-              ratingData && (
-                <div className="border-y border-[#E5E7EB]">
+              ) : (
+                ratingData && (
                   <ReviewRatingComponent
                     ratingData={ratingData[0]}
                     totalReviews={totalReviews || 0}
                   />
-                </div>
-              )
-            )}
+                )
+              )}
+            </div>
             <div className="flex flex-col gap-[10px]">
               {reviews.map(review => (
                 <div key={review.id} className="border-b-2 border-dashed border-[#F3F4F6] pb-4">
@@ -133,7 +131,7 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
                 </div>
               ))}
             </div>
-            <div className="mt-5 flex w-full items-center justify-center gap-2">
+            <div className="mt-5 flex w-full items-center justify-center gap-4">
               <button
                 className="flex h-6 w-6 items-center justify-center"
                 type="button"
@@ -142,7 +140,7 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
                 <Image src="/icons/chevron_left.svg" width={22} height={22} alt="이전" />
               </button>
               <div className="flex items-center justify-between gap-3">
-                <p>{page + 1}</p>
+                <p className="font-semibold">{page + 1}</p>
                 <p className="text-[#9CA3AF]">/</p>
                 <p className="text-[#9CA3AF]">{isRatingLoading || totalPages}</p>
               </div>

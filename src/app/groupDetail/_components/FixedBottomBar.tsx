@@ -6,6 +6,7 @@ import { CancelGathering, LeaveGathering, joinGathering } from "@/apis/assignGat
 import Button from "@/components/Button/Button";
 import useUserStore from "@/store/userStore";
 import { GatheringDetailRes, Participant } from "@/types/api/gatheringApi";
+import { getRemainingOriginHours } from "@/utils/date";
 
 type FixedBottomBarProps = {
   data: GatheringDetailRes;
@@ -36,11 +37,13 @@ export default function FixedBottomBar({
   const determineStatus = useCallback(() => {
     if (data.canceledAt) {
       setStatus("canceled");
+    } else if (getRemainingOriginHours(data.registrationEnd) === "마감이 지났습니다.") {
+      setStatus("closed");
     } else if (data.host || data.user.id === userInfo.id) {
       setStatus("host");
     } else if (data.status === "RECRUITING") {
       setStatus(checkParticipationStatus(data.participants) ? "cancelJoin" : "join");
-    } else setStatus("closed");
+    }
   }, [checkParticipationStatus, data, userInfo.id]);
 
   useEffect(() => {
