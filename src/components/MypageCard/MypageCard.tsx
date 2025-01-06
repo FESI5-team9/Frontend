@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { LeaveGathering } from "@/apis/assignGatheringApi";
 import Button from "@/components/Button/Button";
 import Chip from "@/components/Chips";
@@ -55,14 +56,17 @@ export default function MypageCard({
             </button>
           </div>
         )}
-        <div className="relative flex h-[153px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-3xl tablet:w-[280px]">
+        <Link
+          href={`groupDetail/${id}`}
+          className="relative flex h-[153px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-3xl tablet:w-[280px]"
+        >
           <Image
             src={image || "/images/default-gathering.svg"}
             fill
             objectFit="cover"
             alt="모임 이미지"
           />
-        </div>
+        </Link>
         <div className="flex w-full flex-col">
           <div className="mb-3 flex gap-2">
             <Chip
@@ -116,7 +120,7 @@ export default function MypageCard({
                 }}
                 className="border border-orange-primary px-0 text-[14px] text-orange-primary"
               >
-                예약 취소하기
+                모임 취소하기
               </Button>
             </div>
           </div>

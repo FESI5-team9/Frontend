@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { recruitGathering } from "@/apis/assignGatheringApi";
 import { getUserGathering } from "@/apis/searchGatheringApi";
 import Button from "@/components/Button/Button";
@@ -118,15 +119,18 @@ export default function MyCreatedGathering() {
               key={gathering.id}
               className="flex w-full flex-col gap-4 tablet:h-[153px] tablet:flex-row"
             >
-              <div className="relative flex h-[153px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-3xl tablet:w-[280px]">
+              <Link
+                href={`groupDetail/${gathering.id}`}
+                className="relative flex h-[153px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-3xl tablet:w-[280px]"
+              >
                 <Image
-                  src={gathering.image || "/images/image.png"}
+                  src={gathering.image || "/images/default-gathering.svg"}
                   fill
                   objectFit="cover"
                   alt="모임 이미지"
                   className=""
                 />
-              </div>
+              </Link>
               <div className="flex w-full flex-col justify-between">
                 <div className="flex gap-3">
                   <div className="mb-[18px] flex flex-col gap-1.5">

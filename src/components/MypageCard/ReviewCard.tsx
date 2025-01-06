@@ -2,6 +2,7 @@
 
 import { useEffect, useReducer, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { addReviews } from "@/apis/reviewsApi";
 import Button from "@/components/Button/Button";
 import Chip from "@/components/Chips";
@@ -129,7 +130,11 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
                   : "시간 없음";
 
                 return (
-                  <div key={reviewItem.id} className="w-full">
+                  <Link
+                    href={`groupDetail/${reviewItem.id}`}
+                    key={reviewItem.id}
+                    className="w-full"
+                  >
                     <div className="flex w-full flex-col gap-4 tablet:flex-row">
                       <div className="relative h-[153px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-3xl tablet:w-[272px]">
                         <Image
@@ -209,7 +214,7 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
                     {index !== review.length - 1 && (
                       <div className="mb-[21px] mt-[10px] border-[1.6px] border-dashed border-gray-200"></div>
                     )}
-                  </div>
+                  </Link>
                 );
               })}
 
@@ -220,15 +225,11 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
                   : "날짜 없음";
 
                 return (
-                  <div key={item.id} className="mb-6">
+                  <Link href={`groupDetail/${item.id}`} key={item.id} className="mb-6">
                     <div className="flex w-full flex-col gap-6 tablet:h-[153px] tablet:flex-row">
                       <div className="relative flex h-[153px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-3xl tablet:w-[272px]">
                         <Image
-                          src={
-                            typeof item.gathering.image === "string"
-                              ? item.gathering.image
-                              : "/images/image.png"
-                          }
+                          src={item.gathering.image || "/images/default-gathering.svg"}
                           fill
                           objectFit="cover"
                           alt="이미지"
@@ -251,7 +252,7 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
                     {index !== reviewed.length - 1 && (
                       <div className="mb-4 mt-5 border-[1.6px] border-dashed border-gray-200 tablet:hidden"></div>
                     )}
-                  </div>
+                  </Link>
                 );
               })}
           </div>
