@@ -16,7 +16,7 @@ import { AllReviewCardProps, GetMyJoinedGatheringWithReview } from "@/types/comp
 import { formatToKoreanTime } from "@/utils/date";
 
 export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
-  const [activeTab, setActiveTab] = useState<"uncompleted" | "completed" | "">("");
+  const [activeTab, setActiveTab] = useState<"uncompleted" | "completed" | "">("uncompleted");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reviewText, setReviewText] = useState("");
   const [selectedReview, setSelectedReview] = useState<GetMyJoinedGatheringWithReview | null>(null);
@@ -225,7 +225,7 @@ export default function MyReviewCard({ review, reviewed }: AllReviewCardProps) {
                   : "날짜 없음";
 
                 return (
-                  <Link href={`groupDetail/${item.id}`} key={item.id} className="mb-6">
+                  <Link href={`groupDetail/${item.gathering.id}`} key={item.id} className="mb-6">
                     <div className="flex w-full flex-col gap-6 tablet:h-[153px] tablet:flex-row">
                       <div className="relative flex h-[153px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-3xl tablet:w-[272px]">
                         <Image

@@ -159,14 +159,26 @@ export default function MyCreatedGathering() {
                   </div>
                 </div>
                 <div className="ml-auto flex tablet:justify-end tablet:pb-1">
-                  <Button
-                    size="small"
-                    bgColor="disabled"
-                    onClick={() => handleGatheringStatus(gathering.id)}
-                    className="w-[120px] px-0 text-sm text-white"
-                  >
-                    {gathering.status === "RECRUITMENT_COMPLETED" ? "마감 완료" : "조기 마감"}
-                  </Button>
+                  {gathering.status === "RECRUITMENT_COMPLETED" ? (
+                    <Button
+                      size="small"
+                      bgColor="disabled"
+                      disabled
+                      onClick={() => handleGatheringStatus(gathering.id)}
+                      className="w-[120px] px-0 text-sm text-white"
+                    >
+                      마감 완료
+                    </Button>
+                  ) : (
+                    <Button
+                      size="small"
+                      bgColor="orange"
+                      onClick={() => handleGatheringStatus(gathering.id)}
+                      className="w-[120px] px-0 text-sm text-white"
+                    >
+                      조기 마감
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
