@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { recruitGathering } from "@/apis/assignGatheringApi";
 import { getUserGathering } from "@/apis/searchGatheringApi";
 import Button from "@/components/Button/Button";
@@ -118,15 +119,18 @@ export default function MyCreatedGathering() {
               key={gathering.id}
               className="flex w-full flex-col gap-4 tablet:h-[153px] tablet:flex-row"
             >
-              <div className="relative flex h-[153px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-3xl tablet:w-[280px]">
+              <Link
+                href={`groupDetail/${gathering.id}`}
+                className="relative flex h-[153px] w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-3xl tablet:w-[280px]"
+              >
                 <Image
-                  src={gathering.image || "/images/image.png"}
+                  src={gathering.image || "/images/default-gathering.svg"}
                   fill
                   objectFit="cover"
                   alt="모임 이미지"
                   className=""
                 />
-              </div>
+              </Link>
               <div className="flex w-full flex-col justify-between">
                 <div className="flex gap-3">
                   <div className="mb-[18px] flex flex-col gap-1.5">
@@ -155,14 +159,26 @@ export default function MyCreatedGathering() {
                   </div>
                 </div>
                 <div className="ml-auto flex tablet:justify-end tablet:pb-1">
-                  <Button
-                    size="small"
-                    bgColor="disabled"
-                    onClick={() => handleGatheringStatus(gathering.id)}
-                    className="w-[120px] px-0 text-sm text-white"
-                  >
-                    {gathering.status === "RECRUITMENT_COMPLETED" ? "마감 완료" : "조기 마감"}
-                  </Button>
+                  {gathering.status === "RECRUITMENT_COMPLETED" ? (
+                    <Button
+                      size="small"
+                      bgColor="disabled"
+                      disabled
+                      onClick={() => handleGatheringStatus(gathering.id)}
+                      className="w-[120px] px-0 text-sm text-white"
+                    >
+                      마감 완료
+                    </Button>
+                  ) : (
+                    <Button
+                      size="small"
+                      bgColor="orange"
+                      onClick={() => handleGatheringStatus(gathering.id)}
+                      className="w-[120px] px-0 text-sm text-white"
+                    >
+                      조기 마감
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
