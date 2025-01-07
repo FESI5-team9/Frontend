@@ -121,7 +121,7 @@ export default function MypageCard({
                   }}
                   className="border border-orange-primary px-0 text-[14px] text-orange-primary"
                 >
-                  모임 취소하기
+                  참여 취소하기
                 </Button>
               )}
             </div>
