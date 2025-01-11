@@ -40,6 +40,7 @@ export const MyGathering = () => {
               image={gathering.image}
               participantCount={gathering.participantCount}
               capacity={gathering.capacity}
+              canceledAt={gathering.canceledAt}
             />
             {/* 구분선 추가 (마지막 요소 제외) */}
             {index !== gatherings.length - 1 && (

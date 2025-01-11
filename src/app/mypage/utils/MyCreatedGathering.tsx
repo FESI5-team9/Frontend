@@ -159,7 +159,8 @@ export default function MyCreatedGathering() {
                   </div>
                 </div>
                 <div className="ml-auto flex tablet:justify-end tablet:pb-1">
-                  {gathering.status === "RECRUITMENT_COMPLETED" ? (
+                  {gathering.status === "RECRUITMENT_COMPLETED" ||
+                  new Date(gathering.registrationEnd) < new Date() ? (
                     <Button
                       size="small"
                       bgColor="disabled"
@@ -169,7 +170,7 @@ export default function MyCreatedGathering() {
                     >
                       마감 완료
                     </Button>
-                  ) : (
+                    ) : (
                     <Button
                       size="small"
                       bgColor="orange"
@@ -178,7 +179,7 @@ export default function MyCreatedGathering() {
                     >
                       조기 마감
                     </Button>
-                  )}
+                    )}
                 </div>
               </div>
             </div>
