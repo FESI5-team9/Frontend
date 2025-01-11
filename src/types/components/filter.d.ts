@@ -14,6 +14,7 @@ type FilterButtonProps = {
   selectedDateOption?: CalendarType | null;
   filterType: string;
   onToggle: () => void;
+  isOpen: boolean;
 };
 
 type DropdownProps = {

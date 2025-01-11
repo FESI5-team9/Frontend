@@ -67,6 +67,7 @@ export default function DropdownCalendar() {
         selectedDateOption={submittedDateOption}
         filterType="calendarFilter"
         onToggle={toggleDropdown}
+        isOpen={isOpen}
       />
 
       <div
@@ -77,10 +78,16 @@ export default function DropdownCalendar() {
         {/* 캘린더는 상태 변경 시 자동으로 업데이트 */}
         <Calendar multipleDates={true} />
         <div className="mb-3 flex w-full justify-around px-3">
-          <Button onClick={resetDate} size="small" className="w-[118px] bg-[#F3F4F6] font-semibold">
+          <Button
+            aria-label="날짜 선택 초기화"
+            onClick={resetDate}
+            size="small"
+            className="w-[118px] bg-[#F3F4F6] font-semibold"
+          >
             초기화
           </Button>
           <Button
+            aria-label="선택한 날짜 적용"
             onClick={submitDates}
             size="small"
             className="w-[118px] bg-yellow-primary font-semibold"

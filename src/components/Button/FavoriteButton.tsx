@@ -32,6 +32,8 @@ export default function FavoriteButton({ gatheringId, initialFavorite }: Favorit
         className={`relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full outline-none ${isFavorite || "border-2 border-[#E5E7EB] bg-white"}`}
         initial={{ scale: 1 }}
         whileTap={{ scale: 0.9 }} // 클릭 시 약간의 축소 효과
+        aria-pressed={isFavorite}
+        aria-label={isFavorite ? "찜하기 취소" : "찜하기"}
       >
         <motion.div
           className="absolute inset-0 rounded-full"
@@ -44,7 +46,7 @@ export default function FavoriteButton({ gatheringId, initialFavorite }: Favorit
         />
         <motion.img
           src={isFavorite ? "/images/heart/filled_heart.svg" : "/images/heart/empty_heart.svg"}
-          alt="like"
+          alt={isFavorite ? "찜한 상태" : "찜 추가 가능"}
           className="relative z-10 h-6 w-6"
           key={isFavorite ? "filled-heart" : "empty-heart"}
           initial={{ scale: 0.8 }}
