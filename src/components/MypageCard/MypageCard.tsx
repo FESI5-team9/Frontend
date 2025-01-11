@@ -47,8 +47,8 @@ export default function MypageCard({
           <div className="absolute inset-0 z-10 flex h-[340px] flex-col items-center justify-center gap-6 rounded-3xl bg-black bg-opacity-70 tablet:h-[173px]">
             <span className="text-center text-sm font-semibold text-white">
               {canceledAt
-                ? "모집 취소된 모임이에요, /n다음 기회에 만나요🙏"
-                : "종료된 모임이에요, /n다음 기회에 만나요🙏"}
+                ? "모집 취소된 모임이에요, 다음 기회에 만나요🙏"
+                : "종료된 모임이에요, 다음 기회에 만나요🙏"}
             </span>
             <button className="flex h-[36px] w-[116px] items-center justify-center gap-0.5 rounded-xl bg-[#FFF7ED]">
               <Image src="/images/bye.svg" width={24} height={24} alt="bye 이모지" />
@@ -112,16 +112,18 @@ export default function MypageCard({
           </div>
           <div className="flex justify-end">
             <div className="w-[120px]">
-              <Button
-                size="small"
-                isFilled
-                onClick={() => {
-                  handleLeaveGathering();
-                }}
-                className="border border-orange-primary px-0 text-[14px] text-orange-primary"
-              >
-                모임 취소하기
-              </Button>
+              {!canceledAt && !isPast && (
+                <Button
+                  size="small"
+                  isFilled
+                  onClick={() => {
+                    handleLeaveGathering();
+                  }}
+                  className="border border-orange-primary px-0 text-[14px] text-orange-primary"
+                >
+                  참여 취소하기
+                </Button>
+              )}
             </div>
           </div>
         </div>
