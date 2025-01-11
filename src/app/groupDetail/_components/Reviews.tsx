@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
-import { UseQueryResult, useQuery } from "@tanstack/react-query";
+import { UseQueryResult, keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getReviews, getReviewsRating } from "@/apis/reviewsApi";
 import ReviewRatingComponent from "@/app/groupDetail/_components/ReviewRatingComponent";
 import ReviewRatingSkeleton from "@/app/groupDetail/_components/Skeleton/ReviewRatingSkeleton";
@@ -20,11 +20,11 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
     data: reviews,
     isLoading: isReviewsLoading,
     error: reviewsError,
-    refetch,
   }: UseQueryResult<ReviewsRes, Error> = useQuery({
     queryKey: ["gatheringReviews", gatheringId, page],
     queryFn: () => getReviews({ gatheringId: Number(gatheringId), size, page }),
     staleTime: 1000 * 60 * 5,
+    placeholderData: keepPreviousData, //
   });
 
   // 리뷰 평점 조회
@@ -33,31 +33,21 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
     isLoading: isRatingLoading,
     error: ratingError,
   }: UseQueryResult<GetReviewsRatingRes, Error> = useQuery({
-    queryKey: ["gatheringReviewRating", gatheringId, reviews],
+    queryKey: ["gatheringReviewRating", gatheringId],
     queryFn: () => getReviewsRating({ gatheringId: Number(gatheringId) }),
     staleTime: 1000 * 60 * 5,
   });
 
-  const totalReviews =
-    ratingData && ratingData.length === 1
-      ? ratingData[0].oneStar +
-        ratingData[0].twoStars +
-        ratingData[0].threeStars +
-        ratingData[0].fourStars +
-        ratingData[0].fiveStars
-      : 0;
+  const totalReviews = useMemo(() => {
+    if (!ratingData || ratingData.length !== 1) return 0;
+    const { oneStar, twoStars, threeStars, fourStars, fiveStars } = ratingData[0];
+    return oneStar + twoStars + threeStars + fourStars + fiveStars;
+  }, [ratingData]);
 
   const totalPages = Math.ceil(totalReviews / size);
 
-  const handlePrevPage = () => {
-    if (page > 0) setPage(prevPage => prevPage - 1);
-    refetch();
-  };
-
-  const handleNextPage = () => {
-    if (page < totalPages - 1) setPage(prevPage => prevPage + 1);
-    refetch();
-  };
+  const handlePrevPage = () => setPage(prev => Math.max(prev - 1, 0));
+  const handleNextPage = () => setPage(prev => Math.min(prev + 1, totalPages - 1));
 
   if (reviewsError || ratingError)
     return (
@@ -73,7 +63,14 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
           리뷰 <span>{isRatingLoading || `(${totalReviews})`}</span>
         </h3>
 
-        {reviews && reviews.length > 0 ? (
+        {isReviewsLoading ? (
+          <div className="h-full w-full">
+            <ReviewSkeleton />
+            <ReviewSkeleton />
+            <ReviewSkeleton />
+            <ReviewSkeleton />
+          </div>
+        ) : reviews && reviews.length > 0 ? (
           <div className="mt-4">
             <div className="mb-4 border-y border-[#E5E7EB]">
               {isRatingLoading ? (
@@ -131,9 +128,10 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
             </div>
             <div className="mt-5 flex w-full items-center justify-center gap-4">
               <button
-                className="flex h-6 w-6 items-center justify-center"
+                className={`flex h-6 w-6 items-center justify-center border ${page === 0 ? "invisible" : "visible"}`}
                 type="button"
                 onClick={handlePrevPage}
+                disabled={page === 0}
               >
                 <Image src="/icons/chevron_left.svg" width={22} height={22} alt="이전" />
               </button>
@@ -143,27 +141,19 @@ export default function Reviews({ gatheringId }: { gatheringId: number }) {
                 <p className="text-[#9CA3AF]">{isRatingLoading || totalPages}</p>
               </div>
               <button
-                className="flex h-6 w-6 items-center justify-center"
+                className={`flex h-6 w-6 items-center justify-center border ${page >= totalPages - 1 ? "invisible" : "visible"}`}
                 type="button"
                 onClick={handleNextPage}
+                disabled={page >= totalPages - 1}
               >
                 <Image src="/icons/chevron_right.svg" width={22} height={22} alt="다음" />
               </button>
             </div>
           </div>
-        ) : reviews?.length === 0 ? (
+        ) : (
           <div className="flex h-[200px] w-full items-center justify-center">
             <p className="text-[#9CA3AF]">아직 리뷰가 없어요</p>
           </div>
-        ) : isReviewsLoading ? (
-          <div className="h-full w-full">
-            <ReviewSkeleton />
-            <ReviewSkeleton />
-            <ReviewSkeleton />
-            <ReviewSkeleton />
-          </div>
-        ) : (
-          <></>
         )}
       </div>
     </div>

@@ -74,11 +74,11 @@ export default function DetailCard({ gathering }: GatheringProp) {
         ref={popupRef}
         className="flex w-full grow flex-col justify-end gap-[10px] pt-3"
       >
-        <div className="flex cursor-pointer items-center justify-between">
+        <div className="relative flex cursor-pointer items-center justify-between">
           <div className="flex items-center">
             <p className="text-sm font-semibold">모집 정원 {gathering.participantCount}명</p>
 
-            <div className="relative ml-4 flex">
+            <div className="ml-4 flex">
               {gathering.participants.map(
                 (person, index) =>
                   index < 4 && (
@@ -86,7 +86,7 @@ export default function DetailCard({ gathering }: GatheringProp) {
                       key={index}
                       className="-ml-3 h-[29px] w-[29px] cursor-pointer rounded-full bg-cover bg-center"
                       style={{
-                        backgroundImage: `url(${person.image || "/images/profile.svg"})`,
+                        backgroundImage: `url(${person.image || "/images/lemonProfile.svg"})`,
                       }}
                     ></div>
                   ),
@@ -99,29 +99,31 @@ export default function DetailCard({ gathering }: GatheringProp) {
               {isParticipantsListOpen && (
                 <div
                   onClick={e => e.stopPropagation()}
-                  className="absolute -left-3 top-9 z-10 flex min-w-[200px] cursor-default flex-col items-center justify-between rounded-2xl border bg-white p-4"
+                  className="z-2 absolute left-0 top-9 flex min-w-[200px] cursor-default flex-col items-center justify-between rounded-2xl border bg-white p-4"
                 >
-                  <h3 className="mb-3 border-b-2 border-gray-100 text-center font-semibold">
-                    참석자 목록
-                  </h3>
+                  <div className="flex w-full items-center justify-between">
+                    <div className="h-4 w-4"></div>
+                    <h3 className="text-sm font-semibold">참석자 목록</h3>
+                    <button
+                      onClick={closeParticipantsList}
+                      className="h-[14px] w-[14px]"
+                      type="button"
+                    >
+                      <Image src="/icons/X.svg" width={14} height={14} alt="닫기" />
+                    </button>
+                  </div>
+
                   {gathering.participants.map(person => (
                     <div className="mt-2 flex w-full items-center gap-2" key={person.userId}>
                       <div
                         className="h-[24px] w-[24px] rounded-full bg-cover bg-center"
                         style={{
-                          backgroundImage: `url(${person.image || "/images/profile.svg"})`,
+                          backgroundImage: `url(${person.image || "/images/lemonProfile.svg"})`,
                         }}
                       ></div>
                       <p className="text-sm font-semibold"> {person.nickname}</p>
                     </div>
                   ))}
-                  <button
-                    onClick={closeParticipantsList}
-                    className="mt-6 h-[32px] rounded-xl bg-[#dfe0e1] px-4 text-sm font-semibold"
-                    type="button"
-                  >
-                    닫기
-                  </button>
                 </div>
               )}
             </div>
