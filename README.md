@@ -8,15 +8,13 @@
 
 #### 3. [기술 스택 및 개발 환경](#tech)
 
-#### 4. [아키텍처](#architecture) (추가예정)
+#### 4. [주요 기능](#feature)
 
-#### 5. [주요 기능](#feature)
+#### 5. [화면 구성](#screen)
 
-#### 6. [화면 구성](#screen) (추가예정)
+#### 6. [Git Branch 전략](#branch)
 
-#### 8. [Git Branch 전략](#branch)
-
-#### 9. [폴더 구조](#directory) (추가예정)
+#### 7. [폴더 구조](#directory)
 
 <br>
 <br>
@@ -27,7 +25,7 @@
 다양한 모임을 탐색하고 참여하며 직접 모임을 개설하고 리뷰를 생성할 수 있는 서비스입니다.
 
 <p align="center">
-  <img width="100%" alt="M&M 소개 콘텐츠 이미지" src="public/images/mainpage/ex-images/muckit.svg">
+  <img width="100%" alt="M&M 소개 콘텐츠 이미지" src="https://github.com/user-attachments/assets/ab9fdd3d-758b-42f3-af75-5f1ff9bcf757">
 </p>
 
 <br>
@@ -114,8 +112,7 @@ $ npm dev
 
 <br>
 
-<details>
-  <summary><h3>기술적 의사결정</h3></summary>
+
 
 #### Frontend
 
@@ -149,8 +146,8 @@ $ npm dev
     - React Testing Library (React Component Testing)
       - React Testing Library는 사용자 관점에서 컴포넌트를 테스트할 수 있고, 간단한 API를 제공하여 테스트 코드의 가독성과 유지 보수성을 높일 수 있어 선택했습니다.
         
-    -  ㅇ
-        
+    - Cypress
+      - 빠르고 안정적인 테스트 실행,실시간 디버깅,모던 JS지원,직관적인 API와 강력한 자동화 기능을 제공해서 선택했습니다.
     <br/>
     
     #### Development Tools
@@ -262,16 +259,10 @@ $ npm dev
 <br>
 <br>
 
-## <span id='architecture'>4. 아키텍처</span>
-
-<p align="center">
-  <img width="100%" alt="서비스 아키텍처 이미지" src="">
-</p>
-
 <br>
 <br>
 
-## <span id='feature'>5. 주요 기능</span>
+## <span id='feature'>4. 주요 기능</span>
 
 - 모임 생성
 - 모임 참여
@@ -284,40 +275,22 @@ $ npm dev
 <br>
 <br>
 
-## <span id='screen'>6. 화면 구성</span>
+## <span id='screen'>5. 화면 구성</span>
 
-<!-- |                                                    로그인 페이지                                                     |                                                   회원가입 페이지                                                    |                                                 비밀번호 찾기 페이지                                                 |                                                 비밀번호 변경 페이지                                                 |
-| :------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------: |
-| <img height="500" alt="image" src="https://github.com/user-attachments/assets/e26706d6-a76c-454c-90f9-5c09f187d393"> | <img height="500" alt="image" src="https://github.com/user-attachments/assets/7707c966-cf76-4915-8d9b-d66750595a20"> | <img height="500" alt="image" src="https://github.com/user-attachments/assets/33238cb1-f730-4ffd-88f7-93c55696c42a"> | <img height="500" alt="image" src="https://github.com/user-attachments/assets/06e15b2b-e618-4f84-81d3-6bc5009eb732"> |
+|                          로그인 페이지                          |                         회원가입 페이지                         |                        마이페이지(나의 모임)                        |                       마이페이지(내가 만든 모임)                       |
+| :------------------------------------------------------------: | :------------------------------------------------------------: | :------------------------------------------------------------: | :------------------------------------------------------------: |
+| <img width="300" height="200" alt="image" src="https://github.com/user-attachments/assets/c589a625-cb07-45ae-8995-deb27bfdc65d"> | <img width="300" height="200" alt="image" src="https://github.com/user-attachments/assets/33d02e41-d727-4857-9221-5ac58cd9a596"> | <img width="300" height="200" alt="image" src="https://github.com/user-attachments/assets/64c62303-db7e-48a4-bee2-aed12363d6d4"> | <img width="300" height="200" alt="image" src="https://github.com/user-attachments/assets/5c3b4c96-2220-4754-89ad-1a497d7b79ee"> |
 
-|                                                모임 찾기 페이지 (홈)                                                 |                                             모임 찾기 페이지 - 모임 생성                                             |                                                         GNB                                                          |
-| :------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------: |
-| <img height="500" alt="image" src="https://github.com/user-attachments/assets/e48c1106-b5e2-4b80-8237-68c1c28b5e13"> | <img height="500" alt="image" src="https://github.com/user-attachments/assets/41ce3387-c133-44d1-b4eb-699f93a2e50a"> | <img height="500" alt="image" src="https://github.com/user-attachments/assets/de89d8c3-c186-4c02-9dd1-1e6f6561f6c3"> |
 
-|                                                   모임 상세 페이지                                                   |                                                   찜한 모임 페이지                                                   |                                                   모든 리뷰 페이지                                                   |                                                     마이 페이지                                                      |
-| :------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------: |
-| <img height="500" alt="image" src="https://github.com/user-attachments/assets/202e2ef6-865c-4919-b14e-b35e1f123440"> | <img height="500" alt="image" src="https://github.com/user-attachments/assets/d663e3c6-a5cb-42b5-9411-d361a8ddee11"> | <img height="500" alt="image" src="https://github.com/user-attachments/assets/7d0143a5-3c4d-42ba-abaf-0da6e1af326d"> | <img height="500" alt="image" src="https://github.com/user-attachments/assets/711d8c99-795b-42ce-8ed7-2ec394118b9d"> | -->
+|                          모든 리뷰                          |                         상세페이지                         |                        메인페이지                        |                       모임 생성                       |
+| :------------------------------------------------------------: | :------------------------------------------------------------: | :------------------------------------------------------------: | :------------------------------------------------------------: |
+| <img width="300" height="200" alt="image" src="https://github.com/user-attachments/assets/5b7da273-3b50-4290-b896-0e84073efdbf"> | <img width="300" height="200" alt="image" src="https://github.com/user-attachments/assets/b76284fe-2ea9-4acd-9a1b-c385c33f28f7"> | <img width="300" height="200" alt="image" src="https://github.com/user-attachments/assets/cd81b69c-3850-47e8-938d-a1f5c9fc61c5"> | <img width="300" height="200" alt="image" src="https://github.com/user-attachments/assets/c76c7139-7efc-4b6d-8a87-9d9c8136b603"> |
+
 
 <br>
 <br>
 
-## <span id='trouble'>7. 트러블 슈팅</span>
-
-<!-- <details>
-  <summary><b>예시 제목</b></summary>
-  <br/>
-ex)
-- withCredentials
-  - 크로스 도메인 요청에서 쿠키와 인증 정보를 전송하는 옵션
-- withCredentials: true
-  - 쿠키 전송, 인증 헤더 포함, 세션 유지, 서버 측에서도 CORS 설정 필요
-- withCredentials: false - 쿠키 미전송, 인증 정보 제외, 세션 미유지, 보안 강화
-</details> -->
-
-<br>
-<br>
-
-## <span id='branch'>8. Git Branch 전략</span>
+## <span id='branch'>6. Git Branch 전략</span>
 
 ### gitFlow Development With Jira
 
@@ -343,4 +316,51 @@ ex)
 <br>
 <br>
 
-## <span id='directory'>9. 폴더 구조</span>
+## <span id='directory'>7. 폴더 구조</span>
+
+### 기능 기반 디렉토리 구조" (Feature-Based Directory Structure)
+
+- 기능별 폴더 구성: auth, home, gatherings처럼 각 폴더가 특정 기능이나 페이지와 관련된 코드를 관리합니다.
+
+- 컴포넌트 분리: home/_components 폴더처럼 해당 기능에 필요한 컴포넌트를 세분화하여 관리.
+
+- API 분리: api 폴더가 기능별 API를 관리합니다(auth, gatherings 등).
+
+- 파일 구조 규칙 준수: Next.js의 app 디렉토리 사용 및 각 페이지와 API의 구조가 명확합니다.
+
+### 폴더 상세 설명
+
+1. **`.next/`**:
+   - Next.js에서 빌드한 결과물이 저장되는 폴더입니다.
+
+2. **`cypress/`**:
+   - Cypress를 사용한 테스트 코드를 작성할 때 사용하는 폴더입니다.
+
+3. **`node_modules/`**:
+   - 프로젝트에서 사용하는 의존성 패키지가 저장되는 디렉토리입니다.
+
+4. **`public/`**:
+   - 정적 파일(이미지, 폰트 등)을 저장하는 폴더입니다. 브라우저에서 `/`로 바로 접근 가능합니다.
+
+5. **`src/`**:
+   - 프로젝트의 메인 소스 코드가 들어 있는 디렉토리입니다.
+   - **`__tests__/`**: 유닛 테스트 및 통합 테스트 파일이 위치합니다.
+   - **`apis/`**: API 요청과 관련된 코드들이 위치합니다.
+   - **`app/`**: Next.js의 `app` 디렉토리로, App Router를 사용하는 페이지와 레이아웃이 관리됩니다.
+   - **`components/`**: 공통 UI 컴포넌트들이 관리되는 폴더입니다.
+   - **`constants/`**: 전역적으로 사용하는 상수들이 정의되어 있습니다.
+   - **`hooks/`**: 프로젝트 전반에서 사용하는 커스텀 훅이 위치합니다.
+   - **`lib/`**: 공통적으로 사용하는 라이브러리 함수나 도구 함수가 위치합니다.
+   - **`mocks/`**: 개발 및 테스트에 필요한 목업 데이터를 관리합니다.
+   - **`store/`**: 상태 관리 코드(Zustand, Redux 등)를 저장하는 폴더입니다.
+   - **`types/`**: 프로젝트 내에서 사용하는 TypeScript 타입들을 정의한 폴더입니다.
+     - **`api/`**: API 호출 및 응답 타입 정의.
+     - **`components/`**: 컴포넌트에서 사용하는 타입 정의.
+     - **`hooks/`**: 커스텀 훅에서 사용하는 타입 정의.
+     - **`pages/`**: 페이지 관련 타입 정의.
+     - **`store/`**: 스토어 상태와 관련된 타입 정의.
+   - **`utils/`**: 공통 유틸리티 함수들이 위치합니다.
+
+---
+
+
