@@ -43,7 +43,7 @@ export default function FilterButton({
           </div>
           <span>
             {selectedDateOption
-              ? `${selectedDateOption.firstDate} - ${selectedDateOption.secondDate}`
+              ? `${selectedDateOption.firstDate} - ${selectedDateOption.secondDate || selectedDateOption.firstDate}`
               : "날짜 선택"}
           </span>
         </div>
