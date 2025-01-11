@@ -2,6 +2,22 @@ import { useEffect } from "react";
 import { PostcodeData } from "@/types/components/kakaoMap";
 
 export const LOCATION_MAP: { [key: string]: string } = {
+  // 특별자치도
+  강원특별자치도: "GANGWON_DO",
+  전북특별자치도: "JEOLLA_DO",
+  제주특별자치도: "JEJU_ISLAND",
+
+  // 도
+  강원: "GANGWON_DO",
+  경기: "GYEONGGI_DO",
+  충북: "CHUNGCHEONG_DO",
+  충남: "CHUNGCHEONG_DO",
+  전북: "JEOLLA_DO",
+  전남: "JEOLLA_DO",
+  경북: "GYEONGSANG_DO",
+  경남: "GYEONGSANG_DO",
+
+  // 도시
   서울: "SEOUL",
   부산: "GYEONGSANG_DO",
   대구: "GYEONGSANG_DO",
@@ -9,16 +25,11 @@ export const LOCATION_MAP: { [key: string]: string } = {
   광주: "JEOLLA_DO",
   대전: "CHUNGCHEONG_DO",
   울산: "GYEONGSANG_DO",
-  세종: "CHUNGCHEONG_DO",
-  경기: "GYEONGGI_DO",
-  강원: "GANGWON_DO",
-  충북: "CHUNGCHEONG_DO",
-  충남: "CHUNGCHEONG_DO",
-  전북: "JEOLLA_DO",
-  전남: "JEOLLA_DO",
-  경북: "GYEONGSANG_DO",
-  경남: "GYEONGSANG_DO",
-  제주특별자치도: "JEJU_ISLAND",
+  전주: "JEOLLA_DO",
+  세종특별자치시: "CHUNGCHEONG_DO",
+
+  // 간단명칭 (추가)
+  제주: "JEJU_ISLAND", // 제주 간단명칭
 };
 
 function mapToEnumLocation(koreanLocation: string): string {
