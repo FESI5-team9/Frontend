@@ -1,6 +1,7 @@
-type FilterType = "sortFilter" | "selectionFilter";
+type FilterType = "sortFilter" | "selectionFilter" | "calendarFilter";
 
 type OptionType = { ko: string; eng: string };
+type CalendarType = { firstDate?: string; secondDate?: string };
 
 type FilterDropdownProps = {
   filterType: FilterType;
@@ -10,7 +11,7 @@ type FilterDropdownProps = {
 
 type FilterButtonProps = {
   selectedOption?: OptionType;
-  selectedDateOption?: string;
+  selectedDateOption?: CalendarType | null;
   filterType: string;
   onToggle: () => void;
 };

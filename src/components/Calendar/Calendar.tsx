@@ -17,27 +17,31 @@ function DateCell({
   onNavigateToNextMonth,
 }: DateCellProps) {
   const selectedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(date).padStart(2, "0")}`;
-
-  const todayKST = new Date(today.getTime() + 9 * 60 * 60 * 1000); // KST 기준으로 보정
-  const isToday = type === "current" && todayKST.toISOString().slice(0, 10) === selectedDate;
-
   const isFirstDate = type === "current" && firstDate && firstDate.slice(0, 10) === selectedDate;
-
   const isSecondDate = type === "current" && secondDate && secondDate.slice(0, 10) === selectedDate;
-  const handleClick = {
-    current: onSelectDate,
-    prev: onNavigateToPrevMonth,
-    next: onNavigateToNextMonth,
-  }[type];
+
+  const isPastDay =
+    type === "current" && new Date(currentDate.getFullYear(), currentDate.getMonth(), date) < today;
+
+  const isInRange =
+    type === "current" &&
+    firstDate &&
+    secondDate &&
+    new Date(firstDate) < new Date(selectedDate) &&
+    new Date(selectedDate) < new Date(secondDate);
+
+  const handleClick = isPastDay
+    ? undefined
+    : {
+      current: onSelectDate,
+      prev: onNavigateToPrevMonth,
+      next: onNavigateToNextMonth,
+    }[type];
 
   return (
     <td onClick={handleClick} className="flex h-8 w-9 cursor-pointer text-center">
       <span
-        className={`flex h-full w-full select-none items-center justify-center rounded-[8px] ${
-          type === "prev" || type === "next" ? "text-gray-500" : ""
-        } ${isFirstDate ? "bg-yellow-primary text-white" : ""} ${
-          isSecondDate ? "bg-[#FF9E48] text-white" : ""
-        }${isToday && !isFirstDate ? "text-[#FF9E48]" : ""} `}
+        className={`flex h-full w-full select-none items-center justify-center rounded-[8px] ${isFirstDate && "bg-yellow-primary"} ${isSecondDate && "bg-[#FF9E48]"} ${(type === "prev" || type === "next" || isPastDay) && "text-gray-300"} ${isInRange && "bg-gray-200"} `}
       >
         {date}
       </span>
@@ -52,6 +56,7 @@ export default function Calendar({ selectMode, multipleDates }: CalendarProps) {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const firstDayOfMonth = useMemo(() => new Date(year, month, 1), [year, month]);
   const lastDayOfMonth = useMemo(() => new Date(year, month + 1, 0), [year, month]);

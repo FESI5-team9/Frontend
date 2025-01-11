@@ -14,6 +14,11 @@ export default function DropdownCalendar() {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const updateQueryParams = useQueryBuilder(); // URL 파라미터 업데이트 훅
 
+  const [submittedDateOption, setSummitedDateOption] = useState<{
+    firstDate: string;
+    secondDate: string;
+  } | null>(null);
+
   // 드롭다운 열고 닫기
   const toggleDropdown = () => {
     setIsOpen(prevState => !prevState);
@@ -31,6 +36,8 @@ export default function DropdownCalendar() {
     setFirstDate(null);
     setSecondDate(null);
     updateQueryParams({ startDate: "", endDate: "" }); // 빈 문자열로 파라미터 제거
+    setSummitedDateOption(null);
+    setIsOpen(false);
   };
 
   // URL 파라미터 업데이트
@@ -44,21 +51,26 @@ export default function DropdownCalendar() {
       // URL에 반영
       updateQueryParams(queryParams);
 
+      setSummitedDateOption({
+        firstDate: firstDate ? firstDate.split("-").slice(1).join(".") : "",
+        secondDate: secondDate ? secondDate.split("-").slice(1).join(".") : "",
+      });
+
       // 드롭다운 닫기
       setIsOpen(false);
     }
   };
 
   return (
-    <div ref={dropdownRef}>
+    <div ref={dropdownRef} className="relative">
       <FilterButton
-        selectedDateOption="날짜 선택"
-        filterType="selectionFilter"
+        selectedDateOption={submittedDateOption}
+        filterType="calendarFilter"
         onToggle={toggleDropdown}
       />
 
       <div
-        className={`absolute z-50 mt-3 flex w-[300px] flex-col items-center justify-center rounded-[12px] border-[2px] border-[#F3F4F6] bg-white ${
+        className={`fixed left-1/2 top-1/2 z-50 mt-3 flex w-[300px] -translate-x-1/2 -translate-y-1/2 transform flex-col items-center justify-center rounded-[12px] border-[2px] border-[#F3F4F6] bg-white tablet:absolute tablet:left-0 tablet:top-[36px] tablet:translate-x-0 tablet:translate-y-0 ${
           isOpen ? "block" : "hidden"
         }`}
       >
@@ -71,7 +83,7 @@ export default function DropdownCalendar() {
           <Button
             onClick={submitDates}
             size="small"
-            className="w-[118px] bg-[#FFFACD] font-semibold"
+            className="w-[118px] bg-yellow-primary font-semibold"
           >
             적용
           </Button>
