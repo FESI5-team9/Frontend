@@ -27,10 +27,11 @@ type EditGatheringProps = {
   onShowToast: (message: string, type: "success" | "error" | "notification") => void;
 };
 
-const ReadOnlyInput = ({ value }: { value: string | number }) => {
+const ReadOnlyInput = ({ value, id }: { value: string | number; id?: string }) => {
   return (
     <input
-      className="rounded-lg border border-gray-100 bg-gray-100 px-2 py-2 text-gray-400 focus:border-yellow-400 focus:outline-none"
+      id={id}
+      className="rounded-lg border border-gray-100 bg-gray-100 px-2 py-2 text-gray-400 focus:border-red-300 focus:outline-none"
       value={value}
       readOnly
     />
@@ -43,7 +44,7 @@ export default function EditGathering({
   initialData,
   onShowToast,
 }: EditGatheringProps) {
-  const [keywordValue, setKeywordValue] = useState("");
+  const [keywordValue, setKeywordValue] = useState<string>("");
 
   const {
     name,
@@ -91,8 +92,14 @@ export default function EditGathering({
 
       switch (key) {
         case "image":
-          const emptyImageFile = new File([""], "empty.png", { type: "image/png" });
-          formData.append(key, value instanceof File ? value : emptyImageFile);
+          if (value instanceof File) {
+            formData.append(key, value);
+          } else if (initialData.image !== "") {
+            // 파일이 없고 기존 이미지가 있는 경우, 빈 이미지 파일 추가
+            const emptyImageFile = new File([""], "empty.png", { type: "image/png" });
+            formData.append(key, emptyImageFile);
+          }
+
           break;
 
         case "keyword":
@@ -121,10 +128,12 @@ export default function EditGathering({
 
     const formData = createFormData(data);
 
-    if (!formData.keys().next().value) {
+    if (Array.from(formData.keys()).length === 0) {
       onShowToast("변경된 내용이 없습니다.", "error");
       return;
     }
+
+    if (!confirm("모임을 수정하시겠습니까?")) return;
 
     const isImageModified = formData.has("image");
 
@@ -164,15 +173,33 @@ export default function EditGathering({
   };
 
   return (
-    <Modal title="모임 수정" isOpen={isOpen} onClose={() => setIsOpen(false)}>
+    <Modal
+      aria-labelledby="edit-gathering-title"
+      aria-describedby="edit-gathering-description"
+      title="모임 수정"
+      isOpen={isOpen}
+      onClose={() => setIsOpen(false)}
+    >
+      {/* 모임 수정 타이틀 */}
+      <h1 id="edit-gathering-title" className="sr-only">
+        모임 수정
+      </h1>
+      <p id="edit-gathering-description" className="text-sm font-semibold text-gray-700">
+        ✨수정 가능 항목:{" "}
+        <span className="border-b-2 text-gray-700">모임 이름, 이미지, 모임 설명, 해시태그</span>
+      </p>
+
       <form
         onSubmit={handleSubmit(handleSubmitEdit)}
         className="flex flex-col gap-4 overflow-y-scroll pb-6 font-medium"
       >
         {/* 모임 이름 */}
         <div className="flex w-full flex-col gap-1">
-          <p>모임 이름</p>
+          <label htmlFor="name" className="font-medium">
+            모임 이름
+          </label>
           <Input
+            id="name"
             {...register("name", {
               onChange: () => {
                 trigger("name");
@@ -192,7 +219,9 @@ export default function EditGathering({
 
         {/* 이미지 */}
         <div className="flex flex-col gap-1">
-          <p>이미지</p>
+          <label htmlFor="fileInput" className="font-medium">
+            이미지
+          </label>
           <div className="flex flex-row items-center gap-2">
             {/* 파일 이름 표시 */}
             <div className="relative flex-1 overflow-hidden text-ellipsis whitespace-nowrap rounded-lg border border-gray-100 bg-gray-100 px-2 py-2 text-gray-400">
@@ -208,6 +237,7 @@ export default function EditGathering({
               {/* X 버튼 */}
               {watch("image") && (
                 <button
+                  aria-label="이미지 제거 버튼"
                   type="button"
                   className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-gray-200 text-white hover:bg-gray-500"
                   onClick={() => {
@@ -229,13 +259,13 @@ export default function EditGathering({
                 const files = e.target.files;
                 if (files && files[0]) {
                   if (files[0].size > 5 * 1024 * 1024) {
-                    alert("이미지 크기는 5MB를 초과할 수 없습니다.");
+                    onShowToast("이미지 크기는 5MB를 초과할 수 없습니다.", "error");
                     return;
                   }
                   if (
                     !["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(files[0].type)
                   ) {
-                    alert("지원하지 않는 파일 형식입니다.");
+                    onShowToast("지원하지 않는 파일 형식입니다.", "error");
                     return;
                   }
                   setValue("image", files[0]); // 단일 파일만 저장
@@ -247,6 +277,7 @@ export default function EditGathering({
 
             {/* 커스텀 버튼 */}
             <button
+              aria-label="이미지 파일 선택 버튼"
               type="button"
               onClick={() => document.getElementById("fileInput")?.click()}
               className="rounded-lg border border-orange-400 bg-white px-4 py-2 text-orange-400 hover:bg-orange-100"
@@ -260,8 +291,11 @@ export default function EditGathering({
 
         {/* 설명 */}
         <div className="flex w-full flex-col">
-          <p>모임 설명</p>
+          <label htmlFor="description" className="font-medium">
+            모임 설명
+          </label>
           <Input
+            id="description"
             type="text-area"
             placeholder="모임 설명을 입력 해주세요"
             {...register("description", {
@@ -283,7 +317,9 @@ export default function EditGathering({
         {/* 키워드 */}
         <div className="flex flex-col gap-1 pb-4 font-medium">
           <div className="mb-2 flex flex-row flex-wrap items-center gap-2">
-            <p>관련 해시태그</p>
+            <label htmlFor="keywords" className="font-medium">
+              관련 해시태그
+            </label>
             {/* 키워드 리스트 */}
             <div className="flex flex-row flex-wrap items-center gap-1">
               {keywords.map((word, index) => (
@@ -308,9 +344,10 @@ export default function EditGathering({
           {/* 키워드 입력 */}
           <div className="flex items-center gap-2">
             <Input
+              id="keywords"
               name="keywords"
               type="text"
-              placeholder="#키워드 입력 후 스페이스바"
+              placeholder="키워드를 입력 후 스페이스를 눌러주세요"
               value={keywordValue}
               onChange={e => {
                 handleKeywordChange(e.target.value, setKeywordValue);
@@ -318,7 +355,13 @@ export default function EditGathering({
               onKeyDown={e => {
                 if (e.key === " ") {
                   e.preventDefault();
-                  handleKeywordAddition(e.currentTarget.value, keywords, setKeywordValue, setValue);
+                  if (!e.currentTarget.value.trim()) return; // 공백 문자열 방지
+
+                  const word = e.currentTarget.value.includes("#")
+                    ? e.currentTarget.value
+                    : `#${e.currentTarget.value}`;
+
+                  handleKeywordAddition(word, keywords, setKeywordValue, setValue);
                 }
               }}
               className="w-full rounded-lg border p-2"
@@ -326,55 +369,49 @@ export default function EditGathering({
           </div>
         </div>
 
-        {/* 장소 */}
+        {/* 아래는 수정 불가능 */}
+        <div className="w-full border border-dashed"></div>
+
         <div className="flex w-full flex-col gap-1">
-          <p>장소</p>
-          <ReadOnlyInput value={address2} />
+          <label htmlFor="address" className="font-medium">
+            장소
+          </label>
+          <ReadOnlyInput id="address" value={address2} />
         </div>
 
-        {/* 카테고리 선택 */}
         <div className="flex flex-col gap-1">
-          <p>카테고리</p>
-          <div className="flex flex-row gap-2">
-            {categoryList.map((category, index) => (
-              <div
-                key={index}
-                className={`flex select-none items-center gap-3 rounded-lg px-2 py-1.5 font-medium ${
-                  type === category.link
-                    ? "border border-black bg-black text-white"
-                    : "border border-gray-300 bg-gray-100 text-black"
-                }`}
-              >
-                <span className="flex h-5 w-5 items-center justify-center rounded-xl border border-gray-300 bg-white">
-                  <span className={`${type === category.link ? "text-gray-500" : "hidden"}`}>
-                    ✔
-                  </span>
-                </span>
-                {category.name}
-              </div>
-            ))}
-          </div>
+          <label htmlFor="category" className="font-medium">
+            카테고리
+          </label>
+          <ReadOnlyInput
+            id="category"
+            value={categoryList.find(({ link }) => link === type)?.name || ""}
+          />
         </div>
 
-        {/* 날짜 */}
         <div className="flex flex-col gap-1">
-          <p>날짜</p>
-          <ReadOnlyInput value={formatToKoreanTime(dateTime, "MM월 d일 HH:mm")} />
+          <label htmlFor="dateTime" className="font-medium">
+            날짜
+          </label>
+          <ReadOnlyInput id="dateTime" value={formatToKoreanTime(dateTime, "MM월 d일 HH:mm")} />
         </div>
 
-        {/* 모집 정원 */}
         <div className="flex w-full flex-col">
-          <p>모집 정원</p>
-          <ReadOnlyInput value={capacity} />
+          <label htmlFor="capacity" className="font-medium">
+            모집 정원
+          </label>
+          <ReadOnlyInput id="capacity" value={capacity} />
         </div>
 
-        {/* 최소 인원 */}
         <div className="flex w-full flex-col">
-          <p>최소 인원</p>
-          <ReadOnlyInput value={openParticipantCount} />
+          <label htmlFor="openParticipantCount" className="font-medium">
+            최소 인원
+          </label>
+          <ReadOnlyInput id="openParticipantCount" value={openParticipantCount} />
         </div>
 
         <Button
+          aria-disabled={!isValid}
           type="submit"
           bgColor={`${isValid ? "yellow" : "disabled"}`}
           className={`py-2 hover:bg-yellow-primary ${isValid ? "border-green-500" : "bg-gray-300"}`}

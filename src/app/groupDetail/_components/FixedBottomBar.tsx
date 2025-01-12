@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { CancelGathering, LeaveGathering, joinGathering } from "@/apis/assignGatheringApi";
 import Button from "@/components/Button/Button";
 import useUserStore from "@/store/userStore";
@@ -26,6 +27,8 @@ export default function FixedBottomBar({
 
   const userInfo = useUserStore();
   const router = useRouter();
+
+  const queryClient = useQueryClient();
 
   const isParticipating = useMemo(
     () => data.participants.some(participant => participant.userId === userInfo.id),
@@ -75,6 +78,7 @@ export default function FixedBottomBar({
 
       onShowToast("모임에 참여되었습니다.", "success");
       setStatus("cancelJoin");
+      await queryClient.invalidateQueries({ queryKey: ["gatheringDetail"] });
     } catch (err) {
       console.error("Failed to join gathering:", err);
       onShowToast("예기치 않은 오류가 발생했습니다. 다시 시도해주시기 바랍니다.", "error");
@@ -90,6 +94,7 @@ export default function FixedBottomBar({
 
       onShowToast("모임 참여가 취소되었습니다.", "success");
       setStatus("join");
+      await queryClient.invalidateQueries({ queryKey: ["gatheringDetail"] });
     } catch (err) {
       console.error("Failed to leave gathering:", err);
       onShowToast("예기치 않은 오류가 발생했습니다. 다시 시도해주시기 바랍니다.", "error");
@@ -167,13 +172,21 @@ export default function FixedBottomBar({
         )}
 
         {status === "closed" && (
-          <Button className="h-11 w-[115px] bg-[#9CA3AF] text-white tablet:grow-0" disabled>
+          <Button
+            aria-disabled="true"
+            className="h-11 w-[115px] bg-[#9CA3AF] text-white tablet:grow-0"
+            disabled
+          >
             모임 마감
           </Button>
         )}
 
         {status === "canceled" && (
-          <Button className="h-11 w-[124px] bg-[#9CA3AF] text-white tablet:grow-0" disabled>
+          <Button
+            aria-disabled="true"
+            className="h-11 w-[124px] bg-[#9CA3AF] text-white tablet:grow-0"
+            disabled
+          >
             취소된 모임
           </Button>
         )}

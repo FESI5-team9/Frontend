@@ -73,6 +73,10 @@ export default function DetailCard({ gathering }: GatheringProp) {
         onClick={toggleParticipantsList}
         ref={popupRef}
         className="flex w-full grow flex-col justify-end gap-[10px] pt-3"
+        aria-expanded={isParticipantsListOpen}
+        aria-controls="participants-list-popup"
+        role="button"
+        tabIndex={0}
       >
         <div className="relative flex cursor-pointer items-center justify-between">
           <div className="flex items-center">
@@ -88,26 +92,38 @@ export default function DetailCard({ gathering }: GatheringProp) {
                       style={{
                         backgroundImage: `url(${person.image || "/images/lemonProfile.svg"})`,
                       }}
+                      aria-label={
+                        person.image ? `${person.nickname} 프로필 이미지` : "기본 프로필 이미지"
+                      }
                     ></div>
                   ),
               )}
               {gathering.participantCount > 4 ? (
-                <div className="-ml-3 flex h-[29px] w-[29px] select-none items-center justify-center rounded-full bg-[#f2f4f5] text-sm font-semibold text-[#262626]">
+                <div
+                  aria-label={`추가 참석자 ${gathering.participantCount - 4}명`}
+                  className="-ml-3 flex h-[29px] w-[29px] select-none items-center justify-center rounded-full bg-[#f2f4f5] text-sm font-semibold text-[#262626]"
+                >
                   +{gathering.participantCount - 4}
                 </div>
               ) : null}
               {isParticipantsListOpen && (
                 <div
+                  id="participants-list-popup"
+                  role="dialog"
+                  aria-labelledby="participants-list-title"
                   onClick={e => e.stopPropagation()}
                   className="z-2 absolute left-0 top-9 flex min-w-[200px] cursor-default flex-col items-center justify-between rounded-2xl border bg-white p-4"
                 >
                   <div className="flex w-full items-center justify-between">
                     <div className="h-4 w-4"></div>
-                    <h3 className="text-sm font-semibold">참석자 목록</h3>
+                    <h3 id="participants-list-title" className="text-sm font-semibold">
+                      참석자 목록
+                    </h3>
                     <button
                       onClick={closeParticipantsList}
                       className="h-[14px] w-[14px]"
                       type="button"
+                      aria-label="참석자 목록 닫기"
                     >
                       <Image src="/icons/X.svg" width={14} height={14} alt="닫기" />
                     </button>
@@ -120,6 +136,10 @@ export default function DetailCard({ gathering }: GatheringProp) {
                         style={{
                           backgroundImage: `url(${person.image || "/images/lemonProfile.svg"})`,
                         }}
+                        aria-label={
+                          person.image ? `${person.nickname} 프로필 이미지` : "기본 프로필 이미지"
+                        }
+                        tabIndex={0}
                       ></div>
                       <p className="text-sm font-semibold"> {person.nickname}</p>
                     </div>

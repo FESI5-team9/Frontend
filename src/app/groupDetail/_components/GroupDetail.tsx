@@ -60,7 +60,6 @@ function GroupDetail({ paramsId }: { paramsId: number }) {
                   objectFit: "cover",
                   objectPosition: "center",
                 }}
-                className="z-0"
                 priority
               />
               <ClosingTimeTag deadline={detail.registrationEnd} />
@@ -81,17 +80,20 @@ function GroupDetail({ paramsId }: { paramsId: number }) {
                       backgroundImage: `url(${detail.user.image || "/images/profile.svg"})`,
                     }}
                   ></div>
-                  <span>{detail.user.nickname}</span>
+                  <span aria-label="작성자 닉네임">{detail.user.nickname}</span>
                 </div>
                 <span className="text-[#3C3C3C]">|</span>
-                <span className="text-[#9CA3AF]">
+                <span aria-label="작성 날짜" className="text-[#9CA3AF]">
                   {formatToKoreanTime(detail.createdAt, "yyyy.MM.dd")}
                 </span>
               </div>
             </section>
 
             {detail.address2 && (
-              <section className="desktop:grid-area-bottomRight tablet:col-span-2 tablet:h-[206px] tablet:px-6 desktop:px-0">
+              <section
+                aria-label="모임 위치"
+                className="desktop:grid-area-bottomRight tablet:col-span-2 tablet:h-[206px] tablet:px-6 desktop:px-0"
+              >
                 <Map address={detail.address2} />
               </section>
             )}
