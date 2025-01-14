@@ -34,7 +34,9 @@ export default function ReviewRatingComponent({
     <div className="flex h-[180px] w-full items-center justify-center gap-5 tablet:gap-[120px]">
       <div className="flex max-w-[128px] flex-col items-center justify-center text-2xl font-semibold">
         <div>
-          <span className="mr-[2px]">{ratingScores?.averageScore.toFixed(1)}</span>
+          <span aria-label="평균 평점" className="mr-[2px]">
+            {ratingScores?.averageScore.toFixed(1)}
+          </span>
           <span className="text-[#9CA3AF]">/5</span>
         </div>
         <div className="flex items-center">
@@ -43,7 +45,7 @@ export default function ReviewRatingComponent({
               <Image
                 width={24}
                 height={22}
-                alt="평점"
+                alt="평점 하트 이미지"
                 src={
                   index < ratingScores?.averageScore
                     ? "/images/heart/filled_heart.svg"

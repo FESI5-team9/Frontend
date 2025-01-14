@@ -148,7 +148,11 @@ export default function Gnb() {
                   <Image
                     src={image || "/images/profile.svg"}
                     fill
-                    style={{ objectFit: "cover" }}
+                    style={{
+                      objectFit: "cover",
+                      objectPosition: "center",
+                    }}
+                    sizes="40px"
                     alt="프로필"
                   />
                 </button>

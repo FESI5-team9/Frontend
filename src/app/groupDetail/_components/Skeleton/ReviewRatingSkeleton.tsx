@@ -16,7 +16,7 @@ export default function ReviewRatingSkeleton() {
     <div className="flex h-[180px] w-full items-center justify-center gap-5 tablet:gap-[120px]">
       <div className="flex max-w-[128px] flex-col items-center justify-center text-2xl font-semibold">
         <div>
-          <span className="mr-[2px]">0.0</span>
+          <span className="mr-[2px]">0</span>
           <span className="text-[#9CA3AF]">/5</span>
         </div>
         <div className="flex items-center">

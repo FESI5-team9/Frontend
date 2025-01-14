@@ -26,32 +26,32 @@ export default function FavoriteButton({ gatheringId, initialFavorite }: Favorit
   }, [gatheringId, isFavorite, addToast]); // 의존성 배열은 그대로
 
   return (
-    <>
-      <motion.button
-        onClick={updateFavoriteCount}
-        className={`relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full outline-none ${isFavorite || "border-2 border-[#E5E7EB] bg-white"}`}
-        initial={{ scale: 1 }}
-        whileTap={{ scale: 0.9 }} // 클릭 시 약간의 축소 효과
-      >
-        <motion.div
-          className="absolute inset-0 rounded-full"
-          initial={{ opacity: 0, backgroundColor: isFavorite ? "#FFFACD" : "#FFFFFF" }}
-          animate={{
-            opacity: isFavorite ? 0.3 : 0,
-            backgroundColor: isFavorite ? "#FFFACD" : "#FFFFFF",
-          }}
-          transition={{ duration: 0.3 }}
-        />
-        <motion.img
-          src={isFavorite ? "/images/heart/filled_heart.svg" : "/images/heart/empty_heart.svg"}
-          alt="like"
-          className="relative z-10 h-6 w-6"
-          key={isFavorite ? "filled-heart" : "empty-heart"}
-          initial={{ scale: 0.8 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.3 }}
-        />
-      </motion.button>
-    </>
+    <motion.button
+      onClick={updateFavoriteCount}
+      className={`relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-full ${isFavorite || "border-2 border-[#E5E7EB] bg-white"}`}
+      initial={{ scale: 1 }}
+      whileTap={{ scale: 0.9 }} // 클릭 시 약간의 축소 효과
+      aria-pressed={isFavorite}
+      aria-label={isFavorite ? "찜하기 취소" : "찜하기"}
+    >
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        initial={{ opacity: 0, backgroundColor: isFavorite ? "#FFFACD" : "#FFFFFF" }}
+        animate={{
+          opacity: isFavorite ? 0.3 : 0,
+          backgroundColor: isFavorite ? "#FFFACD" : "#FFFFFF",
+        }}
+        transition={{ duration: 0.3 }}
+      />
+      <motion.img
+        src={isFavorite ? "/images/heart/filled_heart.svg" : "/images/heart/empty_heart.svg"}
+        alt={isFavorite ? "찜한 상태" : "찜 추가 가능"}
+        className="relative z-10 h-6 w-6"
+        key={isFavorite ? "filled-heart" : "empty-heart"}
+        initial={{ scale: 0.8 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.3 }}
+      />
+    </motion.button>
   );
 }

@@ -1,12 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { CancelGathering, LeaveGathering, joinGathering } from "@/apis/assignGatheringApi";
 import Button from "@/components/Button/Button";
 import useUserStore from "@/store/userStore";
-import { GatheringDetailRes, Participant } from "@/types/api/gatheringApi";
-import { getRemainingOriginHours } from "@/utils/date";
+import { GatheringDetailRes } from "@/types/api/gatheringApi";
 
 type FixedBottomBarProps = {
   data: GatheringDetailRes;
@@ -21,41 +21,49 @@ export default function FixedBottomBar({
   toggleEditModal,
   onShowToast,
 }: FixedBottomBarProps) {
-  const [status, setStatus] = useState<"join" | "cancelJoin" | "closed" | "host" | "canceled">(
-    "join",
-  );
+  const [status, setStatus] = useState<
+  "join" | "cancelJoin" | "closed" | "host" | "canceled" | "loading"
+  >("loading");
 
   const userInfo = useUserStore();
   const router = useRouter();
 
-  const checkParticipationStatus = useCallback(
-    (participants: Participant[]) =>
-      participants.some(participant => participant.userId === userInfo.id),
-    [userInfo.id],
+  const queryClient = useQueryClient();
+
+  const isParticipating = useMemo(
+    () => data.participants.some(participant => participant.userId === userInfo.id),
+    [data.participants, userInfo.id],
   );
 
   const determineStatus = useCallback(() => {
     if (data.canceledAt) {
-      setStatus("canceled");
-    } else if (getRemainingOriginHours(data.registrationEnd) === "마감이 지났습니다.") {
-      setStatus("closed");
-    } else if (data.host || data.user.id === userInfo.id) {
-      setStatus("host");
-    } else if (data.status === "RECRUITING") {
-      setStatus(checkParticipationStatus(data.participants) ? "cancelJoin" : "join");
+      return setStatus("canceled");
     }
-  }, [checkParticipationStatus, data, userInfo.id]);
+
+    if (new Date(data.registrationEnd) <= new Date() || data.status === "RECRUITMENT_COMPLETED") {
+      return setStatus("closed");
+    }
+
+    if (data.host || data.user.id === userInfo.id) {
+      return setStatus("host");
+    }
+
+    if (data.status === "RECRUITING") {
+      return setStatus(isParticipating ? "cancelJoin" : "join");
+    }
+  }, [isParticipating, data, userInfo.id]);
 
   useEffect(() => {
     determineStatus();
-  }, [data, determineStatus, userInfo.id]);
+  }, [determineStatus]);
 
   function handleApiError<T extends object>(
     response: T | { code?: string; message?: string },
   ): boolean {
     if ("code" in response && response.code) {
-      console.error("HTTP Error:", response.message);
-      onShowToast(response.message as string, "error");
+      const errorMessage = response.message ?? "예기치 않은 오류가 발생했습니다.";
+      console.error("HTTP Error:", errorMessage);
+      onShowToast(errorMessage, "error");
       return true;
     }
     return false;
@@ -67,8 +75,10 @@ export default function FixedBottomBar({
     try {
       const response = await joinGathering(gatheringId);
       if (handleApiError(response)) return;
+
       onShowToast("모임에 참여되었습니다.", "success");
       setStatus("cancelJoin");
+      await queryClient.invalidateQueries({ queryKey: ["gatheringDetail"] });
     } catch (err) {
       console.error("Failed to join gathering:", err);
       onShowToast("예기치 않은 오류가 발생했습니다. 다시 시도해주시기 바랍니다.", "error");
@@ -81,8 +91,10 @@ export default function FixedBottomBar({
     try {
       const response = await LeaveGathering(gatheringId);
       if (handleApiError(response)) return;
+
       onShowToast("모임 참여가 취소되었습니다.", "success");
       setStatus("join");
+      await queryClient.invalidateQueries({ queryKey: ["gatheringDetail"] });
     } catch (err) {
       console.error("Failed to leave gathering:", err);
       onShowToast("예기치 않은 오류가 발생했습니다. 다시 시도해주시기 바랍니다.", "error");
@@ -96,6 +108,7 @@ export default function FixedBottomBar({
       if (confirm("모임을 취소하시겠습니까?")) {
         const response = await CancelGathering(gatheringId);
         if (handleApiError(response)) return;
+
         onShowToast("모임이 취소되었습니다.", "success");
         setStatus("canceled");
         router.replace("/");
@@ -137,7 +150,7 @@ export default function FixedBottomBar({
             className="h-11 w-[115px] bg-[#ff9e48] !p-[10px] text-white tablet:grow-0"
             onClick={handleLeave}
           >
-            참여 취소하기
+            참여 취소
           </Button>
         )}
 
@@ -159,13 +172,21 @@ export default function FixedBottomBar({
         )}
 
         {status === "closed" && (
-          <Button className="h-11 w-[115px] bg-[#9CA3AF] text-white tablet:grow-0" disabled>
-            마감 완료
+          <Button
+            aria-disabled="true"
+            className="h-11 w-[115px] bg-[#9CA3AF] text-white tablet:grow-0"
+            disabled
+          >
+            모임 마감
           </Button>
         )}
 
         {status === "canceled" && (
-          <Button className="h-11 w-[124px] bg-[#9CA3AF] text-white tablet:grow-0" disabled>
+          <Button
+            aria-disabled="true"
+            className="h-11 w-[124px] bg-[#9CA3AF] text-white tablet:grow-0"
+            disabled
+          >
             취소된 모임
           </Button>
         )}

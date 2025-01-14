@@ -17,27 +17,43 @@ function DateCell({
   onNavigateToNextMonth,
 }: DateCellProps) {
   const selectedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(date).padStart(2, "0")}`;
-
-  const todayKST = new Date(today.getTime() + 9 * 60 * 60 * 1000); // KST 기준으로 보정
-  const isToday = type === "current" && todayKST.toISOString().slice(0, 10) === selectedDate;
-
   const isFirstDate = type === "current" && firstDate && firstDate.slice(0, 10) === selectedDate;
-
   const isSecondDate = type === "current" && secondDate && secondDate.slice(0, 10) === selectedDate;
-  const handleClick = {
-    current: onSelectDate,
-    prev: onNavigateToPrevMonth,
-    next: onNavigateToNextMonth,
-  }[type];
+
+  const isPastDay =
+    type === "current" && new Date(currentDate.getFullYear(), currentDate.getMonth(), date) < today;
+
+  const isInRange =
+    type === "current" &&
+    firstDate &&
+    secondDate &&
+    new Date(firstDate) < new Date(selectedDate) &&
+    new Date(selectedDate) < new Date(secondDate);
+
+  const handleClick = isPastDay
+    ? undefined
+    : {
+      current: onSelectDate,
+      prev: onNavigateToPrevMonth,
+      next: onNavigateToNextMonth,
+    }[type];
 
   return (
-    <td onClick={handleClick} className="flex h-8 w-9 cursor-pointer text-center">
+    <td
+      role="gridcell"
+      aria-selected={isFirstDate || isSecondDate ? "true" : "false"}
+      aria-disabled={isPastDay ? "true" : undefined}
+      tabIndex={isPastDay ? -1 : 0}
+      onClick={handleClick}
+      onKeyDown={e => {
+        if (e.key === "Enter" && !isPastDay) {
+          handleClick?.();
+        }
+      }}
+      className="flex h-8 w-9 cursor-pointer text-center"
+    >
       <span
-        className={`flex h-full w-full select-none items-center justify-center rounded-[8px] ${
-          type === "prev" || type === "next" ? "text-gray-500" : ""
-        } ${isFirstDate ? "bg-yellow-primary text-white" : ""} ${
-          isSecondDate ? "bg-[#FF9E48] text-white" : ""
-        }${isToday && !isFirstDate ? "text-[#FF9E48]" : ""} `}
+        className={`flex h-full w-full select-none items-center justify-center rounded-[8px] ${isFirstDate && "bg-yellow-primary"} ${isSecondDate && "bg-[#FF9E48]"} ${(type === "prev" || type === "next" || isPastDay) && "text-gray-300"} ${isInRange && "bg-gray-200"} `}
       >
         {date}
       </span>
@@ -52,6 +68,7 @@ export default function Calendar({ selectMode, multipleDates }: CalendarProps) {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const firstDayOfMonth = useMemo(() => new Date(year, month, 1), [year, month]);
   const lastDayOfMonth = useMemo(() => new Date(year, month + 1, 0), [year, month]);
@@ -140,7 +157,7 @@ export default function Calendar({ selectMode, multipleDates }: CalendarProps) {
   return (
     <div className="flex w-[280px] flex-col items-center justify-center rounded-[12px] bg-white py-3">
       <div className="mb-1 flex h-8 w-[250px] items-center justify-between">
-        <button type="button" onClick={handlePrevMonth}>
+        <button aria-label="이전 달로 이동" type="button" onClick={handlePrevMonth}>
           <Image
             className="rotate-180"
             src="/images/ic_arrow.png"
@@ -153,16 +170,16 @@ export default function Calendar({ selectMode, multipleDates }: CalendarProps) {
           <span>{MONTH_OF_YEAR[month]}</span>
           <span>{year}</span>
         </div>
-        <button type="button" onClick={handleNextMonth}>
+        <button aria-label="다음 달로 이동" type="button" onClick={handleNextMonth}>
           <Image src="/images/ic_arrow.png" alt="next month" width={24} height={24} />
         </button>
       </div>
 
-      <table className="w-[250px] table-fixed">
+      <table role="grid" aria-label={`${year}년 ${month + 1}월`} className="w-[250px] table-fixed">
         <thead>
-          <tr className="flex w-[250px] justify-between">
+          <tr role="row" className="flex w-[250px] justify-between">
             {DAYS_OF_WEEK.map(day => (
-              <th className="h-8 w-9 select-none text-center" key={day}>
+              <th role="columnheader" className="h-8 w-9 select-none text-center" key={day}>
                 {day}
               </th>
             ))}
@@ -170,7 +187,7 @@ export default function Calendar({ selectMode, multipleDates }: CalendarProps) {
         </thead>
         <tbody className="flex w-[250px] flex-col justify-between">
           {Array.from({ length: Math.ceil(allDates.length / 7) }).map((_, rowIndex) => (
-            <tr className="flex w-[250px] justify-between" key={rowIndex}>
+            <tr role="row" className="flex w-[250px] justify-between" key={rowIndex}>
               {allDates.slice(rowIndex * 7, rowIndex * 7 + 7).map(({ date, type }, colIndex) => (
                 <DateCell
                   key={colIndex}

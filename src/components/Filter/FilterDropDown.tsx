@@ -36,6 +36,7 @@ export function FilterDropDown({ filterType, options, onSelectFilterOption }: Fi
         selectedOption={selectedOption}
         filterType={filterType}
         onToggle={toggleDropdown}
+        isOpen={isOpen}
       />
 
       <Dropdown
