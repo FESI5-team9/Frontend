@@ -164,6 +164,7 @@ export default function Calendar({ selectMode, multipleDates }: CalendarProps) {
             alt="prev month"
             width={24}
             height={24}
+            style={{ height: "auto" }}
           />
         </button>
         <div className="flex gap-1">

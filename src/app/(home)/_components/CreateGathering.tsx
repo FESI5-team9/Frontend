@@ -18,7 +18,7 @@ import {
   handleKeywordChange,
   handleKeywordDelete,
   handleSubmitToServer,
-} from "@/utils/formHandler";
+} from "@/utils/createGathformHandler";
 import { categoryList, timeChips } from "../../../constants/categoryList";
 import { Input } from "./Input";
 
