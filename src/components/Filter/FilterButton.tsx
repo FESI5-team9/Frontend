@@ -32,7 +32,13 @@ export default function FilterButton({
       {filterType === "sortFilter" && (
         <div className="relative flex h-[36px] w-[120px] select-none items-center justify-center rounded-[12px] border-[2px] border-[#F3F4F6] bg-white px-[12px] text-sm transition-all hover:bg-[#F3F4F6] tablet:h-[40px]">
           <div className="flex h-6 w-6 items-center">
-            <Image src="/images/filter/swap_vert.svg" alt={filterType} width={18} height={10} />
+            <Image
+              src="/images/filter/swap_vert.svg"
+              alt={filterType}
+              width={18}
+              height={10}
+              style={{ width: "auto", height: "auto" }}
+            />
           </div>
           <span>{labelText}</span>
         </div>

@@ -6,6 +6,7 @@ import Progressbar from "@/components/Progressbar";
 import { GetGathering } from "@/types/components/card";
 import { formatToOriginTime, getRemainingOriginHours } from "@/utils/date";
 import ButtonJoin from "./ButtonJoin";
+import { ResizedImage } from "./ResizedImage";
 
 export default function Card({
   cardData,
@@ -21,19 +22,26 @@ export default function Card({
     >
       {/* 카드 내용 */}
       <Link prefetch={false} href={`groupDetail/${cardData.id}`} className="relative flex">
-        <Image
-          src={
-            cardData.image && cardData.image.trim() !== ""
-              ? cardData.image
-              : "/images/default-gathering.svg"
-          }
-          alt="food"
-          width={272}
-          height={153}
-          className="w-full rounded-2xl object-cover tablet:h-[153px] tablet:w-[272px] tablet:rounded-l-2xl"
-        />
+        <div className="relative w-full max-w-full rounded-2xl tablet:h-[153px] tablet:w-[272px] tablet:rounded-l-2xl">
+          <ResizedImage
+            src={cardData.image}
+            alt={`${cardData.name}`}
+            width={544}
+            height={306}
+            format="webp"
+            placeholder="blur"
+            priority
+            fetchPriority="high"
+          />
+        </div>
         <div className="absolute right-0 top-0 flex flex-row items-center gap-1 rounded-xl border border-none bg-yellow-primary px-2 py-1 tablet:rounded-bl-xl">
-          <Image src="/images/mainPage/alarm.svg" width={20} height={16} alt="alarm" />
+          <Image
+            src="/images/mainPage/alarm.svg"
+            width={20}
+            height={16}
+            alt="alarm"
+            style={{ width: "auto", height: "auto" }}
+          />
           <p>{getRemainingOriginHours(cardData.registrationEnd) || "날짜 없음"}</p>
         </div>
       </Link>
@@ -72,8 +80,10 @@ export default function Card({
         <div className="flex items-end justify-between">
           <div className="mt-4 flex w-3/5 flex-col gap-2 tablet:w-3/5 desktop:w-3/5">
             <div className="flex flex-row gap-2 text-sm">
-              <div className="flex gap-1">
-                <Image src="/images/mainPage/card/people.svg" width={16} height={16} alt="people" />
+              <div className="flex items-center gap-1">
+                <div className="relative h-[16px] w-[16px]">
+                  <Image src="/images/mainPage/card/people.svg" alt="people" fill />
+                </div>
                 <p>
                   {cardData.participantCount} / {cardData.capacity}
                 </p>
@@ -82,8 +92,8 @@ export default function Card({
                 <div className="flex gap-1">
                   <Image
                     src="/images/mainPage/card/ic_check.svg"
-                    width={16}
-                    height={16}
+                    width={24}
+                    height={24}
                     alt="check"
                   />
                   <div>개설확정</div>

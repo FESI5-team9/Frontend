@@ -193,16 +193,3 @@ export const handleSubmitToServer = async (
     });
   }
 };
-
-export const validateCapacityAndParticipant = (
-  capacity: number,
-  participantCount: number,
-): string | boolean => {
-  if (participantCount < 2) {
-    return "최소 인원은 2명 이상이어야 해요.";
-  }
-  if (participantCount > capacity) {
-    return "모집 정원보다 많을 수 없어요.";
-  }
-  return true; // 유효한 경우
-};
